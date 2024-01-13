@@ -1,0 +1,29 @@
+{
+    "language": "हिंदी",
+    "helloWorld": "हैलो वर्ल्ड",
+    "hello": "नमस्ते {username}",
+    "signIn": "लॉग इन करें",
+    "phoneNumber": "फ़ोन नंबर",
+    "forgotPassword": "पासवर्ड भूल गए",
+    "password": "पासवर्ड",
+    "dashboard": "डैशबोर्ड",
+    "homework": "घर का पाठ",
+    "attendance": "उपस्थिति",
+    "feeDetails": "शुल्क विवरण",
+    "examination": "परीक्षा",
+    "reportsCard": "रिपोर्ट कार्ड",
+    "calendar": "पंचांग",
+    "noticeBoard": "सूचना पट्ट",
+    "multiMedia": "मल्टीमीडिया",
+    "academicYear": "शैक्षणिक वर्ष",
+    "announcement": "घोषणाएं",
+    "studyMaterial": "अध्ययन सामग्री",
+    "profile": "प्रोफ़ाइल",
+    "leave": "छुट्टी"
+
+
+
+
+
+
+}

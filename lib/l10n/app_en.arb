@@ -1,0 +1,92 @@
+{
+    "language": "English",
+    "@language":{
+        "description": "The current Language"
+    },
+    "helloWorld": "Hello World",
+    "@helloWorld": {
+        "description": "A programmer greeting"
+    },
+    "hello": "Hello {username}",
+    "@hello":{
+        "description": "A welcome message",
+        "placeholders": {
+            "username": {
+            "type": "String"
+            }
+        }
+    },
+    "signIn": "Sign In",
+    "@signIn": {
+        "description": "A sign in text"
+    },
+    "phoneNumber": "Phone Number",
+     "@phoneNumber": {
+         "description": "A phone number text"
+     },
+     "password": "Password",
+      "@password": {
+         "description": "A password text"
+      },
+      "forgotPassword": "Forgot Password",
+      "@forgotPassword": {
+        "description": "A forgot password text"
+      },
+      "dashboard": "Dashboard",
+      "@dashboard": {
+         "description": "A dashboard text"
+      },
+      "homework": "Homework",
+      "@homework": {
+         "description": "A homework text"
+      },
+      "attendance": "Attendance",
+      "@attendance": {
+          "description": "A attendance text"
+      },
+      "feeDetails": "Fee Details",
+      "@feeDetails": {
+          "description": "A fee details text"
+      },
+      "examination": "Examination",
+      "@examination": {
+          "description": "A examination text"
+      },
+      "reportsCard": "Reports Card",
+       "@reportsCard": {
+          "description": "A reports card text"
+       },
+       "calendar": "Calendar",
+        "@calendar": {
+          "description": "A calendar text"
+        },
+        "noticeBoard": "Notice Board",
+        "@noticeBoard": {
+          "description": "A notice board text"
+        },
+        "multiMedia": "MultiMedia",
+        "@multiMedia": {
+          "description": "A multi media text"
+        },
+        "academicYear":"Academic Year",
+        "@academicYear": {
+          "description": "A academic year text"
+        },
+        "announcement": "Announcement",
+        "@announcement": {
+          "description": "Announcement page heading"
+        },
+        "studyMaterial":"Study Material",
+        "@studyMaterial": {
+          "description": "A study material text"
+        },
+        "profile":"Profile",
+        "@profile": {
+          "description": "A profile text"
+        },
+        "leave":"Leave",
+         "@leave": {
+           "description": "A leave text"
+         }
+
+}
