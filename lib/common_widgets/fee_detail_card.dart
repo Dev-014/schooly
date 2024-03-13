@@ -18,7 +18,8 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
   Widget build(BuildContext context) {
     return  Container(
       decoration: const BoxDecoration(
-          color: Color(0xffd5f5ff),
+        color: Colors.white,
+          // color: Color(0xffd5f5ff),
 
           borderRadius: BorderRadius.all(Radius.circular(12))
       ),

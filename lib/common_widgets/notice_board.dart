@@ -33,7 +33,7 @@ class _NoticeBoardState extends State<NoticeBoard> {
           // alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: const Color(0xffd4ffea),
+            color:  Colors.white,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

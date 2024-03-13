@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/take_attendance_card.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class Temp extends StatefulWidget {
   const Temp({super.key});
@@ -12,10 +13,10 @@ class _TempState extends State<Temp> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: Colors.black87,
-      appBar: AppBar(
-        title: Text("Take Attendance"),
-      ),
+      backgroundColor: ConstantColors.backGroundColor,
+      // appBar: AppBar(
+      //   title: Text("Take Attendance"),
+      // ),
       body: Container(
         child: Column(
           children: [

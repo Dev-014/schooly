@@ -49,14 +49,16 @@ class _StudyMaterialState extends State<StudyMaterial> {
       }
     }
     return  Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: ConstantColors.backGroundColor,
+      // backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         title: Text("Study Material"),
-      backgroundColor: ConstantColors.primary_color,),
+      // backgroundColor: ConstantColors.primary_color,
+      ),
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 18),
             child: TextField(
               decoration: InputDecoration(
                 filled: true,
@@ -114,9 +116,9 @@ shape: RoundedRectangleBorder(
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.book_outlined,size: 40,),
+                                Icon(Icons.book_outlined,size: 30,),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 4),
                                   child: Text(
                                       subject,
                                       style: TextStyle(fontSize: 18.0,color: Colors.black)),

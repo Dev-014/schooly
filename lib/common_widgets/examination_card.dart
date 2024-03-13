@@ -17,7 +17,8 @@ class _ExaminationCardState extends State<ExaminationCard> {
   Widget build(BuildContext context) {
     return  Container(
       decoration: const BoxDecoration(
-          color: Color(0xffd4ffea),
+        color: Colors.white,
+          // color: Color(0xffd4ffea),
 
           borderRadius: BorderRadius.all(Radius.circular(12))
       ),
@@ -56,7 +57,9 @@ class _ExaminationCardState extends State<ExaminationCard> {
                           ),
                           Container(
                               padding: EdgeInsets.symmetric(vertical: 4,horizontal: 7),
-                              decoration: BoxDecoration(color: Colors.green,borderRadius: BorderRadius.circular(18)),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(18)),
                               child: const Row(
                                 children: [
                                   Padding(

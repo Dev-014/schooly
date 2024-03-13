@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class ApplyLeavePage extends StatefulWidget {
   const ApplyLeavePage({super.key});
@@ -42,9 +43,9 @@ class _ApplyLeavePageState extends State<ApplyLeavePage> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Card(
-              elevation: 4,
-
-              color: Colors.grey.shade200,
+              elevation: 0,
+color: Colors.white,
+              // color: ConstantColors.backGroundColor,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

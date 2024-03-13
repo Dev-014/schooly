@@ -118,7 +118,7 @@ class _CalenderCardState extends State<CalenderCard> {
       weekendTextStyle: TextStyle(
         color: Colors.red,
       ),
-      thisMonthDayBorderColor: (widget.teacher)?ConstantColors.primary_color:Colors.white,
+      thisMonthDayBorderColor: (widget.teacher)?ConstantColors.primary_color:ConstantColors.backGroundColor,
 daysTextStyle: (widget.teacher)?TextStyle(color: Colors.white):TextStyle(color: Colors.black),
 
       weekFormat: false,
@@ -172,7 +172,7 @@ daysTextStyle: (widget.teacher)?TextStyle(color: Colors.white):TextStyle(color: 
     );
 
     return  Scaffold(
-backgroundColor: (widget.teacher)?ConstantColors.primary_color:Colors.white,
+backgroundColor: (widget.teacher)?ConstantColors.primary_color:ConstantColors.backGroundColor,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +180,7 @@ backgroundColor: (widget.teacher)?ConstantColors.primary_color:Colors.white,
             children: <Widget>[
 
               Container(
-                color: (widget.teacher)?ConstantColors.primary_color:Colors.white,
+                color: (widget.teacher)?ConstantColors.primary_color:ConstantColors.backGroundColor,
                 margin: const EdgeInsets.only(
                   top: 30.0,
                   bottom: 16.0,
@@ -224,7 +224,7 @@ backgroundColor: (widget.teacher)?ConstantColors.primary_color:Colors.white,
                 ),
               ),
               Container(
-                color: (widget.teacher)?ConstantColors.primary_color:Colors.white,
+                color: (widget.teacher)?ConstantColors.primary_color:ConstantColors.backGroundColor,
                 margin: EdgeInsets.symmetric(horizontal: 16.0),
                 child: _calendarCarouselNoHeader,
               ), //

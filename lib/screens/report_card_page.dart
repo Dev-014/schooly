@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/homework_card.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class ReportCardPage extends StatefulWidget {
   const ReportCardPage({super.key});
@@ -16,6 +17,7 @@ class _ReportCardPageState extends State<ReportCardPage> {
     String className;
     String report_card_link;
     return Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -25,7 +27,7 @@ class _ReportCardPageState extends State<ReportCardPage> {
           Navigator.pop(context);
         }, icon: const Icon(Icons.arrow_back,size: 30,)),
         title: const Align(alignment:Alignment.centerLeft,child: Text("Report Card",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection("unschool").doc('class').collection('10').doc('sectionC').collection("students").doc("studentID").snapshots(),

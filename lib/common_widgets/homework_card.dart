@@ -24,7 +24,8 @@ class _HomeWorkCardState extends State<HomeWorkCard> {
   Widget build(BuildContext context) {
     return  Container(
       decoration: const BoxDecoration(
-          color: Color(0xfffff1ec),
+          color: Colors.white,
+          // Color(0xfffff1ec),
 
         borderRadius: BorderRadius.all(Radius.circular(12))
       ),

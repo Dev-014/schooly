@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/fee_detail_card.dart';
 import 'package:practice/screens/examination_page.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 import '../common_widgets/multimedia_card.dart';
 
@@ -17,6 +18,7 @@ class _MultiMediaPageState extends State<MultiMediaPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -31,7 +33,7 @@ class _MultiMediaPageState extends State<MultiMediaPage> {
           child: IconButton(onPressed: (){}, icon: const Icon(Icons.search)),
         )],
         title: const Align(alignment:Alignment.centerLeft,child: Text("Multimedia",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
       ),
       body: SingleChildScrollView(
 
@@ -62,7 +64,9 @@ class _MultiMediaPageState extends State<MultiMediaPage> {
                                     bottom: BorderSide(color: Colors.pink, width: 3.0,),
                                     top:BorderSide.none, left: BorderSide.none, right: BorderSide.none):Border()
                             ),
-                            child: const Text("Videos",style: TextStyle(fontSize: 16,color: Colors.pink ),
+                            child: const Text("Videos",style: TextStyle(fontSize: 16,
+                                // color: Colors.pink
+                            ),
 
                             ),
                           )

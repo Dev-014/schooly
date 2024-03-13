@@ -20,9 +20,10 @@ class _AnnouncementState extends State<Announcement> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
-        backgroundColor: ConstantColors.primary_color,
+        elevation: 0,
+        // backgroundColor: ConstantColors.primary_color,
         title: Text("Announcement"),
         // bottom: TabBar(
         //   indicatorColor: Colors.grey,
@@ -41,7 +42,7 @@ class _AnnouncementState extends State<Announcement> with SingleTickerProviderSt
               children: [
                 Container(
                   height: 50,
-                  color: ConstantColors.primary_color,
+                  color: Colors.blue,
                 ),
                 Padding(
                 padding: const EdgeInsets.only(left: 16.0,top: 22,),
