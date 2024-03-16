@@ -86,7 +86,7 @@ class ForgetPasswordPage extends StatelessWidget {
                         onPressed: () {},
                         child: Text('Verify'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.pink,
+                          backgroundColor: Colors.pink,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),

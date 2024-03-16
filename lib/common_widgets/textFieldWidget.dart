@@ -9,7 +9,6 @@ TextField textfieldWidget(
   return TextField(
     controller: controller,
     obscureText: isPasswordType,
-
     enableSuggestions: !isPasswordType,
     autocorrect: !isPasswordType,
     cursorColor: Colors.white,

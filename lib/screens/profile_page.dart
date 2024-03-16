@@ -104,12 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: ElevatedButton(
 
                                     style: ElevatedButton.styleFrom(
-                                      minimumSize: Size(200, 50),
+                                      minimumSize: Size(200, 50), backgroundColor: Colors.pink,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                               30)
                                       ),
-                                      primary: Colors.pink,
                                     ),
                                     onPressed: () {},
                                     child: const Text("Ask for Update")),
