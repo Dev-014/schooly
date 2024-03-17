@@ -20,7 +20,7 @@ class _TempState extends State<Temp> {
       body: Container(
         child: Column(
           children: [
-            TakeAttendanceCard("1", "dev@gmail.com", "Arun Raju", 0, 90, 0, (){}, (){}, (){}, (){}),
+            TakeAttendanceCard("Student_ID", "dev@gmail.com", "Arun Raju", 0, 90, 0, (){}, (){}, (){}, (){}),
             TakeAttendanceCard("1", "dev@gmail.com", "Priya Lalwani", 0, 90, 0, (){}, (){}, (){}, (){})
             
           ],
@@ -29,3 +29,4 @@ class _TempState extends State<Temp> {
     );
   }
 }
+///TODO: We can set total number of classes before.
