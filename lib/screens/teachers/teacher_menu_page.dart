@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:practice/screens/teachers/homework.dart';
 import 'package:practice/screens/teachers/teachers_attendance_page.dart';
+import 'package:practice/screens/teachers/upload_study_material.dart';
 import 'package:practice/utils/constants_colors.dart';
 
 import 'classes.dart';
@@ -117,7 +119,9 @@ borderRadius: BorderRadius.all(Radius.circular(12))
             InkWell(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context){return TeacherAttendancePage();}));
             },child: menuCard("Attendance",Icons.person_add_rounded)),
-            menuCard("My Class",Icons.class_),
+            InkWell(onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context){return HomeWorkForm();}));
+            },child: menuCard("My Class",Icons.class_)),
             InkWell(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context){return Classes();}));
             },child: menuCard("Classes", Icons.class_outlined)),
@@ -131,7 +135,10 @@ borderRadius: BorderRadius.all(Radius.circular(12))
         ),
 
 
-            menuCard("Tasks", Icons.calendar_month),
+            InkWell(onTap: (){
+
+    Navigator.push(context, MaterialPageRoute(builder: (context){return StudyMaterialForm();}));
+            },child: menuCard("Tasks", Icons.calendar_month)),
 
             menuCard("Calender", Icons.calendar_month),
 

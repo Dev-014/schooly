@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/l10n/l10n.dart';
 import 'package:practice/screens/forget_password.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';
 import 'package:practice/screens/students_ui_2.0/dashboard.dart';
 import 'package:practice/screens/teachers/teacher_menu_page.dart';
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import 'package:provider/provider.dart';
 import '../common_widgets/textfield_phonenumber.dart';
 
 class SignInPage extends StatefulWidget {
@@ -16,6 +18,13 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  var genericProvider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +88,10 @@ class _SignInPageState extends State<SignInPage> {
                         height: 44,
                         child: ElevatedButton(
                           onPressed: () {
+                            genericProvider.setUserProfile(profile: "Teacher");
+                            print(genericProvider.userProfile);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const MenuPage()));
+
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pink,

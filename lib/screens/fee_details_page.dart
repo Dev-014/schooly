@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/fee_detail_card.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 import 'multimedia_page.dart';
 
@@ -16,6 +17,7 @@ class _FeeDetailsPageState extends State<FeeDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -26,7 +28,7 @@ class _FeeDetailsPageState extends State<FeeDetailsPage> {
           // Navigator.push(context, MaterialPageRoute(builder: (context)=>CalenderPage()));
           }, icon: const Icon(Icons.arrow_back,size: 30,)),
         title: const Align(alignment:Alignment.centerLeft,child: Text("Fee Details",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
       ),
       body: SingleChildScrollView(
 
@@ -54,10 +56,12 @@ class _FeeDetailsPageState extends State<FeeDetailsPage> {
 // borderRadius: BorderRadius.circular(.10),
                           border: (_selectedItem==i)?const Border(
 
-                              bottom: BorderSide(color: Colors.pink, width: 3.0,),
+                              bottom: BorderSide(color: Colors.blue, width: 3.0,),
                               top:BorderSide.none, left: BorderSide.none, right: BorderSide.none):Border()
                         ),
-                        child: const Text("School Fee",style: TextStyle(fontSize: 16,color: Colors.pink ),
+                        child: const Text("School Fee",style: TextStyle(fontSize: 16,
+                            // color: Colors.pink,
+                        ),
 
                       ),
                     )

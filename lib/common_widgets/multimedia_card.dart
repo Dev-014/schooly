@@ -17,7 +17,8 @@ class _MultiMediaCardState extends State<MultiMediaCard> {
   Widget build(BuildContext context) {
     return  Container(
       decoration: const BoxDecoration(
-          color: Color(0xffffd4d4),
+        color: Colors.white,
+          // color: Color(0xffffd4d4),
 
           borderRadius: BorderRadius.all(Radius.circular(12))
       ),

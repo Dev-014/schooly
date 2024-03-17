@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/examination_card.dart';
 import 'package:practice/common_widgets/fee_detail_card.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 import '../common_widgets/multimedia_card.dart';
 
@@ -17,6 +18,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -28,7 +30,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
         }, icon: const Icon(Icons.arrow_back,size: 30,)),
 
         title: const Align(alignment:Alignment.centerLeft,child: Text("Examination",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
       ),
       body: SingleChildScrollView(
 
@@ -43,7 +45,9 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   padding: const EdgeInsets.only(top: 20,bottom:12,right: 12.0,left: 16),
                   child: Container(
                     padding: const EdgeInsets.all(3),
-                    child: const Text("Examination List",style: TextStyle(fontSize: 16,color: Colors.pink ),
+                    child: const Text("Examination List",style: TextStyle(fontSize: 16,
+                        // color: Colors.pink,
+                    ),
 
                     ),
                   )

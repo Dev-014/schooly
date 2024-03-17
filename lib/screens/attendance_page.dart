@@ -43,7 +43,7 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
         )],
         title: const Align(alignment:Alignment.centerLeft,child: Text("Attendance",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
       ),
       body: SingleChildScrollView(
 
@@ -55,7 +55,9 @@ class _AttendancePageState extends State<AttendancePage> {
             children: [
                const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
-                child: Text("Year 2020",style: TextStyle(fontSize: 17,color: Colors.pink,),),
+                child: Text("Year 2020",style: TextStyle(fontSize: 17,
+                  // color: Colors.pink,
+                ),),
               ),
              for(int i =0;i<10;i++)
                const AttendanceCard()

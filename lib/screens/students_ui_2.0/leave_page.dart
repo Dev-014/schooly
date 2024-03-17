@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/students_ui_2.0/apply_leave_tab.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class LeavePage extends StatefulWidget {
   const LeavePage({super.key});
@@ -14,9 +15,10 @@ class _LeavePageState extends State<LeavePage> {
     return  DefaultTabController(
       length: 2,
       child: Scaffold(
-
+        backgroundColor: Colors.white,
+// backgroundColor: ConstantColors.backGroundColor,
         appBar: AppBar(
-          leading: IconButton(onPressed: (){Navigator.pop(context);},icon: Icon(Icons.ac_unit, color: Colors.white,)),
+          leading: IconButton(onPressed: (){Navigator.pop(context);},icon: Icon(Icons.arrow_back_ios, color: Colors.white,)),
 backgroundColor: Colors.blue,
           title: Row(
           children: [
@@ -38,10 +40,11 @@ backgroundColor: Colors.blue,
             preferredSize: Size(0,55),
             child: Material(
               color: Colors.white,
+              // color: ConstantColors.backGroundColor,
               child: const TabBar(
-                  labelColor: Colors.blue,
-                  dividerColor: Colors.blue,
-                  indicatorColor: Colors.blue,
+                  labelColor: Colors.black,
+                  dividerColor: Colors.black,
+                  indicatorColor: Colors.black,
               tabs: [
                 Tab(text: "APPLY LEAVE",),
                 Tab(text: "REQUESTS")

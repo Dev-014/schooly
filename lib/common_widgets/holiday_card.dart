@@ -39,7 +39,7 @@ class HolidayCard extends StatelessWidget {
           Container(
            width: MediaQuery.of(context).size.width*.8,
             decoration:  BoxDecoration(
-                color: (teacher)?Color(0xff767686):Color(0xfffff1ec),
+                color: (teacher)?Color(0xff767686):Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(12))),
             child: Padding(
               padding:

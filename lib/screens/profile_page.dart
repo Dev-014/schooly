@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,6 +15,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 60,
@@ -22,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
         }, icon: const Icon(Icons.arrow_back,size: 30,)),
         title: const Align(alignment:Alignment.centerLeft,child: Text("Profile",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
 
       ),
       body: StreamBuilder(
@@ -50,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               Expanded(flex: 1, child: Container(
                   decoration: const BoxDecoration(
-                      color: Colors.pink,
+                      color: Colors.blue,
                       borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(24),
                           bottomLeft: Radius.circular(24))),

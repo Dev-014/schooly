@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:practice/common_widgets/holiday_card.dart';
 import 'package:practice/common_widgets/homework_card.dart';
 import 'package:practice/screens/fee_details_page.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class Eventt {
   final DateTime date;
@@ -57,6 +58,7 @@ getHolidays();
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -67,7 +69,7 @@ getHolidays();
 
        }, icon: Icon(Icons.arrow_back,size: 30,)),
         title: const Align(alignment:Alignment.centerLeft,child: Text("Calender",style: TextStyle(fontSize: 18),)),
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
 
       ),
       body: Container(
@@ -90,7 +92,9 @@ mainAxisAlignment: MainAxisAlignment.start,
                       alignment:Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                        child: Text("Holidays",style: TextStyle(fontSize: 18,color: Colors.pink,),),
+                        child: Text("Holidays",style: TextStyle(fontSize: 18,
+                          // ,color: Colors.pink,
+                        ),),
                       ),
                     ),
                     for(int i =0; i<holidays!.length;i++)

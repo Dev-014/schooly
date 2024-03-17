@@ -4,6 +4,7 @@ import 'package:practice/common_widgets/homework_card.dart';
 import 'package:practice/common_widgets/notice_board.dart';
 import 'package:practice/screens/homework_page.dart';
 import 'package:practice/screens/notice_board_page.dart';
+import 'package:practice/utils/constants_colors.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DashBoard extends StatefulWidget {
@@ -46,6 +47,7 @@ class _DashBoardState extends State<DashBoard> {
 
 // print(combinedStream);
     return  Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 70,
         shape: const RoundedRectangleBorder(
@@ -60,7 +62,9 @@ class _DashBoardState extends State<DashBoard> {
             Text("Yogita"),
             Padding(
               padding: EdgeInsets.only(top: 5.0),
-              child: Text("Class VII A",style: TextStyle(fontSize: 12, fontWeight:FontWeight.w200,color: Color.fromRGBO(1, 1, 1, .5)),),
+              child: Text("Class VII A",style: TextStyle(fontSize: 12, fontWeight:FontWeight.w200,
+                  // color: Color.fromRGBO(1, 1, 1, .5),
+              ),),
             )
           ],
 
@@ -69,7 +73,7 @@ class _DashBoardState extends State<DashBoard> {
           padding: EdgeInsets.only(right: 16.0),
           child: Icon(Icons.access_time_sharp),
         )],
-        backgroundColor: Colors.pink,
+        // backgroundColor: Colors.pink,
 
 
       ),
@@ -99,7 +103,9 @@ class _DashBoardState extends State<DashBoard> {
               children: [
                 InkWell(onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder:(context) => const NoticeBoardPage()));
-                },child: const Align(alignment: Alignment.centerLeft,child: Text("Notice Board",style: TextStyle(fontSize: 16,color: Colors.pink ),))),
+                },child: const Align(alignment: Alignment.centerLeft,child: Text("Notice Board",style: TextStyle(fontSize: 16,
+                  // color: Colors.pink,
+                ),))),
 
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -126,7 +132,9 @@ class _DashBoardState extends State<DashBoard> {
                 )),
                 InkWell(onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>const HomeWorkPage()));
-                },child: const Align(alignment: Alignment.centerLeft,child: Text("Home Work",style: TextStyle(fontSize: 16,color: Colors.pink ),))),
+                },child: const Align(alignment: Alignment.centerLeft,child: Text("Home Work",style: TextStyle(fontSize: 16,
+                    // color: Colors.pink,
+                ),))),
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.only(top: 12.0),

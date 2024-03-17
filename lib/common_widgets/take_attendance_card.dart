@@ -156,7 +156,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
   Widget build(BuildContext context) {
     const textStyle = TextStyle(
       fontSize: 16,
-      color: Colors.white,
+      color: Colors.black,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.2,
     );
@@ -167,14 +167,15 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.white54,
-              blurStyle: BlurStyle.outer,
-              blurRadius: 4.0,
-              offset: Offset(0.0, 0.0),
-            )
-          ]
+          color: Colors.white
+          // boxShadow: const [
+          //   BoxShadow(
+          //     color: Colors.white,
+          //     blurStyle: BlurStyle.outer,
+          //     blurRadius: 4.0,
+          //     // offset: Offset(0.0, 0.0),
+          //   )
+          // ]
         // color: Colors.red
       ),
       child: Row(
@@ -200,7 +201,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
                 "Status: ${status}",
                 style: TextStyle(
                   fontSize: 15.1,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
                 ),
@@ -208,7 +209,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.black38,
+                    backgroundColor: Colors.white,
                     child: IconButton(
                       onPressed: () {
                         showEditBox();
@@ -221,7 +222,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
                   ),
                   const SizedBox(width: 10),
                   CircleAvatar(
-                    backgroundColor: Colors.black38,
+                    backgroundColor: Colors.white,
                     child: IconButton(
                         onPressed: () {
                           showDeleteBox();
