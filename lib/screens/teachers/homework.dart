@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:practice/common_widgets/drop_down_button.dart';
@@ -53,7 +54,26 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
             )),
         // backgroundColor: Colors.pink,
       ),
-      body: Padding(
+      body: StreamBuilder(
+    stream: FirebaseFirestore.instance.collection("NewSchool").doc("G0ITybqOBfCa9vownMXU").collection("attendence").doc("y2Yes9Dv5shcWQl9N9r2")
+        .collection('students')
+        .where('class', isEqualTo: FirebaseFirestore.instance.collection("NewSchool").doc("G0ITybqOBfCa9vownMXU").collection("attendence").doc("y2Yes9Dv5shcWQl9N9r2").collection('classes').doc("class_id_10thC"))
+        .snapshots(),
+    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      }
+      if(snapshot.hasData){
+        print(">>>>>>>");
+        List<DocumentSnapshot> documents = snapshot.data!.docs;
+
+        print(documents.first.data());
+      }
+      return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,126 +89,142 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
             // applyLeaveTextField(suffix: false, hintText: "Enter comment here", headingText: "Reason"),
 
             homeWorkTextFields(hintText: "Class", iconData: Icons.group),
-            CustDropDown(
-                hintText: "Sections",
-                items: [
-              CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Custom"))),
-                  CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("New Item"))),
-                ],
-                onChanged: (){}),
-      //   Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: MyDropdownButton(
-      //     items: items,
-      //     hint: "Select an option",
-      //     selectedValue: "Option 2",
-      //     onChanged: (value) => print("Selected value: $value"),
-      //     dropdownColor: Colors.red[200]!,
-      //     textStyle: const TextStyle(fontSize: 16, color: Colors.black),
-      //     // isExpanded: true,
-      // ),
-      //   ),
-      //
-      //       Padding(
-      //         padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
-      //         child: DropdownButtonHideUnderline(
-      //           child: DropdownButton2<String>(
-      //             isExpanded: true,
-      //             hint: const Row(
-      //               children: [
-      //                 Icon(
-      //                   Icons.list,
-      //                   size: 24,
-      //                   color: Colors.grey,
-      //                 ),
-      //                 SizedBox(
-      //                   width: 8,
-      //                 ),
-      //                 Expanded(
-      //                   child: Text(
-      //                     'Sections',
-      //                     style: TextStyle(
-      //                       fontSize: 14,
-      //                       fontWeight: FontWeight.bold,
-      //                       color: Colors.grey,
-      //                     ),
-      //                     overflow: TextOverflow.ellipsis,
-      //                   ),
-      //                 ),
-      //               ],
-      //             ),
-      //             items: items
-      //                 .map((String item) => DropdownMenuItem<String>(
-      //                       value: item,
-      //
-      //                       child: Text(
-      //                         item,
-      //                         style: const TextStyle(
-      //                           fontSize: 14,
-      //                           fontWeight: FontWeight.bold,
-      //                           color: Colors.black,
-      //                         ),
-      //                         overflow: TextOverflow.ellipsis,
-      //                       ),
-      //                     ))
-      //                 .toList(),
-      //             value: selectedValue,
-      //             onChanged: (String? value) {
-      //               setState(() {
-      //                 selectedValue = value;
-      //               });
-      //             },
-      //             buttonStyleData: ButtonStyleData(
-      //               height: 50,
-      //               width: double.infinity,
-      //               padding: const EdgeInsets.only(left: 14, right: 14),
-      //               decoration: BoxDecoration(
-      //                 borderRadius: BorderRadius.circular(14),
-      //                 border: Border.all(
-      //                   color: Colors.white.withOpacity(.15),
-      //                 ),
-      //                 color: Colors.white,
-      //               ),
-      //               elevation: 1,
-      //             ),
-      //             iconStyleData: const IconStyleData(
-      //               icon: Icon(
-      //                 Icons.arrow_forward_ios_outlined,
-      //               ),
-      //               iconSize: 14,
-      //               iconEnabledColor: Colors.black,
-      //               iconDisabledColor: Colors.grey,
-      //             ),
-      //             dropdownStyleData: DropdownStyleData(
-      //
-      //               maxHeight: 200,
-      //               width: MediaQuery.of(context).size.width*.9,
-      //               decoration: BoxDecoration(
-      //
-      //                 borderRadius: BorderRadius.circular(14),
-      //                 color: Colors.white,
-      //               ),
-      //               offset: const Offset(4, -2),
-      //               scrollbarTheme: ScrollbarThemeData(
-      //                 radius: const Radius.circular(40),
-      //                 thickness: MaterialStateProperty.all<double>(6),
-      //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
-      //               ),
-      //             ),
-      //             menuItemStyleData: const MenuItemStyleData(
-      //               height: 40,
-      //               padding: EdgeInsets.only(left: 14, right: 14),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
+
+
+            // CustDropDown(
+            //     hintText: "Sections",
+            //     items: [
+            //       CustDropdownMenuItem(value: "value",
+            //           child: Container(height: 50,
+            //               alignment: Alignment.centerLeft,
+            //               decoration: BoxDecoration(borderRadius: BorderRadius
+            //                   .circular(14), color: Colors.grey.withOpacity(
+            //                   .0)),
+            //               child: Text("Custom"))),
+            //       CustDropdownMenuItem(value: "value",
+            //           child: Container(height: 50,
+            //               alignment: Alignment.centerLeft,
+            //               decoration: BoxDecoration(borderRadius: BorderRadius
+            //                   .circular(14), color: Colors.grey.withOpacity(
+            //                   .0)),
+            //               child: Text("New Item"))),
+            //     ],
+            //     onChanged: () {}),
+
+
+            //   Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: MyDropdownButton(
+            //     items: items,
+            //     hint: "Select an option",
+            //     selectedValue: "Option 2",
+            //     onChanged: (value) => print("Selected value: $value"),
+            //     dropdownColor: Colors.red[200]!,
+            //     textStyle: const TextStyle(fontSize: 16, color: Colors.black),
+            //     // isExpanded: true,
+            // ),
+            //   ),
+            //
+            //       Padding(
+            //         padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
+            //         child: DropdownButtonHideUnderline(
+            //           child: DropdownButton2<String>(
+            //             isExpanded: true,
+            //             hint: const Row(
+            //               children: [
+            //                 Icon(
+            //                   Icons.list,
+            //                   size: 24,
+            //                   color: Colors.grey,
+            //                 ),
+            //                 SizedBox(
+            //                   width: 8,
+            //                 ),
+            //                 Expanded(
+            //                   child: Text(
+            //                     'Sections',
+            //                     style: TextStyle(
+            //                       fontSize: 14,
+            //                       fontWeight: FontWeight.bold,
+            //                       color: Colors.grey,
+            //                     ),
+            //                     overflow: TextOverflow.ellipsis,
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //             items: items
+            //                 .map((String item) => DropdownMenuItem<String>(
+            //                       value: item,
+            //
+            //                       child: Text(
+            //                         item,
+            //                         style: const TextStyle(
+            //                           fontSize: 14,
+            //                           fontWeight: FontWeight.bold,
+            //                           color: Colors.black,
+            //                         ),
+            //                         overflow: TextOverflow.ellipsis,
+            //                       ),
+            //                     ))
+            //                 .toList(),
+            //             value: selectedValue,
+            //             onChanged: (String? value) {
+            //               setState(() {
+            //                 selectedValue = value;
+            //               });
+            //             },
+            //             buttonStyleData: ButtonStyleData(
+            //               height: 50,
+            //               width: double.infinity,
+            //               padding: const EdgeInsets.only(left: 14, right: 14),
+            //               decoration: BoxDecoration(
+            //                 borderRadius: BorderRadius.circular(14),
+            //                 border: Border.all(
+            //                   color: Colors.white.withOpacity(.15),
+            //                 ),
+            //                 color: Colors.white,
+            //               ),
+            //               elevation: 1,
+            //             ),
+            //             iconStyleData: const IconStyleData(
+            //               icon: Icon(
+            //                 Icons.arrow_forward_ios_outlined,
+            //               ),
+            //               iconSize: 14,
+            //               iconEnabledColor: Colors.black,
+            //               iconDisabledColor: Colors.grey,
+            //             ),
+            //             dropdownStyleData: DropdownStyleData(
+            //
+            //               maxHeight: 200,
+            //               width: MediaQuery.of(context).size.width*.9,
+            //               decoration: BoxDecoration(
+            //
+            //                 borderRadius: BorderRadius.circular(14),
+            //                 color: Colors.white,
+            //               ),
+            //               offset: const Offset(4, -2),
+            //               scrollbarTheme: ScrollbarThemeData(
+            //                 radius: const Radius.circular(40),
+            //                 thickness: MaterialStateProperty.all<double>(6),
+            //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
+            //               ),
+            //             ),
+            //             menuItemStyleData: const MenuItemStyleData(
+            //               height: 40,
+            //               padding: EdgeInsets.only(left: 14, right: 14),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
             homeWorkTextFields(
                 hintText: "Section", iconData: Icons.hotel_class_outlined),
             homeWorkTextFields(hintText: "Subject", iconData: Icons.book),
             homeWorkTextFields(
                 hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
             InkWell(
-              onTap: (){
+              onTap: () {
 
               },
               child: Padding(
@@ -197,18 +233,18 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
 
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                     Icon(Icons.attach_file_outlined),
-                     Padding(
-                       padding: const EdgeInsets.only(left: 8.0),
-                       child: Text("Attach Study Material"),
-                     ),
+                    Icon(Icons.attach_file_outlined),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text("Attach Study Material"),
+                    ),
                   ],
                 ),
               ),
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
               child: Container(
                   width: double.infinity,
                   height: 50,
@@ -225,7 +261,9 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
             )
           ],
         ),
-      ),
+      );
+    }
+    )
     );
   }
 

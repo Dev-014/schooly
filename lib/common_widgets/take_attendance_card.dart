@@ -100,15 +100,15 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
 
   void attendedClass() {
     setState(() {
-      widget.totalClass++;
+      // widget.totalClass++;
       widget.attendedClass++;
     });
-    widget.attendedClassFun(widget._id);
+    widget.attendedClassFun();
   }
 
   void notAttendedClass() {
     setState(() {
-      widget.totalClass++;
+      // widget.totalClass++;
     });
     widget.notAttendedClassFun(widget._id);
   }
@@ -129,7 +129,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       return "You can miss next ${x.toStringAsFixed(0)} classes.";
     }
     var x =
-    (3 * widget.totalClass - 4 * widget.attendedClass).toStringAsFixed(0);
+    (widget.totalClass - widget.attendedClass).toStringAsFixed(0);
     if (int.parse(x) == 1) {
       return "Please attend the next class.";
     }
@@ -161,9 +161,9 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       letterSpacing: 0.2,
     );
     return Container(
-      margin: const EdgeInsets.fromLTRB(8, 10, 8, 10),
-      padding: const EdgeInsets.fromLTRB(3, 0, 0, 0),
-      height: 150,
+      margin: const EdgeInsets.fromLTRB(8, 10, 8, 5),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      height: 125,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -180,7 +180,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        // crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,15 +197,15 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
                 "Attendance ${widget.attendedClass}/${widget.totalClass}",
                 style: textStyle,
               ),
-              Text(
-                "Status: ${status}",
-                style: TextStyle(
-                  fontSize: 15.1,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.2,
-                ),
-              ),
+              // Text(
+              //   "Status: ${status}",
+              //   style: TextStyle(
+              //     fontSize: 15.1,
+              //     color: Colors.black,
+              //     fontWeight: FontWeight.w500,
+              //     letterSpacing: 0.2,
+              //   ),
+              // ),
               Row(
                 children: [
                   CircleAvatar(
