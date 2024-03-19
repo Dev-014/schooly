@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/attendance_card.dart';
 import 'package:practice/screens/examination_page.dart';
-
 import '../common_widgets/multimedia_card.dart';
 
 class AttendancePage extends StatefulWidget {
@@ -61,8 +60,6 @@ class _AttendancePageState extends State<AttendancePage> {
               ),
              for(int i =0;i<10;i++)
                const AttendanceCard()
-
-
             ],
           ),
         ),

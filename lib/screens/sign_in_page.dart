@@ -91,7 +91,6 @@ class _SignInPageState extends State<SignInPage> {
                             genericProvider.setUserProfile(profile: "Teacher");
                             print(genericProvider.userProfile);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const MenuPage()));
-
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pink,

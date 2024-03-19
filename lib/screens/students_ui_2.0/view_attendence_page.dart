@@ -1,14 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:intl/intl.dart';
 
-class ViewAttendancePage extends StatelessWidget {
-  final List<MonthAttendance> monthAttendances = [
-    MonthAttendance(
-        month: 'January',
-        totalDays: 20,
-        presentDays: 15,
-        absentDays: [3, 4, 5, 6, 7]),
-  ];
+class ViewAttendancePage extends StatefulWidget {
+  final String studentId;
+
+  ViewAttendancePage({required this.studentId});
+
+  @override
+  _ViewAttendancePageState createState() => _ViewAttendancePageState();
+}
+
+class _ViewAttendancePageState extends State<ViewAttendancePage> {
+  List<MonthAttendance> monthAttendances = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAttendanceData(widget.studentId);
+  }
+  Future<void> fetchAttendanceData(String sid) async {
+    final CollectionReference finalSchoolCollection =
+    FirebaseFirestore.instance.collection('FinalSchool');
+
+    try {
+      // Fetch attendance data for the given sid
+      DocumentSnapshot attendanceSnapshot = await finalSchoolCollection
+          .doc("cpMNxcL2pAhohcN1JIMR") // Assuming this is the correct document ID
+          .collection('attendence')
+          .doc('8viIBZs5rGOiDZhtyyMy') // Replace 'document_id' with the correct document ID containing the attendance data
+          .get();
+
+      // Check if the attendance snapshot exists and contains data
+      if (attendanceSnapshot.exists && attendanceSnapshot.data() != null) {
+        // Extract attendance data
+        Map<String, dynamic> attendanceData =
+        attendanceSnapshot.data() as Map<String, dynamic>;
+
+        List<MonthAttendance> attendances = [];
+
+        // Loop through the dates in the attendance data
+        attendanceData.forEach((date, statusList) {
+          // Parse date string to DateTime object
+          DateTime dateParsed = DateFormat('dd-MM-yy').parse(date);
+
+          // Initialize variables to store attendance data
+          int totalDays = statusList.length;
+          int presentDays = statusList
+              .where((statusData) =>
+          statusData['sid'] == sid && statusData['status'] == 'Present')
+              .length;
+          List<int> absentDays = statusList
+              .where((statusData) =>
+          statusData['sid'] == sid && statusData['status'] == 'Absent')
+              .map<int>((statusData) {
+            return dateParsed.day;
+          }).toList();
+
+          // Construct MonthAttendance object
+          MonthAttendance monthAttendance = MonthAttendance(
+            month: DateFormat.MMMM().format(dateParsed),
+            totalDays: totalDays,
+            presentDays: presentDays,
+            absentDays: absentDays,
+          );
+
+          // Add monthAttendance to the list
+          attendances.add(monthAttendance);
+        });
+
+        setState(() {
+          monthAttendances = attendances;
+        });
+
+      }
+    } catch (e) {
+      // Handle errors
+      print('Error fetching attendance data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +88,9 @@ class ViewAttendancePage extends StatelessWidget {
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20)),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
         ),
         leading: IconButton(
           onPressed: () {
@@ -27,7 +99,9 @@ class ViewAttendancePage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, size: 30),
         ),
         title: const Align(
-            alignment: Alignment.centerLeft, child: Text("Attendence")),
+          alignment: Alignment.centerLeft,
+          child: Text("Attendance"),
+        ),
         backgroundColor: Colors.pink,
       ),
       body: Padding(
@@ -55,24 +129,19 @@ class AttendanceCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AttendanceCalendarPage(
-              monthAttendance: MonthAttendance(
-                month: 'January',
-                totalDays: 31,
-                presentDays: 26,
-                absentDays: [3, 4, 5, 6, 7], // Example absent days
-              ),
-            ),
+            builder: (context) =>
+                AttendanceCalendarPage(monthAttendance: monthAttendance),
           ),
         );
       },
       child: Card(
         child: ListTile(
           title: Center(
-              child: Text(
-            monthAttendance.month,
-            style: TextStyle(fontSize: 20),
-          )),
+            child: Text(
+              monthAttendance.month,
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
           subtitle: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -105,8 +174,9 @@ class AttendanceCalendarPage extends StatelessWidget {
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20)),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
         ),
         leading: IconButton(
           onPressed: () {
@@ -115,7 +185,9 @@ class AttendanceCalendarPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, size: 30),
         ),
         title: const Align(
-            alignment: Alignment.centerLeft, child: Text("Attendence")),
+          alignment: Alignment.centerLeft,
+          child: Text("Attendance"),
+        ),
         backgroundColor: Colors.pink,
       ),
       body: Center(
@@ -142,7 +214,6 @@ class AttendanceCalendar extends StatelessWidget {
       selectedDateTime: null,
       onDayPressed: (DateTime date, List events) {},
       customDayBuilder: (
-
           /// you can provide your own build function to make custom day containers
           bool isSelectable,
           int index,
@@ -152,7 +223,8 @@ class AttendanceCalendar extends StatelessWidget {
           TextStyle textStyle,
           bool isNextMonthDay,
           bool isThisMonthDay,
-          DateTime day) {
+          DateTime day,
+          ) {
         if (!isThisMonthDay) {
           return SizedBox();
         }
@@ -180,17 +252,19 @@ class AttendanceCalendar extends StatelessWidget {
 
 class MonthAttendance {
   final String month;
-  final int totalDays;
-  final int presentDays;
+  late final int totalDays;
+  late final int presentDays;
   final List<int> absentDays;
 
-  MonthAttendance(
-      {required this.month,
-      required this.totalDays,
-      required this.presentDays,
-      required this.absentDays});
+  MonthAttendance({
+    required this.month,
+    required this.totalDays,
+    required this.presentDays,
+    required this.absentDays,
+  });
 
   double calculateAttendancePercent() {
+    if (totalDays == 0) return 0.0;
     return (presentDays / totalDays) * 100;
   }
 }

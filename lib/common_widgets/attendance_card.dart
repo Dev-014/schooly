@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice/screens/students_ui_2.0/view_attendence_page.dart';
 
 class AttendanceCard extends StatefulWidget {
   const AttendanceCard({super.key});
