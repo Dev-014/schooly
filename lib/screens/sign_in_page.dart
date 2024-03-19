@@ -88,7 +88,7 @@ class _SignInPageState extends State<SignInPage> {
                         height: 44,
                         child: ElevatedButton(
                           onPressed: () {
-                            genericProvider.setUserProfile(profile: "Student");
+                            genericProvider.setUserProfile(profile: "Teacher");
                             print(genericProvider.userProfile);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const MenuPage()));
 

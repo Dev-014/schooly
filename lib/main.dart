@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:practice/screens/students_ui_2.0/leave_page.dart';
 import 'package:practice/screens/teachers/class_notice_board.dart';
 import 'package:practice/screens/teachers/homework.dart';
+import 'package:practice/screens/tempp.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -37,7 +38,7 @@ void main() async{
         ],
         supportedLocales: [Locale("en"),Locale("hi")],
         debugShowCheckedModeBanner: false,
-        home: SignInPage()),
+        home: Temp()),
   ));
 }
 
