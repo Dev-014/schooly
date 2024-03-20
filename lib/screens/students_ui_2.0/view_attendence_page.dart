@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class ViewAttendancePage extends StatefulWidget {
   final String studentId;
 
-  ViewAttendancePage({required this.studentId});
+  const ViewAttendancePage({required this.studentId});
 
   @override
   _ViewAttendancePageState createState() => _ViewAttendancePageState();
@@ -20,60 +20,79 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
     super.initState();
     fetchAttendanceData(widget.studentId);
   }
+
   Future<void> fetchAttendanceData(String sid) async {
-    final CollectionReference finalSchoolCollection =
-    FirebaseFirestore.instance.collection('FinalSchool');
+    final CollectionReference attendanceCollection = FirebaseFirestore.instance
+        .collection('NewSchool')
+        .doc("G0ITybqOBfCa9vownMXU")
+        .collection('attendence')
+        .doc('y2Yes9Dv5shcWQl9N9r2') // Assuming this is the correct document ID
+        .collection('attendance ');
 
     try {
-      // Fetch attendance data for the given sid
-      DocumentSnapshot attendanceSnapshot = await finalSchoolCollection
-          .doc("cpMNxcL2pAhohcN1JIMR") // Assuming this is the correct document ID
-          .collection('attendence')
-          .doc('8viIBZs5rGOiDZhtyyMy') // Replace 'document_id' with the correct document ID containing the attendance data
-          .get();
+      DocumentSnapshot attendanceSnapshot = await attendanceCollection.doc(sid).get();
 
-      // Check if the attendance snapshot exists and contains data
-      if (attendanceSnapshot.exists && attendanceSnapshot.data() != null) {
-        // Extract attendance data
-        Map<String, dynamic> attendanceData =
-        attendanceSnapshot.data() as Map<String, dynamic>;
+      if (attendanceSnapshot.exists) {
+        // Get the data for the current document
+        Map<String, dynamic> data = attendanceSnapshot.data() as Map<String, dynamic>;
+
+        // Access the 'attendance' field from the data map
+        Map<String, dynamic> attendanceData = data['attendance'];
+
+        // Initialize variables to store attendance data
+        List<int> presentDates = [];
+        List<int> absentDates = [];
+
+        attendanceData.forEach((dateEpochString, status) {
+          try {
+            print('Date Epoch String: $dateEpochString');
+            int epochMilliseconds = int.parse(dateEpochString);
+            int epochSeconds = epochMilliseconds ~/ 1000; // Convert milliseconds to seconds
+            DateTime date = DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000);
+
+            if (status == 'absent') {
+              // Add day number to absent list
+              absentDates.add(date.day);
+            } else if (status == 'present') {
+              // Add day number to present list
+              presentDates.add(date.day);
+            }
+          } catch (e) {
+            print('Error parsing date: $e');
+          }
+        });
 
         List<MonthAttendance> attendances = [];
+        Set<String> processedMonths = Set<String>();
 
-        // Loop through the dates in the attendance data
-        attendanceData.forEach((date, statusList) {
-          // Parse date string to DateTime object
-          DateTime dateParsed = DateFormat('dd-MM-yy').parse(date);
+        presentDates.forEach((date) {
+          String monthName = DateFormat.MMMM().format(DateTime(DateTime.now().year, date));
+          if (!processedMonths.contains(monthName)) {
+            // Count the number of present and absent days for the month
+            int presentMonthDays = presentDates.where((d) => DateFormat.MMMM().format(DateTime(DateTime.now().year, d)) == monthName).length;
+            int absentMonthDays = absentDates.where((d) => DateFormat.MMMM().format(DateTime(DateTime.now().year, d)) == monthName).length;
+            int totalMonthDays = presentMonthDays + absentMonthDays;
 
-          // Initialize variables to store attendance data
-          int totalDays = statusList.length;
-          int presentDays = statusList
-              .where((statusData) =>
-          statusData['sid'] == sid && statusData['status'] == 'Present')
-              .length;
-          List<int> absentDays = statusList
-              .where((statusData) =>
-          statusData['sid'] == sid && statusData['status'] == 'Absent')
-              .map<int>((statusData) {
-            return dateParsed.day;
-          }).toList();
-
-          // Construct MonthAttendance object
-          MonthAttendance monthAttendance = MonthAttendance(
-            month: DateFormat.MMMM().format(dateParsed),
-            totalDays: totalDays,
-            presentDays: presentDays,
-            absentDays: absentDays,
-          );
-
-          // Add monthAttendance to the list
-          attendances.add(monthAttendance);
+            // Create a MonthAttendance object and add it to the list
+            attendances.add(MonthAttendance(
+              month: monthName,
+              totalDays: totalMonthDays,
+              presentDays: presentMonthDays,
+              absentDays: absentMonthDays,
+              presentDates: presentDates,
+              absentDates: absentDates,
+            ));
+            processedMonths.add(monthName);
+          }
         });
 
         setState(() {
           monthAttendances = attendances;
         });
-
+      } else {
+        setState(() {
+          monthAttendances = [];
+        });
       }
     } catch (e) {
       // Handle errors
@@ -146,7 +165,7 @@ class AttendanceCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total: ${monthAttendance.totalDays} days\nPresent: ${monthAttendance.presentDays} days',
+                'Total: ${monthAttendance.totalDays} days\nPresent: ${monthAttendance.presentDays} days\nAbsent: ${monthAttendance.absentDays} days',
                 style: TextStyle(fontSize: 16),
               ),
               Text(
@@ -214,7 +233,6 @@ class AttendanceCalendar extends StatelessWidget {
       selectedDateTime: null,
       onDayPressed: (DateTime date, List events) {},
       customDayBuilder: (
-          /// you can provide your own build function to make custom day containers
           bool isSelectable,
           int index,
           bool isSelectedDay,
@@ -229,20 +247,23 @@ class AttendanceCalendar extends StatelessWidget {
           return SizedBox();
         }
 
-        Color dayColor = monthAttendance.absentDays.contains(day.day)
-            ? Colors.red
-            : Colors.green;
+        // Check if the day is present or absent
+        bool isPresent = monthAttendance.presentDates.contains(day.day);
+        bool isAbsent = monthAttendance.absentDates.contains(day.day);
+
+        // Determine the color based on attendance status
+        Color dayColor = isPresent ? Colors.green : isAbsent ? Colors.red : Colors.lightBlue;
 
         return Container(
           decoration: BoxDecoration(
-            // color: isSelectedDay ? Theme.of(context).accentColor : null,
+            color: dayColor,
             borderRadius: BorderRadius.circular(8),
           ),
           margin: EdgeInsets.all(3),
           alignment: Alignment.center,
           child: Text(
             day.day.toString(),
-            style: TextStyle(color: dayColor),
+            style: TextStyle(color: Colors.white),
           ),
         );
       },
@@ -252,15 +273,19 @@ class AttendanceCalendar extends StatelessWidget {
 
 class MonthAttendance {
   final String month;
-  late final int totalDays;
-  late final int presentDays;
-  final List<int> absentDays;
+  final int totalDays;
+  final int presentDays;
+  final int absentDays;
+  final List<int> presentDates; // List of day numbers for present days
+  final List<int> absentDates; // List of day numbers for absent days
 
   MonthAttendance({
     required this.month,
     required this.totalDays,
     required this.presentDays,
     required this.absentDays,
+    required this.presentDates,
+    required this.absentDates,
   });
 
   double calculateAttendancePercent() {
@@ -268,3 +293,6 @@ class MonthAttendance {
     return (presentDays / totalDays) * 100;
   }
 }
+
+
+

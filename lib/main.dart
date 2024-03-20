@@ -5,6 +5,7 @@ import 'package:practice/screens/menu_page.dart';
 import 'package:practice/screens/sign_in_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:practice/screens/students_ui_2.0/leave_page.dart';
+import 'package:practice/screens/students_ui_2.0/view_attendence_page.dart';
 import 'package:practice/screens/teachers/class_notice_board.dart';
 import 'package:practice/screens/teachers/homework.dart';
 import 'package:practice/screens/tempp.dart';
@@ -28,7 +29,7 @@ void main() async{
   runApp( ChangeNotifierProvider(
     create: (context) => GenericProvider(), // Provide an instance of Counter to the widget tree
 
-    child: const MaterialApp(
+    child: MaterialApp(
         locale: Locale("en"),
         localizationsDelegates: [
           AppLocalizations.delegate,
@@ -38,7 +39,7 @@ void main() async{
         ],
         supportedLocales: [Locale("en"),Locale("hi")],
         debugShowCheckedModeBanner: false,
-        home: Temp()),
+        home: ViewAttendancePage(studentId: 'scholar_id',)),
   ));
 }
 
