@@ -38,7 +38,7 @@ void main() async{
         ],
         supportedLocales: [Locale("en"),Locale("hi")],
         debugShowCheckedModeBanner: false,
-        home: Temp()),
+        home: SignInPage()),
   ));
 }
 
