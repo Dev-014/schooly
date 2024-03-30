@@ -49,7 +49,6 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-
               Expanded(flex: 1, child: Container(
                   decoration: const BoxDecoration(
                       color: Colors.blue,
