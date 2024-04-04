@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:html' as html; // Import the 'dart:html' library for interacting with HTML elements
-import 'dart:typed_data';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NoticeBoardPage extends StatefulWidget {
@@ -15,62 +13,73 @@ class NoticeBoardPage extends StatefulWidget {
 class _NoticeBoardPageState extends State<NoticeBoardPage> {
   List<Map<String, dynamic>> notices = [];
   int editingIndex = -1;
-  String? downloadUrl;
+  PlatformFile? pickedFile;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  Future<void> uploadFile(html.File file) async {
-    try {
-      // Create a reference to the Firebase Storage location
-      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child('uploads/${file.name}');
+  // Future<void> uploadFile(html.File file) async {
+  //   try {
+  //     // Create a reference to the Firebase Storage location
+  //     firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+  //         .ref()
+  //         .child('uploads/${file.name}');
+  //
+  //     // Read the file as array buffer
+  //     final reader = html.FileReader();
+  //     reader.readAsArrayBuffer(file);
+  //
+  //     // Wait for the file to be read
+  //     await reader.onLoad.first;
+  //
+  //     // Convert the array buffer data to bytes
+  //     final List<int> data = reader.result as List<int>;
+  //
+  //     // Upload the file to Firebase Storage
+  //     await ref.putData(Uint8List.fromList(data));
+  //
+  //     // Get the download URL of the uploaded file
+  //     downloadUrl = await ref.getDownloadURL();
+  //
+  //     // Print the download URL for debugging purposes
+  //     print('Download URL: $downloadUrl');
+  //
+  //     // Once the upload is complete, you can proceed to save the download URL to Firestore or perform other operations
+  //   } catch (error) {
+  //     print('Error uploading file: $error');
+  //     // Handle upload errors here
+  //   }
+  // }
 
-      // Read the file as array buffer
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
+  Future selectFile() async {
 
-      // Wait for the file to be read
-      await reader.onLoad.first;
+    final result = await FilePicker.platform.pickFiles();
+    if(result == null) return;
 
-      // Convert the array buffer data to bytes
-      final data = reader.result as List<int>;
+    setState((){
+      pickedFile = result.files.first;
+    });
 
-      // Upload the file to Firebase Storage as a string
-      await ref.putString(
-        // Convert the file data to a base64 string
-        base64.encode(data),
-        // Set the format of the uploaded file (you can change this as needed)
-        format: firebase_storage.PutStringFormat.base64,
-      );
-
-      // Get the download URL of the uploaded file
-      downloadUrl = await ref.getDownloadURL();
-
-      // Print the download URL for debugging purposes
-      print('Download URL: $downloadUrl');
-
-      // Once the upload is complete, you can proceed to save the download URL to Firestore or perform other operations
-    } catch (error) {
-      print('Error uploading file: $error');
-      // Handle upload errors here
-    }
+    uploadFile();
   }
 
+  Future uploadFile() async {
+
+  }
 
   void addNotice() async {
     // Check if all required fields are filled and download URL is available
     if (titleController.text.isNotEmpty &&
         contentController.text.isNotEmpty &&
-        downloadUrl != null) {
+        pickedFile!.name != null) {
       // Construct the notice data
       final Map<String, dynamic> noticeData = {
         'title': titleController.text,
         'content': contentController.text,
         'class': selectedClass,
-        'imageSrc': downloadUrl!,
+        'imageSrc': pickedFile!.name,
       };
+
 
       try {
         // Get a reference to the Firestore document
@@ -99,7 +108,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
       setState(() {
         titleController.clear();
         contentController.clear();
-        downloadUrl = null;
+        pickedFile = null;
         selectedClass = 'All';
       });
     }
@@ -201,17 +210,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                         },
                       ),
                       ElevatedButton(
-                        onPressed: () async {
-                          // Open file picker dialog
-                          final html.FileUploadInputElement input = html.FileUploadInputElement();
-                          input.accept = 'image/*'; // Accept only image files
-                          input.click(); // Trigger file picker dialog
-                          await input.onChange.first; // Wait for user to select a file
-
-                          // Upload the selected file
-                          final file = input.files!.first;
-                          await uploadFile(file);
-                        },
+                        onPressed: selectFile,
                         child: Text('Add Image', style: TextStyle(color: Colors.black)),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(Colors.pink),
@@ -219,7 +218,15 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                               Size.fromWidth(double.infinity)),
                         ),
                       ),
-
+                      if(pickedFile != null)
+                        Expanded(child: Container(
+                          color: Colors.blue[100],
+                          child: Image.file(
+                            File(pickedFile!.path!),
+                            width: double.infinity,
+                              fit: BoxFit.cover,
+                          ),
+                        ))
                     ],
                   ),
                   // if (downloadUrl != null) Text('Selected File: ${path.basename(downloadUrl!)}'),

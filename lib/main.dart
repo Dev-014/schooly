@@ -9,6 +9,7 @@ import 'package:practice/screens/students_ui_2.0/leave_page.dart';
 import 'package:practice/screens/students_ui_2.0/view_attendence_page.dart';
 import 'package:practice/screens/teachers/class_notice_board.dart';
 import 'package:practice/screens/teachers/homework.dart';
+import 'package:practice/screens/teachers/teachers_leave_page.dart';
 import 'package:practice/screens/tempp.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -37,7 +38,7 @@ void main() async {
           ],
           supportedLocales: [Locale("en"), Locale("hi")],
           debugShowCheckedModeBanner: false,
-          home: NoticeBoardPage())
+          home: TeacherLeavePage())
       // home: AttendanceCalculator(
       //   studentId: 'scholar_2',
       // )),
