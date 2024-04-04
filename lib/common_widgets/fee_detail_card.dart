@@ -3,8 +3,12 @@ import 'package:practice/screens/multimedia_page.dart';
 
 class FeeDetailCard extends StatefulWidget {
   final String title;
-  final String date;
-  const FeeDetailCard({super.key,required this.title,required this.date});
+  final String paymentDate;
+  final String paymentAmount;
+  final String dueDate;
+  final String status;
+
+  const FeeDetailCard({super.key,required this.title,required this.paymentDate,required this.paymentAmount,required this.dueDate,required this.status});
 
   @override
   State<FeeDetailCard> createState() => _FeeDetailCardState();
@@ -49,14 +53,14 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 4.0),
-                        child: Text("School Fee for January",style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
+                        child: Text("Quarterly School Fees",style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
   mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                           const Text("Rs 16,000", style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),),
+                            Text(widget.paymentAmount, style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: ElevatedButton(
@@ -67,21 +71,21 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                                 shape: RoundedRectangleBorder(
 
                                   borderRadius: BorderRadius.circular(10), // Adds a border radius.
-                                )),onPressed: (){}, child: const Padding(
+                                )),onPressed: (){}, child:  Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 3.0),
-                                  child: Text("Paid", style: TextStyle(color: Colors.white),),
+                                  child: Text(widget.status, style: TextStyle(color: Colors.white),),
                                 )),
                           )
                         ],
                       ),
                     ],
                   ),
-                  const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                   Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text("06 May", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
+                      Text(widget.paymentDate, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 4.0),
                         child: Icon(Icons.arrow_drop_down,),
@@ -102,19 +106,55 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                     child: Divider(height: 10,),
                   ),
 
-                  for(int i =0;i<4;i++ )
-                    const Row(
+                  // for(int i =0;i<4;i++ )
+                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
 
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text("Total Fee", style: TextStyle(fontWeight: FontWeight.w600),),
+                          child: Text("Due Date", style: TextStyle(fontWeight: FontWeight.w600),),
                         ),
-                        Text("Rs 14,500"),
+                        Text(widget.dueDate),
                       ],
-                    )
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Text("Payment Date", style: TextStyle(fontWeight: FontWeight.w600),),
+                      ),
+                      Text(widget.paymentDate),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Text("Payment Amount", style: TextStyle(fontWeight: FontWeight.w600),),
+                      ),
+                      Text(widget.paymentAmount),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Text("Status", style: TextStyle(fontWeight: FontWeight.w600),),
+                      ),
+                      Text(widget.status),
+                    ],
+                  ),
                 ],
               ):const SizedBox()
 

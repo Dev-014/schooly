@@ -19,24 +19,40 @@ class GenericProvider extends ChangeNotifier {
   }
 
   List<dynamic>? attendance;
+  int? attended_class;
 
-  void fetchData() async {
-    // Construct the collection path
-    String collectionPath = 'NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/attendance ';
+   Future<int> countPresentEntries(String documentId) async {
+    try {
+      // Get the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    // Get the collection reference
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection(collectionPath);
+      // Reference the document and get its snapshot
+      DocumentSnapshot docSnapshot =
+      await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/attendance ').doc(documentId).get();
 
-    // Fetch the documents in the collection
-    QuerySnapshot<Object?> querySnapshot = await collectionReference.get();
-    print("???????????");
-    print(querySnapshot.docs[1]["attended_classes"]);
+      // Check if the document exists and has the attendance field
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        // Get the attendance map from the document data
+        Map<String, dynamic>? attendanceMap = docSnapshot.data() as Map<String, dynamic>;
+        Map<String, dynamic>? attendanceMap2 = attendanceMap["attendance"] ;
 
-    // Return the list of documents
-    attendance = querySnapshot.docs;
+        if (attendanceMap2 != null) {
+          int count = 0;
+          attendanceMap2.values.forEach((value) {
+            if (value == 'present') {
+              count++;
+            }
+          });
+          attended_class = count;
+          return count;
+        }
+
+      }
+    } catch (e) {
+      print('Error counting present entries: $e');
+    }
+    return 0; // Return 0 if there was an error or if the attendance map is not found
   }
-
-
 
 }
 

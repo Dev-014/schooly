@@ -1,5 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:practice/common_widgets/snack_bar.dart';
 import 'package:practice/common_widgets/textFieldWidget.dart';
@@ -35,11 +37,31 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
   TextEditingController _subjectName = TextEditingController();
   TextEditingController _attended = TextEditingController();
   TextEditingController _total = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  DateTime? selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        dateController.text = DateFormat('dd_MM_yyyy').format(selectedDate!);
+      });
+    }
+  }
+
+
+
 
   void showEditBox() {
     _subjectName.text = widget.studentName;
     _attended.text = widget.attendedClass.toString();
-    _total.text = widget.totalClass.toString();
+    // _total.text = widget.totalClass.toString();
     showDialog(
       context: context,
       builder: (context) {
@@ -59,14 +81,35 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
                 textfieldWidget(
                     "Enter subject name", Icons.subject, false, _subjectName),
                 SizedBox(height: 10),
-                textfieldWidget("Enter no of classes attended", Icons.school,
-                    false, _attended),
+                TextField(
+                  controller: dateController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Select Date',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                    ),
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                    filled: true,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    fillColor: Colors.white.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: const BorderSide(width: 0, style: BorderStyle.none),
+                    ),
+                  ),
+                ),
+                // textfieldWidget("Enter no of classes attended", Icons.school,
+                //     false, _attended),
                 SizedBox(height: 10),
                 textfieldWidget(
-                    "Enter total no of classes", Icons.schema, false, _total),
+                    "Attendance Status", Icons.schema, false, _total),
                 buttonWidget(
                   context,
-                  "Edit Subject",
+                  "Update Attendance",
                       () {
                     editSubject();
                     Navigator.of(context).pop();
@@ -82,6 +125,23 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
     );
   }
 
+  void editAttendance({required String studentID,String? status, String? date}) {
+    FirebaseFirestore.instance
+        .collection("NewSchool")
+        .doc("G0ITybqOBfCa9vownMXU")
+        .collection("attendence")
+        .doc("y2Yes9Dv5shcWQl9N9r2")
+        .collection("attendance ")
+        .doc(studentID)
+        .update({
+      "attendance.${date}": "${status!.toLowerCase()}"
+    }).then((value){
+
+      print("success");
+    }).catchError((error) {
+      print('Error updating student: $error');
+    });
+  }
   void editSubject() {
     if (_subjectName.text.isEmpty ||
         _total.text.isEmpty ||
@@ -89,13 +149,9 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       snackbarWidget(context, "All the fields must be field", Colors.red);
       return;
     }
-    if (int.parse(_attended.text) > int.parse(_total.text)) {
-      snackbarWidget(context,
-          "Attended classes cannot be greater than total classes.", Colors.red);
-      return;
-    }
-    widget.editSubject(widget._id, _subjectName.text, int.parse(_attended.text),
-        int.parse(_total.text));
+
+
+    editAttendance(studentID: widget._id,date: dateController.text,status: _total.text );
   }
 
   void attendedClass() {
@@ -110,7 +166,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
     setState(() {
       // widget.totalClass++;
     });
-    widget.notAttendedClassFun(widget._id);
+    widget.notAttendedClassFun();
   }
 
   get status {

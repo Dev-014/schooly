@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 class TextFieldWithLabelAndCountryCode extends StatelessWidget {
   final String labelText;
   final String? countryCode;
+  final TextEditingController controller;
 
   const TextFieldWithLabelAndCountryCode({
+
     Key? key,
+    required  this.controller,
     required this.labelText,
     this.countryCode,
   }) : super(key: key);
@@ -33,6 +36,7 @@ class TextFieldWithLabelAndCountryCode extends StatelessWidget {
           Container(
             width: double.infinity,
             child: TextField(
+              controller: controller,
               cursorColor: Colors.pink,
               decoration: (countryCode==null)
                   ? InputDecoration(

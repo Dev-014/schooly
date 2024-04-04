@@ -45,14 +45,14 @@ class _MultiMediaCardState extends State<MultiMediaCard> {
                   alignment: Alignment.center,
                     child: const Center(child: Text("ZIP", style: TextStyle(fontWeight: FontWeight.normal,),))),
               ),
-              const Column(
+               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text("Social Science Syllabus",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+                    child: Text(widget.title,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
                   ),
                   Text("Syllabus for 2023 batch", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
                   Text("12 pages / 360 KB", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),

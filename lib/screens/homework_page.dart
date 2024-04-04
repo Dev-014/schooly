@@ -12,6 +12,33 @@ class HomeWorkPage extends StatefulWidget {
 }
 
 class _HomeWorkPageState extends State<HomeWorkPage> {
+
+  Future<List<Map<String, dynamic>>> getHomeworkListForClassAndSection(
+      {String? classNumber, String? section}) async {
+    List<Map<String, dynamic>> homeworkList = [];
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works')
+        .where('class', isEqualTo: classNumber)
+        .where('section', isEqualTo: section)
+        .get();
+
+    querySnapshot.docs.forEach((doc) {
+      print("MMMMMMMMM");
+      print(doc);
+      Map<String, dynamic> homeworkItem = {
+        'HomeworkID': doc.id,
+        'subject': doc['subject'],
+        'title': doc['title'],
+        'status': doc['status']
+      };
+      homeworkList.add(homeworkItem);
+    });
+    print("object");
+  print(homeworkList);
+    return homeworkList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +55,8 @@ class _HomeWorkPageState extends State<HomeWorkPage> {
         title: const Align(alignment:Alignment.centerLeft,child: Text("Homework",style: TextStyle(fontSize: 18),)),
         // backgroundColor: Colors.pink,
       ),
-       body: StreamBuilder(
-         stream: FirebaseFirestore.instance.collection("unschool").doc('class').collection('10').doc('sectionC').snapshots(),
+       body: FutureBuilder<List<Map<String, dynamic>>>(
+         future: getHomeworkListForClassAndSection(classNumber: "10",section: "A"),
          builder: (BuildContext context, snapshot) {
            return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
 
@@ -48,11 +75,12 @@ class _HomeWorkPageState extends State<HomeWorkPage> {
                    child: ListView.builder(
                        shrinkWrap: true,
 
-                       itemCount: snapshot!.data?["Homework"].length,
+                       itemCount: snapshot.data?.length,
                        itemBuilder: (context, index) {
-                         final listOfMap = snapshot!.data?["Homework"];
-                         Map<String, dynamic> map = listOfMap[index];
-                         final homework_heading = map["homework"];
+                         final listOfMap = snapshot.data;
+                         print(listOfMap);
+                         Map<String, dynamic> map = listOfMap![index];
+                         final homework_heading = map["title"];
                          final status = map["status"];
                          return  Padding(
                            padding: const EdgeInsets.symmetric(

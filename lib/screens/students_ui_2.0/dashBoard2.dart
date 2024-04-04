@@ -2,7 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/screens/students_ui_2.0/feeDetil.dart';
+import 'package:practice/screens/students_ui_2.0/time_table.dart';
+import 'package:practice/screens/students_ui_2.0/time_table_form.dart';
 import 'package:practice/screens/teachers/homework.dart';
+import 'package:practice/screens/teachers/upload_announcement.dart';
+import 'package:practice/screens/teachers/upload_fee_details.dart';
+import 'package:practice/screens/teachers/upload_report_card.dart';
 import 'package:practice/screens/teachers/upload_study_material.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/ui_2.0/constant_text_widget.dart';
@@ -41,6 +47,7 @@ class _DashBoard2State extends State<DashBoard2> {
   }
   @override
   Widget build(BuildContext context) {
+    var docu;
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('unschool')
@@ -54,6 +61,7 @@ class _DashBoard2State extends State<DashBoard2> {
 
           if (snapshot.hasData){
             var document = snapshot.data!;
+            docu = document.docs[0].data();
             print(document.docs[0].data());
 
             var fieldValue = document.size;
@@ -144,7 +152,7 @@ class _DashBoard2State extends State<DashBoard2> {
                               child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.attendance, icon: Icons.attach_email_rounded),
                             ),GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeeDetailsPage()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeeD()));
 
                               },
                               child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.academicYear, icon: Icons.money),
@@ -158,7 +166,7 @@ class _DashBoard2State extends State<DashBoard2> {
 
                             GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> const Scaffold(body: ReportCardPage(),)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)? Scaffold(body: ReportCardPage(),):UploadReportCard()));
 
                               },
                               child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.reportsCard, icon: Icons.card_giftcard),
@@ -178,27 +186,27 @@ class _DashBoard2State extends State<DashBoard2> {
                             ),
                             GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const MultiMediaPage()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?FeeDetailsPage():UploadFeeDetail()));
 
                               },
                               child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.multiMedia, icon: Icons.screenshot_monitor),
                             ),
                             GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const Temp()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>  (genericProvider.userProfile == UserProfile.student)?TimeTable(): TimetableForm()));
 
                               },
                               child: dashBoardCard(context: context, text: "Time Table", icon: Icons.hot_tub),
                             ),
                             GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> const Announcement()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)? Announcement(): UploadAnnouncement()));
                               },
                               child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.announcement, icon: Icons.announcement_outlined),
                             ),
                             GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?StudyMaterial(): StudyMaterialForm()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?StudyMaterial(clazz: docu["class"],section: "A",): StudyMaterialForm()));
                               },
                               child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.studyMaterial, icon: Icons.announcement_outlined),
                             ),

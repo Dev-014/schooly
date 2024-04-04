@@ -39,8 +39,8 @@ void main() async {
           supportedLocales: [Locale("en"), Locale("hi")],
           debugShowCheckedModeBanner: false,
           home: TeacherLeavePage())
-      // home: AttendanceCalculator(
-      //   studentId: 'scholar_2',
-      // )),
-      ));
+    // home: AttendanceCalculator(
+    //   studentId: 'scholar_2',
+    // )),
+  ));
 }
