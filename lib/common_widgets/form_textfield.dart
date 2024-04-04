@@ -4,7 +4,9 @@ Padding formTextFields(
     {required String hintText,
       int? maxLine,
       IconData? iconData,
-      bool? enabled}) {
+      bool? enabled,
+      TextEditingController? textEditingController
+    }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 16),
     child: Column(
@@ -23,6 +25,7 @@ Padding formTextFields(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: TextField(
+            controller: textEditingController,
             maxLines: maxLine ?? 1,
             decoration: InputDecoration(
               hintStyle: TextStyle(color: Colors.grey),

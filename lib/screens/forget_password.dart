@@ -9,6 +9,7 @@ class ForgetPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
+    TextEditingController controller2 = TextEditingController();
 
     return Scaffold(
       body: Column(
@@ -53,7 +54,8 @@ class ForgetPasswordPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // Phone number text field.
-                  const TextFieldWithLabelAndCountryCode(
+                   TextFieldWithLabelAndCountryCode(
+                    controller: controller2,
                     labelText: 'Enter Otp',
                   ),
                   Expanded(

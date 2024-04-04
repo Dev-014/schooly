@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/bloc/http_request.dart';
 import 'package:practice/l10n/l10n.dart';
 import 'package:practice/screens/forget_password.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';
 import 'package:practice/screens/students_ui_2.0/dashboard.dart';
 import 'package:practice/screens/teachers/teacher_menu_page.dart';
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import 'package:practice/screens/verify_otp.dart';
 import 'package:provider/provider.dart';
 import '../common_widgets/textfield_phonenumber.dart';
 
@@ -28,6 +30,9 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController();
+    TextEditingController controller2 = TextEditingController();
+
 
     return  Scaffold(
         body: Column(
@@ -73,11 +78,13 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     // Phone number text field.
                      TextFieldWithLabelAndCountryCode(
+                       controller: controller,
                       labelText:  AppLocalizations.of(context)!.phoneNumber,
                       countryCode: '+91 ',
                     ),
                     // Password text field.
                      TextFieldWithLabelAndCountryCode(
+                       controller: controller2,
                       labelText:  AppLocalizations.of(context)!.password,
                     ),
                     // Sign in button.
@@ -87,11 +94,14 @@ class _SignInPageState extends State<SignInPage> {
                         width: double.infinity,
                         height: 44,
                         child: ElevatedButton(
-                          onPressed: () {
-                            genericProvider.setUserProfile(profile: "Teacher");
+                          onPressed: ()async {
+                            genericProvider.setUserProfile(profile: "Student");
                             print(genericProvider.userProfile);
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const MenuPage()));
+                           // final response = await  HttpRequest().sendOtpRequest(mobileNumber: controller.text, school_id: "XrMZE54KzuJlz6ayc7Gh");
+                           // if(response!){
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const VerifyOtpPage()));
 
+                           // }
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.pink,

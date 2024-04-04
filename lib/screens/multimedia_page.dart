@@ -6,7 +6,8 @@ import 'package:practice/utils/constants_colors.dart';
 import '../common_widgets/multimedia_card.dart';
 
 class MultiMediaPage extends StatefulWidget {
-  const MultiMediaPage({super.key});
+  final List<Map<String, dynamic>?>? listOfStudyMaterial;
+  const MultiMediaPage({this.listOfStudyMaterial,super.key});
 
   @override
   State<MultiMediaPage> createState() => _MultiMediaPageState();
@@ -75,10 +76,10 @@ class _MultiMediaPageState extends State<MultiMediaPage> {
                 ],
               ),
             ),
-            for(int i=0;i<10;i++)
-              const Padding(
+            for(int i=0; i<widget.listOfStudyMaterial!.length;i++)
+               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 4),
-                child: MultiMediaCard(title: "title", date: "date"),
+                child: MultiMediaCard(title: widget.listOfStudyMaterial?[i]?["title"] ?? "Got Null", date: "date"),
               )
           ],
         ),

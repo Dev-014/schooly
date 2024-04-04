@@ -30,7 +30,7 @@ class _CustDropDownState extends State<CustDropDown>
     with WidgetsBindingObserver {
   bool _isOpen = false, _isAnyItemSelected = false, _isReverse = false;
   late OverlayEntry _overlayEntry;
-  late RenderBox? _renderBox;
+  late RenderBox _renderBox;
   Widget? _itemSelected;
   late Offset dropDownOffset;
   final LayerLink _layerLink = LayerLink();
@@ -86,9 +86,9 @@ class _CustDropDownState extends State<CustDropDown>
   }
 
   OverlayEntry _createOverlayEntry() {
-    _renderBox = context.findRenderObject() as RenderBox?;
+    _renderBox = context.findRenderObject() as RenderBox;
 
-    var size = _renderBox!.size;
+    var size = _renderBox.size;
 
     dropDownOffset = getOffset();
 
@@ -194,30 +194,40 @@ class _CustDropDownState extends State<CustDropDown>
 
     return screenHeight - offsetY;
   }
+  Future<RenderBox?> _fetchInitialValue() async {
+
+    RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    print("mmmmmmmm");
+
+    print(renderBox?.size.width);
+
+    await Future.delayed(Duration(seconds: 4));
+    // Simulate fetching the initial value asynchronously
+    return renderBox;
+  }
 
   @override
   Widget build(BuildContext context) {
-    RenderBox? renderBox = context.findRenderObject() as RenderBox?;
 
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
         onTap: widget.enabled
             ? () {
-                _isOpen ? _removeOverlay() : _addOverlay();
-              }
+          _isOpen ? _removeOverlay() : _addOverlay();
+        }
             : null,
         child: Container(
           padding: EdgeInsets.zero,
           height: 58,
-          width: renderBox!.size.width,
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(12)),
           // decoration: _getDecoration(),
           child: Card(
             elevation: 8,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             child: Row(
               // mainAxisAlignment: MainAxisAlignment,
               children: <Widget>[
@@ -230,75 +240,75 @@ class _CustDropDownState extends State<CustDropDown>
                 ),
                 _isAnyItemSelected
                     ? Padding(
-                        padding:
-                            const EdgeInsets.only(left: 4.0), // change it here
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.zero,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(.2),
-                              borderRadius: BorderRadius.circular(12)),
-                          width: renderBox!.size.width - 56,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                flex: 5,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: _itemSelected,
-                                ),
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                              ),
-                            ],
+                  padding:
+                  const EdgeInsets.only(left: 4.0), // change it here
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                        borderRadius: BorderRadius.circular(12)),
+                    width: MediaQuery.of(context).size.width - 56,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          flex: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: _itemSelected,
                           ),
                         ),
-                      )
+                        Flexible(
+                          flex: 1,
+                          child: Icon(
+                            Icons.arrow_drop_down,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
                     : Padding(
-                        padding:
-                            const EdgeInsets.only(left: 4.0), // change it here
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.zero,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(.2),
-                              borderRadius: BorderRadius.circular(12)),
-                          width: renderBox!.size.width - 56,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                flex: 5,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
+                  padding:
+                  const EdgeInsets.only(left: 4.0), // change it here
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                        borderRadius: BorderRadius.circular(12)),
+                    width: MediaQuery.of(context).size.width - 56,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          flex: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
 
-                                    widget.hintText,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.clip,
+                              widget.hintText,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
 
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                              ),
-                            ],
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 16),
+                            ),
                           ),
                         ),
-                      ),
+                        Flexible(
+                          flex: 1,
+                          child: Icon(
+                            Icons.arrow_drop_down,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -306,6 +316,7 @@ class _CustDropDownState extends State<CustDropDown>
       ),
     );
   }
+
 
   Decoration? _getDecoration() {
     if (_isOpen && !_isReverse) {

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/homework_card.dart';
+import 'package:practice/screens/students_ui_2.0/report_card_viewer.dart';
 import 'package:practice/utils/constants_colors.dart';
 
 class ReportCardPage extends StatefulWidget {
@@ -11,6 +12,29 @@ class ReportCardPage extends StatefulWidget {
 }
 
 class _ReportCardPageState extends State<ReportCardPage> {
+
+  Future<List<Map<String, dynamic>>> getReportCard() async {
+    List<Map<String, dynamic>> reportCardList = [];
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/scholar_id/report_cards')
+        .get();
+
+    querySnapshot.docs.forEach((doc) {
+      print("MMMMMMMMM");
+      print(doc);
+      Map<String, dynamic> announcementItem = {
+        'report_card_id': doc.id,
+        'report_card_url': doc['report_card_url'],
+        'scholar_id': doc['scholar_id'],
+      };
+      reportCardList.add(announcementItem);
+    });
+    print("object");
+    print(reportCardList);
+    return reportCardList;
+  }
+
   @override
   Widget build(BuildContext context) {
     var reportCards;
@@ -29,21 +53,11 @@ class _ReportCardPageState extends State<ReportCardPage> {
         title: const Align(alignment:Alignment.centerLeft,child: Text("Report Card",style: TextStyle(fontSize: 18),)),
         // backgroundColor: Colors.pink,
       ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("unschool").doc('class').collection('10').doc('sectionC').collection("students").doc("studentID").snapshots(),
+      body: FutureBuilder(
+        future: getReportCard(),
           builder: (BuildContext context, snapshot) {
             if(snapshot.hasData){
-              print(snapshot.data!["report_cards"]);
-              reportCards = snapshot.data!["report_cards"];
-              for(MapEntry<String, dynamic> report in reportCards!.entries){
-                className = report.key.toString();
-                for(MapEntry<String,dynamic>rep in report.value.entries){
-                  report_card_link = rep.value;
-                  print(rep);
 
-                }
-
-              }
             }
             return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()): Padding(
               padding: const EdgeInsets.only(top: 16.0),
@@ -56,19 +70,24 @@ class _ReportCardPageState extends State<ReportCardPage> {
                       height: MediaQuery.of(context).size.height*.7,
                       child:
                       ListView.builder(
-                        itemCount: 7,
+                        itemCount: snapshot.data!.length,
                         itemBuilder: (context,index){
                           return  Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                                 child: InkWell(
-                                  onTap: (){},
-                                  child: const Padding(
+                                  onTap: (){
+                                    final fileUrl = snapshot.data![index]["report_card_url"];
+                                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                                      return ReportCardViewer(fileUrl: fileUrl,);
+                                    }));
+                                  },
+                                  child:  Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                                     child: Row(
                                       children: [
-                                        Text("Class 10th (2014-15)",style: TextStyle(
+                                        Text(snapshot.data![index]["report_card_id"],style: TextStyle(
                                             fontWeight: FontWeight.bold, fontSize: 16,color: Colors.black87
                                         ),),
                                         Spacer(),
