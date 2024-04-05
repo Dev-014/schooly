@@ -98,7 +98,7 @@ class VerifyOtpPage extends StatelessWidget {
                           },
                         child: Text('Verify'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.pink,
+                          backgroundColor: Colors.pink,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),

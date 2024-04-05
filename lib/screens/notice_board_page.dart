@@ -1,7 +1,6 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../bloc/firebase_storage.dart';
 
 class NoticeBoardPage extends StatefulWidget {
   const NoticeBoardPage({Key? key}) : super(key: key);
@@ -13,78 +12,27 @@ class NoticeBoardPage extends StatefulWidget {
 class _NoticeBoardPageState extends State<NoticeBoardPage> {
   List<Map<String, dynamic>> notices = [];
   int editingIndex = -1;
-  PlatformFile? pickedFile;
+  String file = "";
+  bool isUploading = false;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  // Future<void> uploadFile(html.File file) async {
-  //   try {
-  //     // Create a reference to the Firebase Storage location
-  //     firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-  //         .ref()
-  //         .child('uploads/${file.name}');
-  //
-  //     // Read the file as array buffer
-  //     final reader = html.FileReader();
-  //     reader.readAsArrayBuffer(file);
-  //
-  //     // Wait for the file to be read
-  //     await reader.onLoad.first;
-  //
-  //     // Convert the array buffer data to bytes
-  //     final List<int> data = reader.result as List<int>;
-  //
-  //     // Upload the file to Firebase Storage
-  //     await ref.putData(Uint8List.fromList(data));
-  //
-  //     // Get the download URL of the uploaded file
-  //     downloadUrl = await ref.getDownloadURL();
-  //
-  //     // Print the download URL for debugging purposes
-  //     print('Download URL: $downloadUrl');
-  //
-  //     // Once the upload is complete, you can proceed to save the download URL to Firestore or perform other operations
-  //   } catch (error) {
-  //     print('Error uploading file: $error');
-  //     // Handle upload errors here
-  //   }
-  // }
-
-  Future selectFile() async {
-
-    final result = await FilePicker.platform.pickFiles();
-    if(result == null) return;
-
-    setState((){
-      pickedFile = result.files.first;
-    });
-
-    uploadFile();
-  }
-
-  Future uploadFile() async {
-
-  }
+  var store = FirebaseStorageService();
 
   void addNotice() async {
-    // Check if all required fields are filled and download URL is available
-    if (titleController.text.isNotEmpty &&
-        contentController.text.isNotEmpty &&
-        pickedFile!.name != null) {
+    if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
       // Construct the notice data
       final Map<String, dynamic> noticeData = {
         'title': titleController.text,
         'content': contentController.text,
         'class': selectedClass,
-        'imageSrc': pickedFile!.name,
+        'imageSrc': file,
       };
-
 
       try {
         // Get a reference to the Firestore document
-        final DocumentReference documentReference =
-        FirebaseFirestore.instance
+        final DocumentReference documentReference = FirebaseFirestore.instance
             .collection('NewSchool')
             .doc('G0ITybqOBfCa9vownMXU')
             .collection('attendence')
@@ -108,7 +56,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
       setState(() {
         titleController.clear();
         contentController.clear();
-        pickedFile = null;
+        file = "";
         selectedClass = 'All';
       });
     }
@@ -151,33 +99,35 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                       isAddingNotice = true;
                     });
                   },
-                  child: Text('Add Notice', style: TextStyle(color: Colors.black)),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.pink),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.pink),
                     fixedSize: MaterialStateProperty.all<Size>(
-                        Size.fromWidth(double.infinity)),
+                        const Size.fromWidth(double.infinity)),
                   ),
+                  child: const Text('Add Notice',
+                      style: TextStyle(color: Colors.black)),
                 ),
               )
             else
               Column(
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: titleController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Title',
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: contentController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Write the notice here',
                     ),
                     maxLines: 1,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -210,27 +160,32 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                         },
                       ),
                       ElevatedButton(
-                        onPressed: selectFile,
-                        child: Text('Add Image', style: TextStyle(color: Colors.black)),
+                        onPressed: () async {
+                          setState(() {
+                            isUploading = true;
+                          });
+                          file = (await store.uploadFileToFirebase())!;
+                          setState(() {
+                            isUploading = false;
+                          });
+                        },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.pink),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.pink),
                           fixedSize: MaterialStateProperty.all<Size>(
-                              Size.fromWidth(double.infinity)),
+                              const Size.fromWidth(double.infinity)),
                         ),
+                        child: (isUploading)
+                            ? const CircularProgressIndicator()
+                            : const Text('Add Image',
+                                style: TextStyle(color: Colors.black)),
                       ),
-                      if(pickedFile != null)
-                        Expanded(child: Container(
-                          color: Colors.blue[100],
-                          child: Image.file(
-                            File(pickedFile!.path!),
-                            width: double.infinity,
-                              fit: BoxFit.cover,
-                          ),
-                        ))
                     ],
                   ),
-                  // if (downloadUrl != null) Text('Selected File: ${path.basename(downloadUrl!)}'),
-                  SizedBox(height: 10),
+                  if (file != "")
+                    Container(
+                        height: 100, width: 100, child: Image.network(file)),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
                       addNotice();
@@ -239,7 +194,8 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                       });
                     },
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.pink),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.pink),
                       fixedSize: MaterialStateProperty.all<Size>(
                           const Size.fromWidth(double.infinity)),
                     ),
@@ -249,7 +205,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                   ),
                 ],
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
@@ -262,12 +218,12 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
                   if (!snapshot.hasData) {
-                    return Center(
+                    return const Center(
                       child: Text('No notices found.'),
                     );
                   }
@@ -277,7 +233,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                     itemCount: notices.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> notice =
-                      notices[index] as Map<String, dynamic>;
+                          notices[index] as Map<String, dynamic>;
                       return Card(
                         child: ListTile(
                           title: Column(
@@ -287,20 +243,27 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   notice['title'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                    height: 200,
+                                    width: 200,
+                                    child: Image.network(notice['imageSrc'])),
+                              ),
+                              const SizedBox(height: 10),
                               Text(notice['content']),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               Text('Class: ${notice['class']}'),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.edit),
+                                    icon: const Icon(Icons.edit),
                                     onPressed: () {
                                       editNotice(
                                         notice['id'],
@@ -318,31 +281,31 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                                         await FirebaseFirestore.instance
                                             .collection('NewSchool')
                                             .doc(
-                                            "G0ITybqOBfCa9vownMXU") // Update with your document ID
+                                                "G0ITybqOBfCa9vownMXU") // Update with your document ID
                                             .collection('attendence')
                                             .doc(
-                                            'y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
+                                                'y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
                                             .collection('noticeBoard')
                                             .doc(
-                                            "allNotice") // Assuming widget.studentId is the student's document ID
+                                                "allNotice") // Assuming widget.studentId is the student's document ID
                                             .update({
                                           'notice':
-                                          FieldValue.arrayRemove([notice])
+                                              FieldValue.arrayRemove([notice])
                                         });
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
+                                            .showSnackBar(const SnackBar(
                                           content: Text(
                                               'notice deleted successfully'),
                                         ));
                                       } catch (error) {
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
+                                            .showSnackBar(const SnackBar(
                                           content: Text(
                                               'Failed to delete notice. Please try again later.'),
                                         ));
                                       }
                                     },
-                                    icon: Icon(Icons.delete),
+                                    icon: const Icon(Icons.delete),
                                   ),
                                 ],
                               ),
@@ -362,12 +325,12 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
   }
 
   void editNotice(
-      String id,
-      String currentTitle,
-      String currentContent,
-      String currentClass,
-      String currentImageSrc,
-      ) async {
+    String id,
+    String currentTitle,
+    String currentContent,
+    String currentClass,
+    String? currentImageSrc, // Make currentImageSrc nullable
+  ) async {
     // Update notice in Firestore
     try {
       await FirebaseFirestore.instance
@@ -384,7 +347,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
             'title': currentTitle,
             'content': currentContent,
             'class': currentClass,
-            'imageSrc': currentImageSrc,
+            'imageSrc': currentImageSrc, // Use currentImageSrc directly
           }
         ])
       });
@@ -398,7 +361,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
       titleController.text = currentTitle;
       contentController.text = currentContent;
       selectedClass = currentClass;
-      // downloadUrl = currentImageSrc.isNotEmpty ? File(currentImageSrc) : null;
+      file = currentImageSrc ?? "";
       editingIndex = int.parse(id); // Set editing index for tracking
       isAddingNotice = true; // Switch to the adding notice mode
     });
