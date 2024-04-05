@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import '../../bloc/firebase_storage.dart';
 
 class StudentNoticeCreate extends StatefulWidget {
@@ -22,10 +23,13 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
 
   void addNotice() async {
     if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
+      Timestamp appliedDate = Timestamp.now();
+
       // Construct the notice data
       final Map<String, dynamic> noticeData = {
         'title': titleController.text,
         'content': contentController.text,
+        'date': appliedDate,
         'class': selectedClass,
         'imageSrc': file,
       };
@@ -210,11 +214,13 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
                   );
                 }
                 List<dynamic> notices = snapshot.data!['notice'] ?? <dynamic>[];
+
                 return ListView.builder(
                   itemCount: notices.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> notice =
                         notices[index] as Map<String, dynamic>;
+                    DateTime date = (notice['date'] as Timestamp).toDate();
                     return Card(
                       child: ListTile(
                         title: Column(
@@ -239,22 +245,29 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
                             const SizedBox(height: 10),
                             Text(notice['content']),
                             const SizedBox(height: 5),
-                            Text('Class: ${notice['class']}'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Class: ${notice['class']}'),
+                                Text(
+                                    'Date: ${DateFormat('dd MMM yyyy').format(date)}')
+                              ],
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {
-                                    editNotice(
-                                      notice['id'],
-                                      notice['title'],
-                                      notice['content'],
-                                      notice['class'],
-                                      notice['imageSrc'],
-                                    );
-                                  },
-                                ),
+                                // IconButton(
+                                //   icon: const Icon(Icons.edit),
+                                //   onPressed: () {
+                                //     editNotice(
+                                //       notice['id'],
+                                //       notice['title'],
+                                //       notice['content'],
+                                //       notice['class'],
+                                //       notice['imageSrc'],
+                                //     );
+                                //   },
+                                // ),
                                 IconButton(
                                   onPressed: () async {
                                     // Delete the leave request
@@ -304,46 +317,46 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
     );
   }
 
-  void editNotice(
-    String id,
-    String currentTitle,
-    String currentContent,
-    String currentClass,
-    String? currentImageSrc, // Make currentImageSrc nullable
-  ) async {
-    // Update notice in Firestore
-    try {
-      await FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc('G0ITybqOBfCa9vownMXU')
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2')
-          .collection('noticeBoard')
-          .doc('allNotice')
-          .update({
-        'notice': FieldValue.arrayRemove([
-          {
-            'id': id,
-            'title': currentTitle,
-            'content': currentContent,
-            'class': currentClass,
-            'imageSrc': currentImageSrc, // Use currentImageSrc directly
-          }
-        ])
-      });
-    } catch (error) {
-      print('Failed to update notice: $error');
-      return; // Exit the method if Firestore update fails
-    }
-
-    // Set the current values to the input fields for editing
-    setState(() {
-      titleController.text = currentTitle;
-      contentController.text = currentContent;
-      selectedClass = currentClass;
-      file = currentImageSrc ?? "";
-      editingIndex = int.parse(id); // Set editing index for tracking
-      isAddingNotice = true; // Switch to the adding notice mode
-    });
-  }
+  // void editNotice(
+  //   String id,
+  //   String currentTitle,
+  //   String currentContent,
+  //   String currentClass,
+  //   String? currentImageSrc, // Make currentImageSrc nullable
+  // ) async {
+  //   // Update notice in Firestore
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('NewSchool')
+  //         .doc('G0ITybqOBfCa9vownMXU')
+  //         .collection('attendence')
+  //         .doc('y2Yes9Dv5shcWQl9N9r2')
+  //         .collection('noticeBoard')
+  //         .doc('allNotice')
+  //         .update({
+  //       'notice': FieldValue.arrayRemove([
+  //         {
+  //           'id': id,
+  //           'title': currentTitle,
+  //           'content': currentContent,
+  //           'class': currentClass,
+  //           'imageSrc': currentImageSrc, // Use currentImageSrc directly
+  //         }
+  //       ])
+  //     });
+  //   } catch (error) {
+  //     print('Failed to update notice: $error');
+  //     return; // Exit the method if Firestore update fails
+  //   }
+  //
+  //   // Set the current values to the input fields for editing
+  //   setState(() {
+  //     titleController.text = currentTitle;
+  //     contentController.text = currentContent;
+  //     selectedClass = currentClass;
+  //     file = currentImageSrc ?? "";
+  //     editingIndex = int.parse(id); // Set editing index for tracking
+  //     isAddingNotice = true; // Switch to the adding notice mode
+  //   });
+  // }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class TeacherNoticeView extends StatefulWidget {
   const TeacherNoticeView({Key? key}) : super(key: key);
@@ -89,6 +90,7 @@ class _TeacherNoticeViewState extends State<TeacherNoticeView> {
               itemCount: filteredNotice.length,
               itemBuilder: (BuildContext context, int index) {
                 Map<String, dynamic> notice = filteredNotice[index];
+                DateTime date = (notice['date'] as Timestamp).toDate();
                 return Card(
                   child: ListTile(
                     title: Column(
@@ -113,7 +115,14 @@ class _TeacherNoticeViewState extends State<TeacherNoticeView> {
                         const SizedBox(height: 10),
                         Text(notice['content']),
                         const SizedBox(height: 5),
-                        Text('Class: ${notice['class']}'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Class: ${notice['class']}'),
+                            Text(
+                                'Date: ${DateFormat('dd MMM yyyy').format(date)}')
+                          ],
+                        ),
                       ],
                     ),
                   ),
