@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/students_ui_2.0/apply_leave_tab.dart';
-import 'package:practice/utils/constants_colors.dart';
+import 'package:practice/screens/students_ui_2.0/total_leave_page.dart';
 
 class LeavePage extends StatefulWidget {
   const LeavePage({super.key});
@@ -53,11 +53,10 @@ backgroundColor: Colors.blue,
             ),
           ),
         ),
-        body: const TabBarView(
+        body:  TabBarView(
             children: [
               ApplyLeavePage(),
-          // Icon(Icons.shopping_bag_outlined),
-          Icon(Icons.access_time_sharp)
+              LeaveRequestsPage(),
         ]),
 
         
