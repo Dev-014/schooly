@@ -2,21 +2,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../modals/student.dart';
+
 class GenericProvider extends ChangeNotifier {
-
+  String? empID;
+  String? scholarId;
+  Student? loggedInStudent;
   UserProfile? userProfile;
+  bool isUserLoggedIn = false;
+  int groupValues = 1;
+  void groupValue() {
+    groupValues = 0;
+  }
 
+  void setUserLoginToTrue(){
+    isUserLoggedIn = true;
+    notifyListeners();
+  }
   void setUserProfile({required String profile}) {
     if (profile == "Student") {
       userProfile = UserProfile.student;
     } else if (profile == "Teacher") {
       userProfile = UserProfile.teacher;
-    } else {
+    } else if (profile == "Principal"){
       userProfile = UserProfile.principal;
     }
     notifyListeners();
 
   }
+
 
   List<dynamic>? attendance;
   int? attended_class;

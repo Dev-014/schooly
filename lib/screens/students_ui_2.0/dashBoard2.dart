@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import 'package:go_router/go_router.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/routes/url_constants.dart';
 import 'package:practice/screens/students_ui_2.0/feeDetil.dart';
 import 'package:practice/screens/students_ui_2.0/notice_board1.dart';
 import 'package:practice/screens/students_ui_2.0/student_notice_board.dart';
+import 'package:practice/screens/students_ui_2.0/syllabus.dart';
 import 'package:practice/screens/students_ui_2.0/time_table.dart';
 import 'package:practice/screens/students_ui_2.0/time_table_form.dart';
 import 'package:practice/screens/students_ui_2.0/total_leave_page.dart';
 import 'package:practice/screens/students_ui_2.0/view_attendance_page.dart';
+import 'package:practice/screens/teachers/add_student.dart';
+import 'package:practice/screens/teachers/add_teacher.dart';
 import 'package:practice/screens/teachers/homework.dart';
 import 'package:practice/screens/teachers/teacher_leave.dart';
 import 'package:practice/screens/teachers/teacher_leave_page.dart';
@@ -17,6 +22,7 @@ import 'package:practice/screens/teachers/upload_announcement.dart';
 import 'package:practice/screens/teachers/upload_fee_details.dart';
 import 'package:practice/screens/teachers/upload_report_card.dart';
 import 'package:practice/screens/teachers/upload_study_material.dart';
+import 'package:practice/screens/teachers/upload_syllabus.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/ui_2.0/constant_text_widget.dart';
 import '../teachers/teacher_menu_page.dart';
@@ -131,107 +137,379 @@ class _DashBoard2State extends State<DashBoard2> {
                           child: ConstantTextWidget.normalText(text: "Welcome to St Joseph eCamp - St Joseph school. Stay Safe Stay Connected",color: Colors.white),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          direction: Axis.horizontal ,
-                          runAlignment: WrapAlignment.center,
-                          runSpacing: 15,
-                          spacing: 15,
+
+                      //Principal DashBoard
+                      if(genericProvider.userProfile == UserProfile.principal)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const DashBoard()));
-                              },
-                              child: dashBoardCard(context: context,text: AppLocalizations.of(context)!.dashboard,icon: Icons.home),
-                            ),GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?HomeWorkPage():HomeWorkForm()));
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                                          return AddStudents();
+                                        }));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("Add Student",style: TextStyle(fontWeight: FontWeight.bold),),
+                                            Icon(Icons.add),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                                          return AddTeacher();
+                                        }));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("Add Teacher",style: TextStyle(fontWeight: FontWeight.bold),),
+                                            Icon(Icons.add),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
 
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.homework, icon: Icons.book,),
-                            ),GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?AttendanceCalculator(studentId: "scholar_2"):AttendancePage()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.attendance, icon: Icons.attach_email_rounded),
-                            ),GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?FeeDetailsPage():UploadFeeDetail()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.feeDetails, icon: Icons.money),
-                            ),GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ExaminationPage()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.examination, icon: Icons.padding_outlined),
+                                  ],
+                                ),
+                              ),
                             ),
-
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)? Scaffold(body: ReportCardPage(),):UploadReportCard()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.reportsCard, icon: Icons.card_giftcard),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>const CalenderPage()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.calendar, icon: Icons.calendar_month),
-                            ), GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>(genericProvider.userProfile == UserProfile.student)?StudentNoticeBoard():TeacherNoticeBoard()));
-
-                              },
-                              child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.noticeBoard, icon: Icons.departure_board_sharp),
-                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                direction: Axis.horizontal ,
+                                runAlignment: WrapAlignment.center,
+                                runSpacing: 15,
+                                spacing: 15,
+                                children: [
+                                 GestureDetector(
+                                    onTap: (){
+                                      GoRouter.optionURLReflectsImperativeAPIs =true;
+                                      GoRouter.of(context).push(UrlConstants.add_homework);
+                                      // Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?HomeWorkPage():HomeWorkForm()));
+                                    },
+                                    child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.homework, icon: Icons.book,),
+                                  ),
                             // GestureDetector(
-                            //   onTap: (){
-                            //     Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?FeeDetailsPage():UploadFeeDetail()));
+                            //         onTap: (){
+                            //           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ExaminationPage()));
                             //
-                            //   },
-                            //   child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.multiMedia, icon: Icons.screenshot_monitor),
-                            // ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>  (genericProvider.userProfile == UserProfile.student)?TimeTable(): TimetableForm()));
+                            //         },
+                            //         child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.examination, icon: Icons.padding_outlined),
+                            //       ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const CalenderPage()));
 
-                              },
-                              child: dashBoardCard(context: context, text: "Time Table", icon: Icons.hot_tub),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)? Announcement(): UploadAnnouncement()));
-                              },
-                              child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.announcement, icon: Icons.announcement_outlined),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?StudyMaterial(clazz: docu["class"],section: "A",): StudyMaterialForm()));
-                              },
-                              child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.studyMaterial, icon: Icons.announcement_outlined),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> TeacherLeavePage()));
-                              },
-                              child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.leave, icon: Icons.announcement_outlined),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
-                              },
-                              child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.profile, icon: Icons.person),
+                                    },
+                                    child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.calendar, icon: Icons.calendar_month),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>(genericProvider.userProfile == UserProfile.student)?StudentNoticeBoard():TeacherNoticeBoard()));
+
+                                    },
+                                    child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.noticeBoard, icon: Icons.departure_board_sharp),
+                                  ),
+
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>  TimetableForm()));
+
+                                    },
+                                    child: dashBoardCard(context: context, text: "Time Table", icon: Icons.hot_tub),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadAnnouncement()));
+                                    },
+                                    child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.announcement, icon: Icons.announcement_outlined),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> StudyMaterialForm()));
+                                    },
+                                    child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.studyMaterial, icon: Icons.announcement_outlined),
+                                  ),
+                                  ///ToDo : Need to update it according to Principal Profile
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> TeacherLeavePage()));
+                                    },
+                                    child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.leave, icon: Icons.announcement_outlined),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
+                                    },
+                                    child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.profile, icon: Icons.person),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
+                      //Teacher DashBoard
+                      if(genericProvider.userProfile == UserProfile.teacher)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: InkWell(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                                      return AddStudents();
+                                    }));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text("Add Student",style: TextStyle(fontWeight: FontWeight.bold),),
+                                        Icon(Icons.add),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              direction: Axis.horizontal ,
+                              runAlignment: WrapAlignment.center,
+                              runSpacing: 15,
+                              spacing: 15,
+                              children: [
+                                // GestureDetector(
+                                //   onTap: (){
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context)=>const DashBoard()));
+                                //   },
+                                //   child: dashBoardCard(context: context,text: AppLocalizations.of(context)!.dashboard,icon: Icons.home),
+                                // ),
+                                GestureDetector(
+                                  onTap: (){
+                                    GoRouter.optionURLReflectsImperativeAPIs =true;
+                                    GoRouter.of(context).push(UrlConstants.add_homework);
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?HomeWorkPage():HomeWorkForm()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.homework, icon: Icons.book,),
+                                ),GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> AttendanceCalculator()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.attendance, icon: Icons.attach_email_rounded),
+                                ),
+                               /// TODO: We can add Salary Details according to Teacher Profile like monthly Salary slip
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> (genericProvider.userProfile == UserProfile.student)?FeeDetailsPage():UploadFeeDetail()));
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.feeDetails, icon: Icons.money),
+                                ),
+                                ///ToDo: Need to finalize how examination section should look like.
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const ExaminationPage()));
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.examination, icon: Icons.padding_outlined),
+                                ),
+
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadReportCard()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.reportsCard, icon: Icons.card_giftcard),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadSyllabusPage()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: "Syllabus", icon: Icons.book),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const CalenderPage()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.calendar, icon: Icons.calendar_month),
+                                ), GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>TeacherNoticeBoard()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.noticeBoard, icon: Icons.departure_board_sharp),
+                                ),
+
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> TimetableForm()));
+
+                                  },
+                                  child: dashBoardCard(context: context, text: "Time Table", icon: Icons.hot_tub),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadAnnouncement()));
+                                  },
+                                  child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.announcement, icon: Icons.announcement_outlined),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>StudyMaterialForm()));
+                                  },
+                                  child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.studyMaterial, icon: Icons.announcement_outlined),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> TeacherLeavePage()));
+                                  },
+                                  child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.leave, icon: Icons.announcement_outlined),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
+                                  },
+                                  child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.profile, icon: Icons.person),
+                                ),
+                              ],
+                            ),
+                                                  ),
+                          ],
+                        ),
+                      //Student DashBoard
+                      if(genericProvider.userProfile == UserProfile.student)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            direction: Axis.horizontal ,
+                            runAlignment: WrapAlignment.center,
+                            runSpacing: 15,
+                            spacing: 15,
+                            children: [
+                              // GestureDetector(
+                              //   onTap: (){
+                              //     Navigator.push(context, MaterialPageRoute(builder: (context)=>const DashBoard()));
+                              //   },
+                              //   child: dashBoardCard(context: context,text: AppLocalizations.of(context)!.dashboard,icon: Icons.home),
+                              // ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeWorkPage()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.homework, icon: Icons.book,),
+                              ),GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AttendanceCalculator()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.attendance, icon: Icons.attach_email_rounded),
+                              ),GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> FeeDetailsPage()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.feeDetails, icon: Icons.money),
+                              ),GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const ExaminationPage()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.examination, icon: Icons.padding_outlined),
+                              ),
+
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Scaffold(body: ReportCardPage(),)));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.reportsCard, icon: Icons.card_giftcard),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Scaffold(body: SyllabusPage(),)));
+
+                                },
+                                child: dashBoardCard(context: context, text: "Syllabus", icon: Icons.book),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const CalenderPage()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.calendar, icon: Icons.calendar_month),
+                              ), GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>StudentNoticeBoard()));
+
+                                },
+                                child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.noticeBoard, icon: Icons.departure_board_sharp),
+                              ),
+
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> TimeTable()));
+
+                                },
+                                child: dashBoardCard(context: context, text: "Time Table", icon: Icons.hot_tub),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Announcement()));
+                                },
+                                child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.announcement, icon: Icons.announcement_outlined),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>StudyMaterial(clazz: docu["class"],section: "A",)));
+                                },
+                                child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.studyMaterial, icon: Icons.announcement_outlined),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> LeavePage()));
+                                },
+                                child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.leave, icon: Icons.announcement_outlined),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfilePage()));
+                                },
+                                child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.profile, icon: Icons.person),
+                              ),
+                            ],
+                          ),
+                        ),
+
+
+                     //Logout Button
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24.0),
                         child: TextButton(onPressed: (){
@@ -239,7 +517,8 @@ class _DashBoard2State extends State<DashBoard2> {
                             return TeacherMenuPage();
                           }));
                         }, child: Text("LogOut",style: TextStyle(color: Colors.white),)),
-                      )
+                      ),
+
                     ],
                   );
                 },

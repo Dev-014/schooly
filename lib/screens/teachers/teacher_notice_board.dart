@@ -21,7 +21,7 @@ class _TeacherNoticeBoardState extends State<TeacherNoticeBoard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Notice Board",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
               )),
           leading: IconButton(
             onPressed: () {
@@ -29,10 +29,10 @@ class _TeacherNoticeBoardState extends State<TeacherNoticeBoard> {
             },
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
-          backgroundColor: Colors.pink,
+          backgroundColor: Colors.white,
           bottom: const PreferredSize(
             preferredSize: Size(0, 55),
             child: Material(

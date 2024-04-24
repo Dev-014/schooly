@@ -18,20 +18,24 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leadingWidth: 50,
+
           leading: IconButton(
+            padding: EdgeInsets.zero,
             onPressed: () {
               Navigator.pop(context);
             },
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white,
           title: Row(
             children: [
               CircleAvatar(
                 backgroundColor: Colors.grey,
+                child: Icon(Icons.person,color: Colors.white,),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -42,12 +46,12 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                     Text(
                       "Deepanshu",
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                      style: TextStyle(fontSize: 12, color: Colors.black),
                     )
                   ],
                 ),
@@ -56,13 +60,14 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
                 onPressed: () {},
                 icon: Icon(
                   Icons.arrow_circle_right_outlined,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               )
             ],
           ),
+          titleSpacing: 0,
           bottom: const PreferredSize(
-            preferredSize: Size(0, 55),
+            preferredSize: Size(0, 60),
             child: Material(
               color: Colors.white,
               // color: ConstantColors.backGroundColor,

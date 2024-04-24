@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel, EventList;
 import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:practice/bloc/generic_bloc.dart';
+import 'package:provider/provider.dart';
 
 class AttendanceCalculator extends StatefulWidget {
-  final String studentId;
 
-  AttendanceCalculator({required this.studentId});
 
   @override
   _AttendanceCalculatorState createState() => _AttendanceCalculatorState();
@@ -24,9 +24,12 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
   DateTime? fromDate;
   DateTime? toDate;
   EventList<Event> _markedDates = EventList<Event>(events: {});
-
+  var genericProvider;
+  // var scholarId;
   @override
   void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // scholarId = genericProvider.scholarId;
     super.initState();
     calculateAttendance();
   }
@@ -38,7 +41,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
         .collection('attendence')
         .doc('y2Yes9Dv5shcWQl9N9r2')
         .collection('attendance ')
-        .doc(widget.studentId)
+        .doc(genericProvider.scholarId)
         .get();
 
     if (attendanceSnapshot.exists) {
@@ -92,7 +95,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
         totalPresentPercentage = (totalPresentDays / totalDays) * 100;
       });
     } else {
-      print('Attendance data not found for student ${widget.studentId}');
+      print('Attendance data not found for student ${genericProvider.scholarId}');
     }
   }
 

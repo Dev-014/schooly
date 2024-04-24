@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-
+import 'package:practice/bloc/generic_bloc.dart';
+import 'package:provider/provider.dart';
+///ToDo : StudentNoticeView works in scholar_1 but fails with other scholarIDs
+///Found the problem the current query has something do wih class field in Student doc if it mismatches it throws a error
 class StudentNoticeView extends StatefulWidget {
   const StudentNoticeView({Key? key}) : super(key: key);
 
@@ -10,8 +13,13 @@ class StudentNoticeView extends StatefulWidget {
 }
 
 class _StudentNoticeViewState extends State<StudentNoticeView> {
+  var genericProvider;
   String mainClass = "";
-
+@override
+  void initState() {
+  genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -21,7 +29,7 @@ class _StudentNoticeViewState extends State<StudentNoticeView> {
           .collection('attendence')
           .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
           .collection('students')
-          .doc("scholar_1") // Assuming teacher ID is "teacher_1"
+          .doc(genericProvider.scholarId) // Assuming teacher ID is "teacher_1"
           .snapshots(),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot> studentSnapshot) {
@@ -40,7 +48,7 @@ class _StudentNoticeViewState extends State<StudentNoticeView> {
         Map<String, dynamic>? teacherData =
         studentSnapshot.data!.data() as Map<String, dynamic>?;
 
-        mainClass = teacherData?['class'];
+        mainClass = teacherData?['classs'];
 
         return StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance

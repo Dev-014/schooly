@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/common_widgets/drop_down_button.dart';
 import 'package:practice/common_widgets/new_drop_down.dart';
+import 'package:practice/common_widgets/subject_dropdown.dart';
 import 'package:practice/utils/constants_colors.dart';
+import 'package:provider/provider.dart';
 
+import '../../common_widgets/class_section_dropdown.dart';
 import '../../common_widgets/homework_card.dart';
 
 class HomeWorkForm extends StatefulWidget {
@@ -22,32 +26,35 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
     required String sectionId,
     required String title,
     required String fileUrl,
-    required String teacherUid,
+    // required String teacherUid,
     bool isForAllSections = false,
   }) async {
     final firestore = FirebaseFirestore.instance;
     Map<String, dynamic> materialData = {
       'title': title,
       'fileUrl': fileUrl,
-      'uploadedBy': teacherUid,
-      'subjectId': subjectId,
+      'emp_id': genericProvider.empID,
+      'subject': subjectId,
+      'class':classId,
+      'section':sectionId,
       'status': false
     };
 
     // Add the material data to the study_materials collection
-    await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works').doc("newMaterialIds11_teacher_Uid").set(materialData);
+    await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works').doc().set(materialData);
 
     print('Material IDs updated successfully!');
   }
 
   Future<List<Map<String, dynamic>>> getHomeworkListForClassAndSection(
-      {String? classNumber, String? section}) async {
+     ) async {
     List<Map<String, dynamic>> homeworkList = [];
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works')
-        .where('class', isEqualTo: classNumber)
-        .where('section', isEqualTo: section)
+        // .where('class', isEqualTo: classNumber)
+        // .where('section', isEqualTo: section)
+    .where("emp_id",isEqualTo: genericProvider.empID)
         .get();
 
     querySnapshot.docs.forEach((doc) {
@@ -79,8 +86,21 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
   // List<String> myItems = ["Option 1", "Option 2", "Option 3"];
 
   String? selectedValue;
+  var genericProvider;
+  @override
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // TODO: implement initState
+    super.initState();
+  }
+  TextEditingController _textController1 = TextEditingController();
+  TextEditingController _textController2 = TextEditingController();
+  TextEditingController _textController3 = TextEditingController();
+  TextEditingController _textController4 = TextEditingController();
+  TextEditingController _textController5 = TextEditingController();
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -146,141 +166,166 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
                     // applyLeaveTextField(suffix: false, hintText: "Study Material", headingText: "Study Material"),
                     // applyLeaveTextField(suffix: false, hintText: "Enter comment here", headingText: "Reason"),
                     // applyLeaveTextField(suffix: false, hintText: "Enter comment here", headingText: "Reason"),
+                    Container(
+                        width: MediaQuery.of(context).size.width*.9,
+                        color: Colors.white,
+                        // height: 200,
+                        child: ClassSectionDropdown(
+                          maxWidth: MediaQuery.of(context).size.width*.84,
+                          onSelect: (selectedClass, selectedSection) {
+                            var classs = selectedClass;
+                            var sections = selectedSection;
+                            // Use the selectedClass and selectedSection values here
+                            print('Selected Class: $classs, Selected Section: $sections');
+                          },
+                        ),
 
-                    homeWorkTextFields(hintText: "Class", iconData: Icons.group),
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width*.9,
+                        color: Colors.white,
+                        // height: 200,
+                        child: SubjectDropdown(
+                          maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                          var subject = selectedSubject;
+                          // Use the selectedClass and selectedSection values here
+                          print('Selected subject: $subject');
+                        },)),
 
-
-                    // CustDropDown(
-                    //     hintText: "Sections",
-                    //     items: [
-                    //       CustDropdownMenuItem(value: "value",
-                    //           child: Container(height: 50,
-                    //               alignment: Alignment.centerLeft,
-                    //               decoration: BoxDecoration(borderRadius: BorderRadius
-                    //                   .circular(14), color: Colors.grey.withOpacity(
-                    //                   .0)),
-                    //               child: Text("Custom"))),
-                    //       CustDropdownMenuItem(value: "value",
-                    //           child: Container(height: 50,
-                    //               alignment: Alignment.centerLeft,
-                    //               decoration: BoxDecoration(borderRadius: BorderRadius
-                    //                   .circular(14), color: Colors.grey.withOpacity(
-                    //                   .0)),
-                    //               child: Text("New Item"))),
-                    //     ],
-                    //     onChanged: () {}),
-
-
-                    //   Padding(
-                    //     padding: const EdgeInsets.all(8.0),
-                    //     child: MyDropdownButton(
-                    //     items: items,
-                    //     hint: "Select an option",
-                    //     selectedValue: "Option 2",
-                    //     onChanged: (value) => print("Selected value: $value"),
-                    //     dropdownColor: Colors.red[200]!,
-                    //     textStyle: const TextStyle(fontSize: 16, color: Colors.black),
-                    //     // isExpanded: true,
-                    // ),
-                    //   ),
+                    // homeWorkTextFields(controller: _textController1,hintText: "Class", iconData: Icons.group),
                     //
-                    //       Padding(
-                    //         padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
-                    //         child: DropdownButtonHideUnderline(
-                    //           child: DropdownButton2<String>(
-                    //             isExpanded: true,
-                    //             hint: const Row(
-                    //               children: [
-                    //                 Icon(
-                    //                   Icons.list,
-                    //                   size: 24,
-                    //                   color: Colors.grey,
-                    //                 ),
-                    //                 SizedBox(
-                    //                   width: 8,
-                    //                 ),
-                    //                 Expanded(
-                    //                   child: Text(
-                    //                     'Sections',
-                    //                     style: TextStyle(
-                    //                       fontSize: 14,
-                    //                       fontWeight: FontWeight.bold,
-                    //                       color: Colors.grey,
-                    //                     ),
-                    //                     overflow: TextOverflow.ellipsis,
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             items: items
-                    //                 .map((String item) => DropdownMenuItem<String>(
-                    //                       value: item,
                     //
-                    //                       child: Text(
-                    //                         item,
-                    //                         style: const TextStyle(
-                    //                           fontSize: 14,
-                    //                           fontWeight: FontWeight.bold,
-                    //                           color: Colors.black,
-                    //                         ),
-                    //                         overflow: TextOverflow.ellipsis,
-                    //                       ),
-                    //                     ))
-                    //                 .toList(),
-                    //             value: selectedValue,
-                    //             onChanged: (String? value) {
-                    //               setState(() {
-                    //                 selectedValue = value;
-                    //               });
-                    //             },
-                    //             buttonStyleData: ButtonStyleData(
-                    //               height: 50,
-                    //               width: double.infinity,
-                    //               padding: const EdgeInsets.only(left: 14, right: 14),
-                    //               decoration: BoxDecoration(
-                    //                 borderRadius: BorderRadius.circular(14),
-                    //                 border: Border.all(
-                    //                   color: Colors.white.withOpacity(.15),
-                    //                 ),
-                    //                 color: Colors.white,
-                    //               ),
-                    //               elevation: 1,
-                    //             ),
-                    //             iconStyleData: const IconStyleData(
-                    //               icon: Icon(
-                    //                 Icons.arrow_forward_ios_outlined,
-                    //               ),
-                    //               iconSize: 14,
-                    //               iconEnabledColor: Colors.black,
-                    //               iconDisabledColor: Colors.grey,
-                    //             ),
-                    //             dropdownStyleData: DropdownStyleData(
+                    // // CustDropDown(
+                    // //     hintText: "Sections",
+                    // //     items: [
+                    // //       CustDropdownMenuItem(value: "value",
+                    // //           child: Container(height: 50,
+                    // //               alignment: Alignment.centerLeft,
+                    // //               decoration: BoxDecoration(borderRadius: BorderRadius
+                    // //                   .circular(14), color: Colors.grey.withOpacity(
+                    // //                   .0)),
+                    // //               child: Text("Custom"))),
+                    // //       CustDropdownMenuItem(value: "value",
+                    // //           child: Container(height: 50,
+                    // //               alignment: Alignment.centerLeft,
+                    // //               decoration: BoxDecoration(borderRadius: BorderRadius
+                    // //                   .circular(14), color: Colors.grey.withOpacity(
+                    // //                   .0)),
+                    // //               child: Text("New Item"))),
+                    // //     ],
+                    // //     onChanged: () {}),
                     //
-                    //               maxHeight: 200,
-                    //               width: MediaQuery.of(context).size.width*.9,
-                    //               decoration: BoxDecoration(
                     //
-                    //                 borderRadius: BorderRadius.circular(14),
-                    //                 color: Colors.white,
-                    //               ),
-                    //               offset: const Offset(4, -2),
-                    //               scrollbarTheme: ScrollbarThemeData(
-                    //                 radius: const Radius.circular(40),
-                    //                 thickness: MaterialStateProperty.all<double>(6),
-                    //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
-                    //               ),
-                    //             ),
-                    //             menuItemStyleData: const MenuItemStyleData(
-                    //               height: 40,
-                    //               padding: EdgeInsets.only(left: 14, right: 14),
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    homeWorkTextFields(
-                        hintText: "Section", iconData: Icons.hotel_class_outlined),
-                    homeWorkTextFields(hintText: "Subject", iconData: Icons.book),
-                    homeWorkTextFields(
+                    // //   Padding(
+                    // //     padding: const EdgeInsets.all(8.0),
+                    // //     child: MyDropdownButton(
+                    // //     items: items,
+                    // //     hint: "Select an option",
+                    // //     selectedValue: "Option 2",
+                    // //     onChanged: (value) => print("Selected value: $value"),
+                    // //     dropdownColor: Colors.red[200]!,
+                    // //     textStyle: const TextStyle(fontSize: 16, color: Colors.black),
+                    // //     // isExpanded: true,
+                    // // ),
+                    // //   ),
+                    // //
+                    // //       Padding(
+                    // //         padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
+                    // //         child: DropdownButtonHideUnderline(
+                    // //           child: DropdownButton2<String>(
+                    // //             isExpanded: true,
+                    // //             hint: const Row(
+                    // //               children: [
+                    // //                 Icon(
+                    // //                   Icons.list,
+                    // //                   size: 24,
+                    // //                   color: Colors.grey,
+                    // //                 ),
+                    // //                 SizedBox(
+                    // //                   width: 8,
+                    // //                 ),
+                    // //                 Expanded(
+                    // //                   child: Text(
+                    // //                     'Sections',
+                    // //                     style: TextStyle(
+                    // //                       fontSize: 14,
+                    // //                       fontWeight: FontWeight.bold,
+                    // //                       color: Colors.grey,
+                    // //                     ),
+                    // //                     overflow: TextOverflow.ellipsis,
+                    // //                   ),
+                    // //                 ),
+                    // //               ],
+                    // //             ),
+                    // //             items: items
+                    // //                 .map((String item) => DropdownMenuItem<String>(
+                    // //                       value: item,
+                    // //
+                    // //                       child: Text(
+                    // //                         item,
+                    // //                         style: const TextStyle(
+                    // //                           fontSize: 14,
+                    // //                           fontWeight: FontWeight.bold,
+                    // //                           color: Colors.black,
+                    // //                         ),
+                    // //                         overflow: TextOverflow.ellipsis,
+                    // //                       ),
+                    // //                     ))
+                    // //                 .toList(),
+                    // //             value: selectedValue,
+                    // //             onChanged: (String? value) {
+                    // //               setState(() {
+                    // //                 selectedValue = value;
+                    // //               });
+                    // //             },
+                    // //             buttonStyleData: ButtonStyleData(
+                    // //               height: 50,
+                    // //               width: double.infinity,
+                    // //               padding: const EdgeInsets.only(left: 14, right: 14),
+                    // //               decoration: BoxDecoration(
+                    // //                 borderRadius: BorderRadius.circular(14),
+                    // //                 border: Border.all(
+                    // //                   color: Colors.white.withOpacity(.15),
+                    // //                 ),
+                    // //                 color: Colors.white,
+                    // //               ),
+                    // //               elevation: 1,
+                    // //             ),
+                    // //             iconStyleData: const IconStyleData(
+                    // //               icon: Icon(
+                    // //                 Icons.arrow_forward_ios_outlined,
+                    // //               ),
+                    // //               iconSize: 14,
+                    // //               iconEnabledColor: Colors.black,
+                    // //               iconDisabledColor: Colors.grey,
+                    // //             ),
+                    // //             dropdownStyleData: DropdownStyleData(
+                    // //
+                    // //               maxHeight: 200,
+                    // //               width: MediaQuery.of(context).size.width*.9,
+                    // //               decoration: BoxDecoration(
+                    // //
+                    // //                 borderRadius: BorderRadius.circular(14),
+                    // //                 color: Colors.white,
+                    // //               ),
+                    // //               offset: const Offset(4, -2),
+                    // //               scrollbarTheme: ScrollbarThemeData(
+                    // //                 radius: const Radius.circular(40),
+                    // //                 thickness: MaterialStateProperty.all<double>(6),
+                    // //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
+                    // //               ),
+                    // //             ),
+                    // //             menuItemStyleData: const MenuItemStyleData(
+                    // //               height: 40,
+                    // //               padding: EdgeInsets.only(left: 14, right: 14),
+                    // //             ),
+                    // //           ),
+                    // //         ),
+                    // //       ),
+                    // homeWorkTextFields(controller: _textController2,
+                    //     hintText: "Section", iconData: Icons.hotel_class_outlined),
+                    homeWorkTextFields(controller: _textController3,hintText: "Subject", iconData: Icons.book),
+                    homeWorkTextFields(controller: _textController4,
                         hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
                     InkWell(
                       onTap: () {
@@ -309,7 +354,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {
-                              addHomeWork(subjectId: "hindi", classId: '10', sectionId: "A", title: "chapter : 10", fileUrl: "fileUrl", teacherUid: "teacherUid");
+                              addHomeWork(subjectId: _textController3.text, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
                             },
                             child: Text("Submit"),
                             style: ElevatedButton.styleFrom(
@@ -325,7 +370,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
               ),
             ),
             FutureBuilder<List<Map<String, dynamic>>>(
-                future: getHomeworkListForClassAndSection(classNumber: "10",section: "A"),
+                future: getHomeworkListForClassAndSection(),
                 builder: (BuildContext context, snapshot) {
                   return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
 
@@ -355,7 +400,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
                                 return  Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 10),
-                                  child: HomeWorkCard(title: homework_heading,status:status, date: "English / Today",),
+                                  child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
                                 );
                               }),
                         ),
@@ -373,6 +418,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
       {required String hintText,
       int? maxLine,
       IconData? iconData,
+        TextEditingController? controller,
       bool? enabled}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 16),
@@ -392,6 +438,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: TextField(
+controller: controller,
               maxLines: maxLine ?? 1,
               decoration: InputDecoration(
                 hintStyle: TextStyle(color: Colors.grey),

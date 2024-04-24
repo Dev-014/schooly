@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/common_widgets/homework_card.dart';
 import 'package:practice/screens/students_ui_2.0/report_card_viewer.dart';
 import 'package:practice/utils/constants_colors.dart';
+import 'package:provider/provider.dart';
 
 class ReportCardPage extends StatefulWidget {
   const ReportCardPage({super.key});
@@ -13,11 +15,12 @@ class ReportCardPage extends StatefulWidget {
 
 class _ReportCardPageState extends State<ReportCardPage> {
 
-  Future<List<Map<String, dynamic>>> getReportCard() async {
+
+  Future<List<Map<String, dynamic>>> getReportCard({required String scholarID}) async {
     List<Map<String, dynamic>> reportCardList = [];
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/scholar_id/report_cards')
+        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/$scholarID/report_cards')
         .get();
 
     querySnapshot.docs.forEach((doc) {
@@ -34,9 +37,18 @@ class _ReportCardPageState extends State<ReportCardPage> {
     print(reportCardList);
     return reportCardList;
   }
-
+  var scholarId;
+  var genericProvider;
+  @override
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    scholarId = genericProvider.scholarId;
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+
     var reportCards;
     String className;
     String report_card_link;
@@ -54,7 +66,7 @@ class _ReportCardPageState extends State<ReportCardPage> {
         // backgroundColor: Colors.pink,
       ),
       body: FutureBuilder(
-        future: getReportCard(),
+        future: getReportCard(scholarID: genericProvider.scholarId),
           builder: (BuildContext context, snapshot) {
             if(snapshot.hasData){
 

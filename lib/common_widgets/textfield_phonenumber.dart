@@ -69,7 +69,7 @@ class TextFieldWithLabelAndCountryCode extends StatelessWidget {
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
-              keyboardType: TextInputType.phone,
+              keyboardType: TextInputType.text,
             ),
           ),
           // Text field.

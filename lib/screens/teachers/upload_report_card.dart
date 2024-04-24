@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../bloc/firebase_storage.dart';
+import '../../common_widgets/class_section_dropdown.dart';
 import '../../common_widgets/form_textfield.dart';
 
 class UploadReportCard extends StatefulWidget {
@@ -18,6 +19,7 @@ class _UploadReportCardState extends State<UploadReportCard> {
   TextEditingController textEditingController3 = TextEditingController();
   String? reportCardUrl;
   bool enabledStatus = false;
+
   Future<void> uploadReportCard(
       {required String reportCardUrl, required String scholarId,required String clazz}) async {
     // String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
@@ -33,7 +35,7 @@ class _UploadReportCardState extends State<UploadReportCard> {
 
     try {
       await FirebaseFirestore.instance
-          .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/scholar_id/report_cards').doc(reportCardId)
+          .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/$scholarId/report_cards').doc(reportCardId)
           .set(reportCardData);
       print('Report Card uploaded successfully!');
     } catch (e) {
@@ -79,9 +81,23 @@ class _UploadReportCardState extends State<UploadReportCard> {
               SizedBox(
                 height: 10,
               ),
+              Container(
+                width: MediaQuery.of(context).size.width*.9,
+                color: Colors.white,
+                // height: 200,
+                child: ClassSectionDropdown(
+                  maxWidth: MediaQuery.of(context).size.width*.84,
+                  onSelect: (selectedClass, selectedSection) {
+                    var classs = selectedClass;
+                    var sections = selectedSection;
+                    // Use the selectedClass and selectedSection values here
+                    print('Selected Class: $classs, Selected Section: $sections');
+                  },
+                ),
 
+              ),
 
-              formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: textEditingController1),
+              // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: textEditingController1),
 
 
               formTextFields

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:practice/screens/teachers/upload_fee_details.dart';
 
 import '../../bloc/firebase_storage.dart';
+import '../../common_widgets/class_section_dropdown.dart';
 import '../../common_widgets/form_textfield.dart';
 import '../teachers/time_table_new.dart';
 
@@ -44,18 +45,33 @@ class _TimetableFormState extends State<TimetableForm> {
                   SizedBox(
                     height: 10,
                   ),
-                  formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: _textController1 ),
-                  // CustDropDown(
-                  //   hintText: "Subject",
-                  //     items: [
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-                  //     ],
-                  //     onChanged: (){}),
-                  formTextFields(
-                      hintText: "Section", iconData: Icons.hotel_class_outlined,textEditingController: _textController2),
+                  Container(
+                    width: MediaQuery.of(context).size.width*.9,
+                    color: Colors.white,
+                    // height: 200,
+                    child: ClassSectionDropdown(
+                      maxWidth: MediaQuery.of(context).size.width*.84,
+                      onSelect: (selectedClass, selectedSection) {
+                        var classs = selectedClass;
+                        var sections = selectedSection;
+                        // Use the selectedClass and selectedSection values here
+                        print('Selected Class: $classs, Selected Section: $sections');
+                      },
+                    ),
+
+                  ),
+                  // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: _textController1 ),
+                  // // CustDropDown(
+                  // //   hintText: "Subject",
+                  // //     items: [
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
+                  // //     ],
+                  // //     onChanged: (){}),
+                  // formTextFields(
+                  //     hintText: "Section", iconData: Icons.hotel_class_outlined,textEditingController: _textController2),
                   InkWell(
                     onTap: () async{
 

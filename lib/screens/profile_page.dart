@@ -15,8 +15,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: ConstantColors.backGroundColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: ConstantColors.backGroundColor,
         elevation: 0,
         toolbarHeight: 60,
         leading: IconButton(onPressed: ()async{
@@ -51,8 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
 
               Expanded(flex: 1, child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.blue,
+                  decoration:  BoxDecoration(
+                      color: ConstantColors.backGroundColor,
                       borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(24),
                           bottomLeft: Radius.circular(24))),
@@ -63,12 +64,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircleAvatar(radius: 48, backgroundColor: Colors.white,),
+                      const CircleAvatar(radius: 48, backgroundColor: Colors.black,child: Icon(Icons.person,color: Colors.white,),),
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0,bottom: 2),
-                        child: Text(student["name"]["first_name"],style: const TextStyle(fontSize: 26,color: Colors.white,fontWeight: FontWeight.w500),),
+                        child: Text(student["name"]["first_name"],style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
                       ),
-                      Text("Class"+student["class"],style:  TextStyle(fontSize:14,color: Colors.grey.shade100,fontWeight: FontWeight.w200),)
+                      Text("Class"+student["class"],style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),)
 
                     ],
                   )
@@ -111,10 +112,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                           borderRadius: BorderRadius.circular(
                                               30)
                                       ),
-                                      primary: Colors.pink,
+                                      backgroundColor: Colors.pink,
                                     ),
                                     onPressed: () {},
-                                    child: const Text("Ask for Update")),
+                                      child: const Text("Ask for Update",style: TextStyle(color: Colors.white),)),
                               ),
                             )
 

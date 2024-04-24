@@ -3,13 +3,27 @@ import 'package:practice/bloc/http_request.dart';
 import 'package:practice/screens/dashboard.dart';
 import 'package:practice/screens/students_ui_2.0/dashBoard2.dart';
 import 'package:practice/screens/students_ui_2.0/dashboard.dart';
+import 'package:provider/provider.dart';
 
+import '../bloc/generic_bloc.dart';
 import '../common_widgets/otp_textfield.dart';
 import '../common_widgets/textfield_phonenumber.dart';
 
-class VerifyOtpPage extends StatelessWidget {
+class VerifyOtpPage extends StatefulWidget {
   const VerifyOtpPage({Key? key}) : super(key: key);
 
+  @override
+  State<VerifyOtpPage> createState() => _VerifyOtpPageState();
+}
+
+class _VerifyOtpPageState extends State<VerifyOtpPage> {
+  var genericProvider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
@@ -91,14 +105,20 @@ class VerifyOtpPage extends StatelessWidget {
                         onPressed: () async {
                           // final response = await  HttpRequest().verifyOtpForLogIn(mobile_number: '9826135966', school_id: 'XrMZE54KzuJlz6ayc7Gh',otp:controller.text);
                         // if(response!){
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return MenuPage();
-                          }));
+                          genericProvider
+                              .isUserLoggedIn = true;
+                          // await  Future.delayed(Duration(seconds: 1));
+
+                          Navigator.pushNamed(context, "/dashboard");
+
+                        //   Navigator.push(context, MaterialPageRoute(builder: (context){
+                        //     return MenuPage();
+                        //   }));
                         // }
                           },
                         child: Text('Verify'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.pink,
+                          backgroundColor: Colors.pink,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),

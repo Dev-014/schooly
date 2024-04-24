@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:practice/common_widgets/class_section_dropdown.dart';
 import 'package:practice/common_widgets/homework_card.dart';
+import 'package:practice/routes/routes2.0.dart';
 import 'package:practice/screens/calender_page.dart';
 import 'package:practice/utils/constants_colors.dart';
 
@@ -50,7 +54,9 @@ class _HomeWorkPageState extends State<HomeWorkPage> {
           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)),
         ),
         leading: IconButton(onPressed: (){
-          Navigator.pop(context);
+          GoRouter.of(context).pop();
+          // RouteHandler().getLoggedInGoRouter.pop();
+          // Navigator.pop(context);
           }, icon: Icon(Icons.arrow_back,size: 30,)),
         title: const Align(alignment:Alignment.centerLeft,child: Text("Homework",style: TextStyle(fontSize: 18),)),
         // backgroundColor: Colors.pink,
@@ -85,7 +91,7 @@ class _HomeWorkPageState extends State<HomeWorkPage> {
                          return  Padding(
                            padding: const EdgeInsets.symmetric(
                                vertical: 4.0, horizontal: 10),
-                           child: HomeWorkCard(title: homework_heading,status:status, date: "English / Today",),
+                           child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
                          );
                        }),
                  ),

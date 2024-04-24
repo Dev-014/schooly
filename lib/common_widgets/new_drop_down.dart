@@ -9,6 +9,7 @@ class CustDropDown<T> extends StatefulWidget {
   final double borderWidth;
   final int defaultSelectedIndex;
   final bool enabled;
+  final double? maxWidth;
 
   const CustDropDown(
       {required this.items,
@@ -17,7 +18,9 @@ class CustDropDown<T> extends StatefulWidget {
       this.borderRadius = 0,
       this.borderWidth = 1,
       this.maxListHeight = 150,
+        this.maxWidth,
       this.defaultSelectedIndex = -1,
+
       Key? key,
       this.enabled = true})
       : super(key: key);
@@ -129,7 +132,7 @@ class _CustDropDownState extends State<CustDropDown>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20)),
                                 elevation: 0,
-                                shadowColor: Colors.red,
+                                shadowColor: Colors.white,
                                 child: ListView(
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: false,
@@ -220,12 +223,15 @@ class _CustDropDownState extends State<CustDropDown>
         child: Container(
           padding: EdgeInsets.zero,
           height: 58,
-          width: MediaQuery.of(context).size.width,
+          width: widget.maxWidth??MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),),
           // decoration: _getDecoration(),
           child: Card(
             elevation: 8,
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             child: Row(
@@ -235,7 +241,7 @@ class _CustDropDownState extends State<CustDropDown>
                   padding: const EdgeInsets.only(left: 12.0, right: 8.0),
                   child: Icon(
                     Icons.account_balance_sharp,
-                    color: Colors.grey,
+                    // color: Colors.grey,
                   ),
                 ),
                 _isAnyItemSelected
@@ -245,10 +251,16 @@ class _CustDropDownState extends State<CustDropDown>
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.zero,
+
                     decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
+                        color: Colors.grey.withOpacity(.15),
+
+                        border: Border.all(
+                          color: Colors.grey.withOpacity(.3),
+                        ),
                         borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width - 56,
+                    width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
+                    // width: MediaQuery.of(context).size.width - 56,
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -277,9 +289,18 @@ class _CustDropDownState extends State<CustDropDown>
                     height: 50,
                     padding: EdgeInsets.zero,
                     decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
+                        color: Colors.grey.withOpacity(.15),
+
+                        border: Border.all(
+                          color: Colors.grey.withOpacity(.3),
+                        ),
                         borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width - 56,
+
+                    // decoration: BoxDecoration(
+                    //     color: Colors.grey.withOpacity(.2),
+                    //     borderRadius: BorderRadius.circular(12)),
+                    width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
+                    // width: MediaQuery.of(context).size.width - 56,
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,7 +316,8 @@ class _CustDropDownState extends State<CustDropDown>
                               overflow: TextOverflow.clip,
 
                               style: TextStyle(
-                                  color: Colors.grey, fontSize: 16),
+                                  // color: Colors.grey,
+                                  fontSize: 16),
                             ),
                           ),
                         ),

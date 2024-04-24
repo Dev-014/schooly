@@ -7,7 +7,9 @@ import 'package:practice/common_widgets/multimedia_card.dart';
 import 'package:practice/common_widgets/new_drop_down.dart';
 import 'package:practice/utils/constants_colors.dart';
 
+import '../../common_widgets/class_section_dropdown.dart';
 import '../../common_widgets/form_textfield.dart';
+import '../../common_widgets/subject_dropdown.dart';
 
 class StudyMaterialForm extends StatefulWidget {
   const StudyMaterialForm({super.key});
@@ -25,6 +27,8 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
   String? section;
   String? clazz;
   String? subject;
+  bool get allDropdownsSelected => clazz != null && section != null && subject != null;
+
 
   Future<List<Map<String, dynamic>?>?> fetchStudyMaterials(String? subjectId, String? classId, String? sectionId) async {
     final firestore = FirebaseFirestore.instance;
@@ -285,19 +289,46 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
                   SizedBox(
                     height: 10,
                   ),
-                  formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: _textController1 ),
-                  // CustDropDown(
-                  //   hintText: "Subject",
-                  //     items: [
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-                  //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-                  //     ],
-                  //     onChanged: (){}),
-                  formTextFields(
-                      hintText: "Section", iconData: Icons.hotel_class_outlined,textEditingController: _textController2),
-                  formTextFields(hintText: "Subject", iconData: Icons.book, textEditingController: _textController3),
+                  Container(
+                    width: MediaQuery.of(context).size.width*.9,
+                    color: Colors.white,
+                    // height: 200,
+                    child: ClassSectionDropdown(
+                      maxWidth: MediaQuery.of(context).size.width*.84,
+                      onSelect: (selectedClass, selectedSection) {
+                        var classs = selectedClass;
+                        var sections = selectedSection;
+                        // Use the selectedClass and selectedSection values here
+                        print('Selected Class: $classs, Selected Section: $sections');
+                      },
+                    ),
+
+                  ),
+                  // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: _textController1 ),
+                  // // CustDropDown(
+                  // //   hintText: "Subject",
+                  // //     items: [
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
+                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
+                  // //     ],
+                  // //     onChanged: (){}),
+                  // formTextFields(
+                  //     hintText: "Section", iconData: Icons.hotel_class_outlined,textEditingController: _textController2),
+                  //
+                  Container(
+                      width: MediaQuery.of(context).size.width*.9,
+                      color: Colors.white,
+                      // height: 200,
+                      child: SubjectDropdown(
+                        maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                        var subject = selectedSubject;
+                        // Use the selectedClass and selectedSection values here
+                        print('Selected subject: $subject');
+                      },)),
+
+                  // formTextFields(hintText: "Subject", iconData: Icons.book, textEditingController: _textController3),
                   formTextFields(
                       hintText: "Assignment", maxLine: 4, iconData: Icons.assignment,textEditingController: _textController4),
                   InkWell(
@@ -358,106 +389,214 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
               ),
             ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
+          Padding(
+            padding: const EdgeInsets.all( 12.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
 
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustDropDown(
-                hintText: "Class",
-                  items: [
-                    CustDropdownMenuItem(value: "10", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 10"))),
-                    CustDropdownMenuItem(value: "9", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 9"))),
-                    CustDropdownMenuItem(value: "8", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 8"))),
-                    CustDropdownMenuItem(value: "6", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 6"))),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClassSectionDropdown(
+                  horizontalDirection: true,
+                  maxWidth: MediaQuery.of(context).size.width*.445,
+                  onSelect: (selectedClass, selectedSection) {
+                    var classs = selectedClass;
+                    var sections = selectedSection;
+                    // Use the selectedClass and selectedSection values here
+                    print('Selected Class: $classs, Selected Section: $sections');
+                  },
+                ),
 
-                    CustDropdownMenuItem(value: "5", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 5"))),
-                  ],
-                  onChanged: (value){
-                  clazz = value;
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                //         child: CustDropDown(
+                //             maxWidth: MediaQuery.of(context).size.width*.45,
+                //             hintText: "Class",
+                //             items: [
+                //               CustDropdownMenuItem(value: "10", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 10"))),
+                //               CustDropdownMenuItem(value: "9", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 9"))),
+                //               CustDropdownMenuItem(value: "8", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 8"))),
+                //               CustDropdownMenuItem(value: "6", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 6"))),
+                //
+                //               CustDropdownMenuItem(value: "5", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 5"))),
+                //             ],
+                //             onChanged: (value){
+                //               clazz = value;
+                //
+                //             }),
+                //       ),
+                //       Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                //         child: CustDropDown(
+                //             maxWidth: MediaQuery.of(context).size.width*.45,
+                //             hintText: "Section",
+                //             items: [
+                //               CustDropdownMenuItem(value: "A", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section A"))),
+                //               CustDropdownMenuItem(value: "B", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section B"))),
+                //               CustDropdownMenuItem(value: "C", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section C"))),
+                //               CustDropdownMenuItem(value: "D", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section D"))),
+                //             ],
+                //             onChanged: (value){
+                //               section = value;
+                //             }),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                SubjectDropdown(
+                  maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                  var subject = selectedSubject;
+                  // Use the selectedClass and selectedSection values here
+                  print('Selected subject: $subject');
+                },),
 
-                  }),
-              CustDropDown(
-                  hintText: "Section",
-                  items: [
-                    CustDropdownMenuItem(value: "A", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section A"))),
-                    CustDropdownMenuItem(value: "B", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section B"))),
-                    CustDropdownMenuItem(value: "C", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section C"))),
-                    CustDropdownMenuItem(value: "D", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section D"))),
-                  ],
-                  onChanged: (value){
-                    section = value;
-                  }),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                //   child: CustDropDown(
+                //     maxWidth: MediaQuery.of(context).size.width*.92,
+                //     hintText: "Subject",
+                //       items: [
+                //         CustDropdownMenuItem(value: "science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
+                //         CustDropdownMenuItem(value: "social_science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
+                //         CustDropdownMenuItem(value: "maths", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
+                //         CustDropdownMenuItem(value: "english", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
+                //         CustDropdownMenuItem(value: "hindi", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Hindi"))),
+                //
+                //       ],
+                //       onChanged: (value){
+                //       setState(() {
+                //         subject = value;
+                //
+                //       });
+                //       }),
+                // ),
 
-              CustDropDown(
-                hintText: "Subject",
-                  items: [
-                    CustDropdownMenuItem(value: "science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-                    CustDropdownMenuItem(value: "social_science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-                    CustDropdownMenuItem(value: "maths", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-                    CustDropdownMenuItem(value: "english", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-                    CustDropdownMenuItem(value: "hindi", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Hindi"))),
+                if (allDropdownsSelected) // Only build FutureBuilder if all dropdowns are selected
+                  FutureBuilder<List<Map<String, dynamic>?>?>(
+                    future: fetchStudyMaterials(subject, clazz, section),
+                    builder: (BuildContext context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Center(child: Text('Error: ${snapshot.error}')),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: const Center(child: Text('No data available')),
+                        );
+                      } else {
+                        return Column(
 
-                  ],
-                  onChanged: (value){
-                  setState(() {
-                    subject = value;
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                                child: Align(alignment: Alignment.centerLeft,
+                                    child: Text("Today",
+                                      style: TextStyle(fontSize: 20,
+                                        // color: Colors.pink,
+                                      ),)),
+                              ),
+                              Container(
+                                height: 550,
+                                width: 400,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
 
-                  });
-                  }),
+                                    itemCount: snapshot.data?.length,
+                                    itemBuilder: (context, index) {
+                                      final listOfMap = snapshot.data;
+                                      print(listOfMap);
+                                      Map<String, dynamic>? map = listOfMap![index];
+                                      final homework_heading = map!["title"];
+                                      // final status = map["status"];
+                                      return  Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 10),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            MultiMediaCard(title: homework_heading, date: "English / Today",),
+                                            IconButton(onPressed: (){
 
+                                              deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
+                                              setState(() {
 
-              FutureBuilder<List<Map<String, dynamic>?>?>(
-                  future: fetchStudyMaterials(subject, clazz, section),
-                  builder: (BuildContext context, snapshot) {
-                    return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
+                                              });
+                                            }, icon: Icon(Icons.delete))
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ]
+                        );
+                      }
+                    },
+                  ),
+                // FutureBuilder<List<Map<String, dynamic>?>?>(
+                //     future: fetchStudyMaterials(subject, clazz, section),
+                //     builder: (BuildContext context, snapshot) {
+                //       return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
+                //
+                //           children: [
+                //             const Padding(
+                //               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                //               child: Align(alignment: Alignment.centerLeft,
+                //                   child: Text("Today",
+                //                     style: TextStyle(fontSize: 20,
+                //                       // color: Colors.pink,
+                //                     ),)),
+                //             ),
+                //             Container(
+                //               height: 550,
+                //               width: 400,
+                //               child: ListView.builder(
+                //                   shrinkWrap: true,
+                //
+                //                   itemCount: snapshot.data?.length,
+                //                   itemBuilder: (context, index) {
+                //                     final listOfMap = snapshot.data;
+                //                     print(listOfMap);
+                //                     Map<String, dynamic>? map = listOfMap![index];
+                //                     final homework_heading = map!["title"];
+                //                     // final status = map["status"];
+                //                     return  Padding(
+                //                       padding: const EdgeInsets.symmetric(
+                //                           vertical: 4.0, horizontal: 10),
+                //                       child: Row(
+                //                         mainAxisSize: MainAxisSize.min,
+                //                         children: [
+                //                           MultiMediaCard(title: homework_heading, date: "English / Today",),
+                //                           IconButton(onPressed: (){
+                //
+                //                             deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
+                //                           setState(() {
+                //
+                //                           });
+                //                             }, icon: Icon(Icons.delete))
+                //                         ],
+                //                       ),
+                //                     );
+                //                   }),
+                //             ),
+                //           ]
+                //       );
+                //     })
 
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
-                            child: Align(alignment: Alignment.centerLeft,
-                                child: Text("Today",
-                                  style: TextStyle(fontSize: 20,
-                                    // color: Colors.pink,
-                                  ),)),
-                          ),
-                          Container(
-                            height: 550,
-                            width: 400,
-                            child: ListView.builder(
-                                shrinkWrap: true,
-
-                                itemCount: snapshot.data?.length,
-                                itemBuilder: (context, index) {
-                                  final listOfMap = snapshot.data;
-                                  print(listOfMap);
-                                  Map<String, dynamic>? map = listOfMap![index];
-                                  final homework_heading = map!["title"];
-                                  // final status = map["status"];
-                                  return  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4.0, horizontal: 10),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        MultiMediaCard(title: homework_heading, date: "English / Today",),
-                                        IconButton(onPressed: (){
-
-                                          deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
-                                        setState(() {
-
-                                        });
-                                          }, icon: Icon(Icons.delete))
-                                      ],
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ]
-                    );
-                  })
-
-            ],
+              ],
+            ),
           ),
 
 
