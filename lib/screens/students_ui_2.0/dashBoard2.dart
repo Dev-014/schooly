@@ -26,23 +26,16 @@ import 'package:practice/screens/teachers/upload_syllabus.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/ui_2.0/constant_text_widget.dart';
 import '../teachers/teacher_menu_page.dart';
-
-import 'package:practice/screens/attendance_page.dart';
 import 'package:practice/screens/calender_page.dart';
-import 'package:practice/screens/dashboard.dart';
 import 'package:practice/screens/examination_page.dart';
 import 'package:practice/screens/fee_details_page.dart';
-import 'package:practice/screens/homework_page.dart';
-import 'package:practice/screens/multimedia_page.dart';
-import 'package:practice/screens/notice_board_page.dart';
+import 'package:practice/screens/students_ui_2.0/homework_page.dart';
 import 'package:practice/screens/profile_page.dart';
-import 'package:practice/screens/report_card_page.dart';
+import 'package:practice/screens/students_ui_2.0/report_card_page.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';
 import 'package:practice/screens/students_ui_2.0/leave_page.dart';
 import 'package:practice/screens/students_ui_2.0/study_material.dart';
-import 'package:practice/screens/teachers/teacher_menu_page.dart';
 
-import '../tempp.dart';
 class DashBoard2 extends StatefulWidget {
   const DashBoard2({super.key});
 
@@ -89,8 +82,6 @@ class _DashBoard2State extends State<DashBoard2> {
 
                 builder: (context){
                   return  Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         color: Color(0xffffae00),
@@ -114,9 +105,16 @@ class _DashBoard2State extends State<DashBoard2> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ConstantTextWidget.normalText(text: "Demo", bold: true,color: Colors.white),
-                                  ConstantTextWidget.smallText(text: "MA (English)",color: Colors.white),
-                                  ConstantTextWidget.smallText(text: "(1st Semester)",color: Colors.white),
+                                  ConstantTextWidget.normalText(text: (genericProvider.userProfile == UserProfile.student)?genericProvider.loggedInStudent.studentName:(genericProvider.userProfile==UserProfile.teacher)?genericProvider.loggedInTeacher.teacherName:"Principal", bold: true,color: Colors.white),
+                                  ConstantTextWidget.smallText(text: (genericProvider.userProfile == UserProfile.student)?"Student":(genericProvider.userProfile==UserProfile.teacher)?"Teacher":"Principal",color: Colors.white),
+                                  ConstantTextWidget.smallText(text: (genericProvider.userProfile == UserProfile.student)?"Class ${
+                                              genericProvider
+                                                  .loggedInStudent.classs
+                                            } "
+                                          :(genericProvider.userProfile==UserProfile.teacher)?"Class ${
+                                              genericProvider
+                                                  .loggedInTeacher.classs
+                                            }":"All Classes",color: Colors.white),
                                   ConstantTextWidget.smallText(text: "Session: 2022-2023",color: Colors.white)
 
                                 ],
@@ -513,9 +511,12 @@ class _DashBoard2State extends State<DashBoard2> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24.0),
                         child: TextButton(onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return TeacherMenuPage();
-                          }));
+                          //
+                          // Navigator.push(context, MaterialPageRoute(builder: (context){
+                          //   return TeacherMenuPage();
+                          // }
+                          // )
+                          // );
                         }, child: Text("LogOut",style: TextStyle(color: Colors.white),)),
                       ),
 

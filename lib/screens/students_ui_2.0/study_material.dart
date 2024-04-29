@@ -134,6 +134,8 @@ class _StudyMaterialState extends State<StudyMaterial> {
     print(subjectNames);
     return subjectNames;
   }
+
+
   Future<List<String>> getSubjects() async {
     List<String> listOfSubjects = [];
 //genericProvider.loggedInStudent.classs
@@ -173,7 +175,7 @@ print(subjects);
     final firestore = FirebaseFirestore.instance;
 
     // Create a query based on the path and criteria
-    final query = firestore.collection("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material").where('subject_name', isEqualTo: subjectName)
+    final query = firestore.collection("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material").where('subjectId', isEqualTo: subjectName)
         .where('class', isEqualTo: clazz)
         .where('section', isEqualTo: section);
 

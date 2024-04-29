@@ -8,8 +8,8 @@ import 'package:practice/common_widgets/take_attendance_card.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../modals/student.dart';
-import '../modals/teacher.dart';
+import '../../modals/student.dart';
+import '../../modals/teacher.dart';
 
 class TeachersAttendance extends StatefulWidget {
   const TeachersAttendance({super.key});
@@ -27,7 +27,6 @@ class _TeachersAttendanceState extends State<TeachersAttendance> {
   List<Teacher> getListOfTeachers(List<dynamic> listOfTeachers) {
     List<Teacher> list = [];
     listOfTeachers.forEach((teacher) {
-      print("tititititititi");
 
       Teacher teacher1 = Teacher(
           teacherName: teacher["teacher_name"] ?? '',

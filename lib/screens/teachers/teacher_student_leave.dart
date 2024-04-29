@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../../bloc/generic_bloc.dart';
 
 class TeacherStudentApproval extends StatefulWidget {
   const TeacherStudentApproval({Key? key}) : super(key: key);
@@ -13,7 +16,13 @@ class TeacherStudentApproval extends StatefulWidget {
 class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
   String teacherClass = "";
   String teacherSection = "";
+  var genericProvider;
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
 
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -23,18 +32,21 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
           .collection('attendence')
           .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
           .collection('teachers')
-          .doc("teacher_1") // Assuming teacher ID is "teacher_1"
+          .doc(genericProvider.empID) // Assuming teacher ID is "teacher_1"
           .snapshots(),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot> teacherSnapshot) {
+
         if (teacherSnapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
           );
         } else if (!teacherSnapshot.hasData ||
             teacherSnapshot.data!.data() == null) {
+          print("teacherSnapshot");
+          print(teacherSnapshot.data?.data());
           return Center(
-            child: Text('No teacher data found.'),
+            child: Text('No  data found.'),
           );
         }
 
@@ -42,8 +54,8 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
         Map<String, dynamic>? teacherData =
         teacherSnapshot.data!.data() as Map<String, dynamic>?;
 
-        teacherClass = teacherData?['class'];
-        teacherSection = teacherData?['section'];
+        teacherClass = teacherData?['classs'];
+        teacherSection = teacherData?['Section'];
 
         return StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
@@ -57,12 +69,14 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
               .snapshots(),
           builder: (BuildContext context,
               AsyncSnapshot<DocumentSnapshot> studentSnapshot) {
+
             if (studentSnapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
               );
             } else if (!studentSnapshot.hasData ||
                 studentSnapshot.data!.data() == null) {
+
               return Center(
                 child: Text('No student leave data found.'),
               );
@@ -187,8 +201,8 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
 
       // Check if studentData is not null and contains necessary data
       if (studentData != null &&
-          teacherClass == studentData['class'] &&
-          teacherSection == studentData['section']) {
+          teacherClass == studentData['classs'] &&
+          teacherSection == studentData['Section']) {
         studentDataList.add(leaveRequests[i]);
       }
     }

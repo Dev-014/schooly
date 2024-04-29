@@ -5,6 +5,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel, EventList;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/utils/constants_colors.dart';
 import 'package:provider/provider.dart';
 
 class AttendanceCalculator extends StatefulWidget {
@@ -29,19 +30,44 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // deleteValuesFromMap();
     // scholarId = genericProvider.scholarId;
     super.initState();
     calculateAttendance();
   }
+  Future<void> deleteValuesFromMap() async {
+    final firestore = FirebaseFirestore.instance;
+    final docRef = firestore.doc("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/attendance /scholar_id");
+
+    // Get the document
+    final docSnapshot = await docRef.get();
+
+    if (!docSnapshot.exists) {
+      return; // Handle document not found (optional)
+    }
+
+    // Get the existing map (assuming there's a field with a map)
+    final existingMap = docSnapshot.data()!['attendance'] as Map<String, dynamic>; // Replace 'mapField' with the actual field name
+
+    // Filter the map, keeping only entries where key doesn't start with the prefix
+    final filteredMap = existingMap.entries.fold({}, (acc, entry) =>
+    !entry.key.toString().startsWith("1710") ? { ...acc, entry.key: entry.value } : acc);
+
+    // Update the document with the modified data
+    await docRef.update({'attendance': filteredMap}); // Replace 'mapField' with the actual field name
+
+    print("Values starting with '1710' deleted from map in document.");
+  }
 
   void calculateAttendance() async {
+    var id = (genericProvider.userProfile == UserProfile.teacher)?genericProvider.empID:genericProvider.scholarId;
     final DocumentSnapshot attendanceSnapshot = await FirebaseFirestore.instance
         .collection('NewSchool')
         .doc("G0ITybqOBfCa9vownMXU")
         .collection('attendence')
         .doc('y2Yes9Dv5shcWQl9N9r2')
         .collection('attendance ')
-        .doc(genericProvider.scholarId)
+        .doc(id)
         .get();
 
     if (attendanceSnapshot.exists) {
@@ -126,6 +152,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ConstantColors.backGroundColor,
       appBar: AppBar(
         toolbarHeight: 60,
         shape: const RoundedRectangleBorder(
@@ -141,7 +168,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
         ),
         title: const Align(
             alignment: Alignment.centerLeft, child: Text("Attendance")),
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.white,
       ),
       body: Column(
         children: <Widget>[

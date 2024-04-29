@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:practice/screens/teachers/teacher_apply_leave.dart';
 import 'package:practice/screens/teachers/teacher_leave.dart';
 import 'package:practice/screens/teachers/teacher_student_leave.dart';
+import 'package:practice/utils/constants_colors.dart';
+import 'package:provider/provider.dart';
+
+import '../../bloc/generic_bloc.dart';
 
 class TeacherLeavePage extends StatefulWidget {
   const TeacherLeavePage({Key? key});
@@ -11,11 +15,20 @@ class TeacherLeavePage extends StatefulWidget {
 }
 
 class _TeacherLeavePageState extends State<TeacherLeavePage> {
+  var genericProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        // backgroundColor: ConstantColors.backGroundColor,
         backgroundColor: Colors.white,
         appBar: AppBar(
           leadingWidth: 50,
@@ -30,6 +43,8 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
               color: Colors.black,
             ),
           ),
+          // backgroundColor: ConstantColors.backGroundColor,
+
           backgroundColor: Colors.white,
           title: Row(
             children: [
@@ -50,8 +65,8 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
                       ),
                     ),
                     Text(
-                      "Deepanshu",
-                      style: TextStyle(fontSize: 12, color: Colors.black),
+                      genericProvider.loggedInTeacher.teacherName,
+                      style: TextStyle(fontSize: 12, color: Colors.black,overflow: TextOverflow.clip),
                     )
                   ],
                 ),
@@ -66,7 +81,7 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
             ],
           ),
           titleSpacing: 0,
-          bottom: const PreferredSize(
+          bottom:  PreferredSize(
             preferredSize: Size(0, 60),
             child: Material(
               color: Colors.white,

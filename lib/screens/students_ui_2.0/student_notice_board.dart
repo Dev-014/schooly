@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:practice/screens/students_ui_2.0/student_notice_create.dart';
 import 'package:practice/screens/students_ui_2.0/student_notice_view.dart';
 
+import '../../utils/constants_colors.dart';
+
 class StudentNoticeBoard extends StatefulWidget {
   const StudentNoticeBoard({Key? key}) : super(key: key);
 
@@ -15,13 +17,13 @@ class _StudentNoticeBoardState extends State<StudentNoticeBoard> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ConstantColors.backGroundColor,
         appBar: AppBar(
           title: const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Notice Board",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
               )),
           leading: IconButton(
             onPressed: () {
@@ -29,10 +31,10 @@ class _StudentNoticeBoardState extends State<StudentNoticeBoard> {
             },
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
-          backgroundColor: Colors.pink,
+          backgroundColor: Colors.white,
           bottom: const PreferredSize(
             preferredSize: Size(0, 55),
             child: Material(

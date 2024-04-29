@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:practice/bloc/http_request.dart';
-import 'package:practice/screens/dashboard.dart';
-import 'package:practice/screens/students_ui_2.0/dashBoard2.dart';
-import 'package:practice/screens/students_ui_2.0/dashboard.dart';
 import 'package:provider/provider.dart';
-
 import '../bloc/generic_bloc.dart';
-import '../common_widgets/otp_textfield.dart';
 import '../common_widgets/textfield_phonenumber.dart';
 
 class VerifyOtpPage extends StatefulWidget {

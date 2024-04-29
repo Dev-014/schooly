@@ -7,6 +7,7 @@ class SubjectDropdown extends StatefulWidget {
   double maxWidth;
   final void Function(String? selectedSubject) onSelect;
 
+
   SubjectDropdown({
     required this.maxWidth,
     required this.onSelect,
@@ -40,9 +41,11 @@ class _SubjectDropdownState extends State<SubjectDropdown> {
           );
         }
 
-        return Column(
-          children: [
-            CustDropDown<String>(
+        return Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: Column(
+            children: [
+              CustDropDown<String>(
 
               borderRadius: 0,
 
@@ -60,8 +63,8 @@ class _SubjectDropdownState extends State<SubjectDropdown> {
               },
               hintText: "Select Subject",
               // hint: Text('Select Class'),
-            ),
-          ],
+            ),]
+          ),
         );
       },
     );

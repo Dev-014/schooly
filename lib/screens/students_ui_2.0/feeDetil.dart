@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../bloc/generic_bloc.dart';
 import '../../common_widgets/fee_detail_card.dart';
 
 class FeeD extends StatefulWidget {
@@ -11,9 +13,16 @@ class FeeD extends StatefulWidget {
 }
 
 class _FeeDState extends State<FeeD> {
+  var genericProvider;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
+  }
   Future<Map<String, Map<String,dynamic>>?> func()async{
-    var a =  await FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/fee_details').doc("859949").get();
+    var a =  await FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/fee_details').doc(genericProvider.loggedInStudent.scholarId).get();
 
     Map<String, Map<String, dynamic>> convertedMap = {};
 

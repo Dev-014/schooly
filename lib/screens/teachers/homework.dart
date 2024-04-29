@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:practice/bloc/generic_bloc.dart';
@@ -87,6 +88,7 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
 
   String? selectedValue;
   var genericProvider;
+  var subject;
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
@@ -150,261 +152,126 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
         body: TabBarView(
 
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height*.9,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // applyLeaveTextField(suffix: false, hintText: "Class", headingText: "Class"),
-                    // applyLeaveTextField(suffix: false, hintText: "Section", headingText: "Sections"),
-                    // applyLeaveTextField(suffix: false, hintText: "Assignment", headingText: "Assignment"),
-                    // applyLeaveTextField(suffix: false, hintText: "Study Material", headingText: "Study Material"),
-                    // applyLeaveTextField(suffix: false, hintText: "Enter comment here", headingText: "Reason"),
-                    // applyLeaveTextField(suffix: false, hintText: "Enter comment here", headingText: "Reason"),
-                    Container(
-                        width: MediaQuery.of(context).size.width*.9,
-                        color: Colors.white,
-                        // height: 200,
-                        child: ClassSectionDropdown(
-                          maxWidth: MediaQuery.of(context).size.width*.84,
-                          onSelect: (selectedClass, selectedSection) {
-                            var classs = selectedClass;
-                            var sections = selectedSection;
+            SingleChildScrollView(
+              child: Container(
+                // height: MediaQuery.of(context).size.height*.95,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width*.9,
+                          color: Colors.white,
+                          // height: 200,
+                          child: ClassSectionDropdown(
+                            maxWidth: MediaQuery.of(context).size.width*.84,
+                            onSelect: (selectedClass, selectedSection) {
+                              var classs = selectedClass;
+                              var sections = selectedSection;
+                              // Use the selectedClass and selectedSection values here
+                              print('Selected Class: $classs, Selected Section: $sections');
+                            },
+                          ),
+              
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width*.9,
+                          // color: Colors.white,
+                          // height: 200,
+                          child: SubjectDropdown(
+                            maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                             subject = selectedSubject;
                             // Use the selectedClass and selectedSection values here
-                            print('Selected Class: $classs, Selected Section: $sections');
-                          },
-                        ),
+                            print('Selected subject: $subject');
+                          },)),
+              
 
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width*.9,
-                        color: Colors.white,
-                        // height: 200,
-                        child: SubjectDropdown(
-                          maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                          var subject = selectedSubject;
-                          // Use the selectedClass and selectedSection values here
-                          print('Selected subject: $subject');
-                        },)),
-
-                    // homeWorkTextFields(controller: _textController1,hintText: "Class", iconData: Icons.group),
-                    //
-                    //
-                    // // CustDropDown(
-                    // //     hintText: "Sections",
-                    // //     items: [
-                    // //       CustDropdownMenuItem(value: "value",
-                    // //           child: Container(height: 50,
-                    // //               alignment: Alignment.centerLeft,
-                    // //               decoration: BoxDecoration(borderRadius: BorderRadius
-                    // //                   .circular(14), color: Colors.grey.withOpacity(
-                    // //                   .0)),
-                    // //               child: Text("Custom"))),
-                    // //       CustDropdownMenuItem(value: "value",
-                    // //           child: Container(height: 50,
-                    // //               alignment: Alignment.centerLeft,
-                    // //               decoration: BoxDecoration(borderRadius: BorderRadius
-                    // //                   .circular(14), color: Colors.grey.withOpacity(
-                    // //                   .0)),
-                    // //               child: Text("New Item"))),
-                    // //     ],
-                    // //     onChanged: () {}),
-                    //
-                    //
-                    // //   Padding(
-                    // //     padding: const EdgeInsets.all(8.0),
-                    // //     child: MyDropdownButton(
-                    // //     items: items,
-                    // //     hint: "Select an option",
-                    // //     selectedValue: "Option 2",
-                    // //     onChanged: (value) => print("Selected value: $value"),
-                    // //     dropdownColor: Colors.red[200]!,
-                    // //     textStyle: const TextStyle(fontSize: 16, color: Colors.black),
-                    // //     // isExpanded: true,
-                    // // ),
-                    // //   ),
-                    // //
-                    // //       Padding(
-                    // //         padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
-                    // //         child: DropdownButtonHideUnderline(
-                    // //           child: DropdownButton2<String>(
-                    // //             isExpanded: true,
-                    // //             hint: const Row(
-                    // //               children: [
-                    // //                 Icon(
-                    // //                   Icons.list,
-                    // //                   size: 24,
-                    // //                   color: Colors.grey,
-                    // //                 ),
-                    // //                 SizedBox(
-                    // //                   width: 8,
-                    // //                 ),
-                    // //                 Expanded(
-                    // //                   child: Text(
-                    // //                     'Sections',
-                    // //                     style: TextStyle(
-                    // //                       fontSize: 14,
-                    // //                       fontWeight: FontWeight.bold,
-                    // //                       color: Colors.grey,
-                    // //                     ),
-                    // //                     overflow: TextOverflow.ellipsis,
-                    // //                   ),
-                    // //                 ),
-                    // //               ],
-                    // //             ),
-                    // //             items: items
-                    // //                 .map((String item) => DropdownMenuItem<String>(
-                    // //                       value: item,
-                    // //
-                    // //                       child: Text(
-                    // //                         item,
-                    // //                         style: const TextStyle(
-                    // //                           fontSize: 14,
-                    // //                           fontWeight: FontWeight.bold,
-                    // //                           color: Colors.black,
-                    // //                         ),
-                    // //                         overflow: TextOverflow.ellipsis,
-                    // //                       ),
-                    // //                     ))
-                    // //                 .toList(),
-                    // //             value: selectedValue,
-                    // //             onChanged: (String? value) {
-                    // //               setState(() {
-                    // //                 selectedValue = value;
-                    // //               });
-                    // //             },
-                    // //             buttonStyleData: ButtonStyleData(
-                    // //               height: 50,
-                    // //               width: double.infinity,
-                    // //               padding: const EdgeInsets.only(left: 14, right: 14),
-                    // //               decoration: BoxDecoration(
-                    // //                 borderRadius: BorderRadius.circular(14),
-                    // //                 border: Border.all(
-                    // //                   color: Colors.white.withOpacity(.15),
-                    // //                 ),
-                    // //                 color: Colors.white,
-                    // //               ),
-                    // //               elevation: 1,
-                    // //             ),
-                    // //             iconStyleData: const IconStyleData(
-                    // //               icon: Icon(
-                    // //                 Icons.arrow_forward_ios_outlined,
-                    // //               ),
-                    // //               iconSize: 14,
-                    // //               iconEnabledColor: Colors.black,
-                    // //               iconDisabledColor: Colors.grey,
-                    // //             ),
-                    // //             dropdownStyleData: DropdownStyleData(
-                    // //
-                    // //               maxHeight: 200,
-                    // //               width: MediaQuery.of(context).size.width*.9,
-                    // //               decoration: BoxDecoration(
-                    // //
-                    // //                 borderRadius: BorderRadius.circular(14),
-                    // //                 color: Colors.white,
-                    // //               ),
-                    // //               offset: const Offset(4, -2),
-                    // //               scrollbarTheme: ScrollbarThemeData(
-                    // //                 radius: const Radius.circular(40),
-                    // //                 thickness: MaterialStateProperty.all<double>(6),
-                    // //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
-                    // //               ),
-                    // //             ),
-                    // //             menuItemStyleData: const MenuItemStyleData(
-                    // //               height: 40,
-                    // //               padding: EdgeInsets.only(left: 14, right: 14),
-                    // //             ),
-                    // //           ),
-                    // //         ),
-                    // //       ),
-                    // homeWorkTextFields(controller: _textController2,
-                    //     hintText: "Section", iconData: Icons.hotel_class_outlined),
-                    homeWorkTextFields(controller: _textController3,hintText: "Subject", iconData: Icons.book),
-                    homeWorkTextFields(controller: _textController4,
-                        hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
-                    InkWell(
-                      onTap: () {
-
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.attach_file_outlined),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text("Attach Study Material"),
-                            ),
-                          ],
+                      homeWorkTextFields(controller: _textController4,
+                          hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
+                      InkWell(
+                        onTap: () {
+              
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+              
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.attach_file_outlined),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text("Attach Study Material"),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                      child: Container(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              addHomeWork(subjectId: _textController3.text, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
-                            },
-                            child: Text("Submit"),
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20), // Adjust the value as needed
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                        child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                addHomeWork(subjectId: subject, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
+                              },
+                              child: Text("Submit"),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // Adjust the value as needed
+                                ),
                               ),
-                            ),
-                          )),
-                    )
-                  ],
+                            )),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
             FutureBuilder<List<Map<String, dynamic>>>(
                 future: getHomeworkListForClassAndSection(),
                 builder: (BuildContext context, snapshot) {
-                  return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
-
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
-                          child: Align(alignment: Alignment.centerLeft,
-                              child: Text("Today",
-                                style: TextStyle(fontSize: 20,
-                                  // color: Colors.pink,
-                                ),)),
-                        ),
-                        Container(
-                          height: 550,
-                          width: 400,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-
-                              itemCount: snapshot.data?.length,
-                              itemBuilder: (context, index) {
-                                final listOfMap = snapshot.data;
-                                print("MMMNNNNNNNVVVVV");
-                                print(listOfMap);
-                                Map<String, dynamic> map = listOfMap![index];
-                                final homework_heading = map["title"];
-                                final status = map["status"];
-                                return  Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0, horizontal: 10),
-                                  child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
-                                );
-                              }),
-                        ),
-                      ]
+                  return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):SingleChildScrollView(
+                    child: Column(
+                    
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                            child: Align(alignment: Alignment.centerLeft,
+                                child: Text("Today",
+                                  style: TextStyle(fontSize: 20,
+                                  ),)),
+                          ),
+                          Container(
+                            height: 550,
+                            width: 400,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                    
+                                itemCount: snapshot.data?.length,
+                                itemBuilder: (context, index) {
+                                  final listOfMap = snapshot.data;
+                                  print("MMMNNNNNNNVVVVV");
+                                  print(listOfMap);
+                                  Map<String, dynamic> map = listOfMap![index];
+                                  final homework_heading = map["title"];
+                                  final status = map["status"];
+                                  return  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0, horizontal: 10),
+                                    child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
+                                  );
+                                }),
+                          ),
+                        ]
+                    ),
                   );
                 }),
           ],

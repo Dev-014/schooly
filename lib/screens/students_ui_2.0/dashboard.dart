@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:practice/screens/students_ui_2.0/dashBoard2.dart';
-import 'package:practice/screens/teacher_attendance.dart';
+import 'package:practice/screens/teachers/teacher_attendance.dart';
 import 'package:practice/screens/teachers/teacher_menu_page.dart';
 
 import 'package:provider/provider.dart';
@@ -31,17 +33,23 @@ class _MenuPageState extends State<MenuPage> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  final List<Widget> _teacherPages = [
     DashBoard2(),
     Temp(),
-    TeacherMenuPage(),
+    Container(),
+    // Your second page widget
+    Container(), // Your third page widget
+  ];
+  final List<Widget> _pages = [
+    DashBoard2(),
+    Container(),
     // Your second page widget
     Container(), // Your third page widget
   ];
   final List<Widget> _principalPages = [
     DashBoard2(),
     TeachersAttendance(),
-    TeacherMenuPage(),
+    Container(),
     // Your second page widget
     Container(), // Your third page widget
   ];
@@ -60,17 +68,8 @@ class _MenuPageState extends State<MenuPage> {
               icon: const Icon(
                 Icons.view_column,
               )),
-          title: const Align(
-            alignment: Alignment.center,
-            child: Text("St Joseph school "),
-          ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: Icon(Icons.cancel_rounded),
-            )
-          ],
-          // backgroundColor: Colors.white,
+          title: Text("St Joseph school "),
+
         ),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
@@ -103,6 +102,7 @@ class _MenuPageState extends State<MenuPage> {
                       color: Colors.black,
                     ),
                     label: AppLocalizations.of(context)!.attendance),
+
               BottomNavigationBarItem(
                   icon: Icon(
                     Icons.headphones,
@@ -116,6 +116,6 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                   label: "Logout")
             ]),
-        body: (genericProvider.userProfile == UserProfile.principal)?_principalPages.elementAt(_currentIndex):_pages.elementAt(_currentIndex));
+        body: (genericProvider.userProfile == UserProfile.principal)?_principalPages.elementAt(_currentIndex):(genericProvider.userProfile == UserProfile.teacher)?_teacherPages.elementAt(_currentIndex):_pages.elementAt(_currentIndex));
   }
 }

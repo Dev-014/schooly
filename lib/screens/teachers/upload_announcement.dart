@@ -65,50 +65,52 @@ class _UploadAnnouncementState extends State<UploadAnnouncement> {
        // backgroundColor: Colors.pink,
      ),
 
-     body: Container(
-        height: MediaQuery.of(context).size.height*.9,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 10,
-              ),
+     body: SingleChildScrollView(
+       child: SizedBox(
+          height: MediaQuery.of(context).size.height*.9,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
 
 
-              formTextFields(hintText: "Title", iconData: Icons.group,textEditingController: textEditingController1),
+                formTextFields(hintText: "Title", iconData: Icons.group,textEditingController: textEditingController1),
 
 
-              formTextFields
-              (
-                  hintText: "Category", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
-              formTextFields(hintText: "Description", iconData: Icons.book,textEditingController: textEditingController3),
+                formTextFields
+                (
+                    hintText: "Category", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
+                formTextFields(hintText: "Description", iconData: Icons.book,textEditingController: textEditingController3),
 
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        uploadAnnouncement(textEditingController3.text, textEditingController1.text, textEditingController2.text);
-                        // addHomeWork(subjectId: "hindi", classId: '10', sectionId: "A", title: "chapter : 10", fileUrl: "fileUrl", teacherUid: "teacherUid");
-                      },
-                      child: Text("Submit"),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Adjust the value as needed
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                  child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          uploadAnnouncement(textEditingController3.text, textEditingController1.text, textEditingController2.text);
+                          // addHomeWork(subjectId: "hindi", classId: '10', sectionId: "A", title: "chapter : 10", fileUrl: "fileUrl", teacherUid: "teacherUid");
+                        },
+                        child: Text("Submit"),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Adjust the value as needed
+                          ),
                         ),
-                      ),
-                    )),
-              )
-            ],
+                      )),
+                )
+              ],
+            ),
           ),
         ),
-      ),
+     ),
    );
 
   }

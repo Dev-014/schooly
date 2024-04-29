@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/bloc/http_request.dart';
 import 'package:practice/l10n/l10n.dart';
+import 'package:practice/modals/principal.dart';
 import 'package:practice/routes/url_constants.dart';
 import 'package:practice/screens/forget_password.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';
@@ -14,6 +15,7 @@ import 'package:practice/screens/verify_otp.dart';
 import 'package:provider/provider.dart';
 import '../common_widgets/textfield_phonenumber.dart';
 import '../modals/student.dart';
+import '../modals/teacher.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   var genericProvider;
+  final _focusNode = FocusNode();
   @override
   void initState() {
     // TODO: implement initState
@@ -36,12 +39,13 @@ class _SignInPageState extends State<SignInPage> {
   int? groupValue = 0;
   bool _isChecked1 = true;
   bool _isChecked2 = false;
+
+  TextEditingController controller = TextEditingController();
+  TextEditingController controller2 = TextEditingController();
   @override
   Widget build(BuildContext context) {
     genericProvider = Provider.of<GenericProvider>(context);
 
-    TextEditingController controller = TextEditingController();
-    TextEditingController controller2 = TextEditingController();
 
     Future<bool> checkDocumentAndLogin(String docId, BuildContext context) async {
       try {
@@ -74,6 +78,8 @@ class _SignInPageState extends State<SignInPage> {
           if (docSnapshot.exists) {
             // Update provider variable
             genericProvider.empID = docId;
+            genericProvider.loggedInTeacher = Teacher.fromFirestore(docSnapshot);
+
             genericProvider.setUserLoginToTrue();
             return true;
           } else {
@@ -85,13 +91,20 @@ class _SignInPageState extends State<SignInPage> {
             );
             return false;
           }
-        }else{
-          if (docId=="principal") {
+        }else if(genericProvider.userProfile == UserProfile.principal) {
+            final docRef = FirebaseFirestore.instance.doc("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/principal/$docId");
+            final docSnapshot = await docRef.get();
             // Update provider variable
-            genericProvider.empID = docId;
-            genericProvider.setUserLoginToTrue();
-            return true;
-          } else {
+            if (docSnapshot.exists) {
+              genericProvider.empID = docId;
+              genericProvider.loggedInPrincipal =
+                  Principal.fromFirestore(docSnapshot);
+
+              genericProvider.setUserLoginToTrue();
+              return true;
+            }
+
+           else {
             // Document doesn't exist, handle error or display message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -101,6 +114,8 @@ class _SignInPageState extends State<SignInPage> {
             return false;
           }
         }
+        return false;
+
       } catch (error) {
         // Handle potential errors during Firestore access
         ScaffoldMessenger.of(context).showSnackBar(
@@ -113,109 +128,111 @@ class _SignInPageState extends State<SignInPage> {
     }
 
 
-    return  SingleChildScrollView(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        
-        child: Scaffold(
-            body: Column(
-              children: [
-                // Top half of the screen with the logo.
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20))),
-                    child:  Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-            
-                          const Icon(
-                            Icons.ice_skating,
-                            color: Colors.white,
-                          ),
-                          Text(
-                              ( AppLocalizations.of(context)==null)?"bb":AppLocalizations.of(context)!.signIn,
-                            style: TextStyle(fontSize: 40, color: Colors.white),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                  Text("Principal",style: TextStyle(color: Colors.white),),
+    return  Scaffold(
+      resizeToAvoidBottomInset: true, // This is the key to keyboard management
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+
+          child: Column(
+            children: [
+              // Top half of the screen with the logo.
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20))),
+                  child:  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        const Icon(
+                          Icons.ice_skating,
+                          color: Colors.white,
+                        ),
+                        Text(
+                            ( AppLocalizations.of(context)==null)?"bb":AppLocalizations.of(context)!.signIn,
+                          style: TextStyle(fontSize: 40, color: Colors.white),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
+                                Text("Principal",style: TextStyle(color: Colors.white),),
+                                ),
+                                Radio(
+                                    value: 0,
+                                    groupValue: groupValue,
+                                    activeColor: Colors.white,
+                                    onChanged: (value){
+                                      setState(() {
+                                        groupValue = value;
+
+                                        genericProvider.setUserProfile(profile:"Principal");
+                                      });
+
+                                    }
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
+                                Text("Teacher",style: TextStyle(color: Colors.white),),
+                                    ),                              Radio(
+                                    value:1,
+                                    groupValue:groupValue,
+                                    activeColor: Colors.white,
+                                    onChanged: (value){
+
+                                      setState(() {
+                                        groupValue = value;
+                                        genericProvider.setUserProfile(profile:"Teacher");
+
+                                        // genericProvider.userProfile = UserProfile.teacher;
+                                      });
+                                    }),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
+                                Text("Student",style: TextStyle(color: Colors.white),),
                                   ),
-                                  Radio(
-                                      value: 0,
-                                      groupValue: groupValue,
-                                      activeColor: Colors.white,
-                                      onChanged: (value){
-                                        setState(() {
-                                          groupValue = value;
-            
-                                          genericProvider.setUserProfile(profile:"Principal");
-                                        });
-            
-                                      }
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                  Text("Teacher",style: TextStyle(color: Colors.white),),
-                                      ),                              Radio(
-                                      value:1,
-                                      groupValue:groupValue,
-                                      activeColor: Colors.white,
-                                      onChanged: (value){
-            
-                                        setState(() {
-                                          groupValue = value;
-                                          genericProvider.setUserProfile(profile:"Teacher");
-            
-                                          // genericProvider.userProfile = UserProfile.teacher;
-                                        });
-                                      }),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                  Text("Student",style: TextStyle(color: Colors.white),),
-                                    ),
-                              Radio(
-                                  value: 2,
-                                  groupValue: groupValue,
-                                  activeColor: Colors.white,
-                                  onChanged: (value){
-                                setState(() {
-                                  groupValue = value;
-            
-                                 genericProvider.setUserProfile(profile:"Student");
-                                });
-            
-                                }
-                              ),
-                                ],
-                              ),
-            
-                            ],
-                          )
-                        ],
-                      ),
+                            Radio(
+                                value: 2,
+                                groupValue: groupValue,
+                                activeColor: Colors.white,
+                                onChanged: (value){
+                              setState(() {
+                                groupValue = value;
+
+                               genericProvider.setUserProfile(profile:"Student");
+                              });
+
+                              }
+                            ),
+                              ],
+                            ),
+
+                          ],
+                        )
+                      ],
                     ),
                   ),
                 ),
-                // Bottom half of the screen with the sign in components.
-                Expanded(
-                  flex: 2,
+              ),
+              // Bottom half of the screen with the sign in components.
+              Expanded(
+                flex: 2,
+                child: SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.all(30),
                     decoration: const BoxDecoration(
@@ -249,7 +266,7 @@ class _SignInPageState extends State<SignInPage> {
                                 // genericProvider.setUserProfile(profile: "Teacher");
                                 print(")))00000p00p0p0p0p0p0p0");
                                 print(genericProvider.userProfile);
-            
+                  
                                 setState(() {
                                   // genericProvider
                                   //     .isUserLoggedIn = true;
@@ -259,12 +276,12 @@ class _SignInPageState extends State<SignInPage> {
                                 });}
                                // final response = await  HttpRequest().sendOtpRequest(mobileNumber: controller.text, school_id: "XrMZE54KzuJlz6ayc7Gh");
                                // if(response!){
-            
-            
+                  
+                  
                                 // await  Future.delayed(Duration(seconds: 1));
                                 // Navigator.pushNamed(context, UrlConstants.verify_otp);
                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>const VerifyOtpPage()));
-            
+                  
                                // }
                               },
                               style: ElevatedButton.styleFrom(
@@ -295,11 +312,12 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
       ),
-    );
+      );
 
   }
 }

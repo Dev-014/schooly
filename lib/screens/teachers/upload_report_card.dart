@@ -71,93 +71,95 @@ class _UploadReportCardState extends State<UploadReportCard> {
         // backgroundColor: Colors.pink,
       ),
 
-      body: Container(
-        height: MediaQuery.of(context).size.height*.9,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width*.9,
-                color: Colors.white,
-                // height: 200,
-                child: ClassSectionDropdown(
-                  maxWidth: MediaQuery.of(context).size.width*.84,
-                  onSelect: (selectedClass, selectedSection) {
-                    var classs = selectedClass;
-                    var sections = selectedSection;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected Class: $classs, Selected Section: $sections');
-                  },
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height*.9,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-
-              ),
-
-              // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: textEditingController1),
-
-
-              formTextFields
-                (
-                  hintText: "Scholar Id", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
-              GestureDetector(
-                onTap: () async{
-                  var store = FirebaseStorageService();
-                  String? file = await store.uploadFileToFirebase();
-                  setState(() {
-                    print(" setState obj");
+                Container(
+                  width: MediaQuery.of(context).size.width*.9,
+                  // color: Colors.white,
+                  // height: 200,
+                  child: ClassSectionDropdown(
+                    maxWidth: MediaQuery.of(context).size.width*.87,
+                    onSelect: (selectedClass, selectedSection) {
+                      var classs = selectedClass;
+                      var sections = selectedSection;
+                      // Use the selectedClass and selectedSection values here
+                      print('Selected Class: $classs, Selected Section: $sections');
+                    },
+                  ),
+        
+                ),
+        
+                // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: textEditingController1),
+        
+        
+                formTextFields
+                  (
+                    hintText: "Scholar Id", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
+                GestureDetector(
+                  onTap: () async{
+                    var store = FirebaseStorageService();
+                    String? file = await store.uploadFileToFirebase();
+                    setState(() {
+                      print(" setState obj");
+                      print(file);
+                      reportCardUrl =  file ;
+                      enabledStatus = true;
+                    });
+        
+                    print("object.....");
                     print(file);
-                    reportCardUrl =  file ;
-                    enabledStatus = true;
-                  });
-
-                  print("object.....");
-                  print(file);
-
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.attach_file_outlined),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text("Attach Study Material"),
-                      ),
-                    ],
+        
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+        
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.attach_file_outlined),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text("Attach Study Material"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                        onPressed:(enabledStatus)? (){
-                          uploadReportCard( scholarId:textEditingController2.text, reportCardUrl: reportCardUrl!, clazz: textEditingController1.text);
-                        }: null,
-
-                      child: Text("Submit"),
-
-                      style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor: Colors.grey.shade200,
-                        textStyle: TextStyle(color: enabledStatus? Colors.white: Colors.black),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Adjust the value as needed
+        
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                  child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                          onPressed:(enabledStatus)? (){
+                            uploadReportCard( scholarId:textEditingController2.text, reportCardUrl: reportCardUrl!, clazz: textEditingController1.text);
+                          }: null,
+        
+                        child: Text("Submit"),
+        
+                        style: ElevatedButton.styleFrom(
+                          disabledBackgroundColor: Colors.grey.shade200,
+                          textStyle: TextStyle(color: enabledStatus? Colors.white: Colors.black),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Adjust the value as needed
+                          ),
                         ),
-                      ),
-                    )),
-              )
-            ],
+                      )),
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -68,7 +68,7 @@ class MaterialWrapper extends StatelessWidget {
 
         builder: EasyLoading.init(),
 
-        locale: Locale("en"),
+        locale: Locale("hi"),
         localizationsDelegates: [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/routes/url_constants.dart';
-import 'package:practice/screens/homework_page.dart';
+import 'package:practice/screens/students_ui_2.0/homework_page.dart';
 import 'package:practice/screens/profile_page.dart';
 import 'package:practice/screens/sign_in_page.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';

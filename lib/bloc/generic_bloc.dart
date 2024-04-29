@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:practice/modals/principal.dart';
 import 'package:provider/provider.dart';
 
 import '../modals/student.dart';
+import '../modals/teacher.dart';
 
 class GenericProvider extends ChangeNotifier {
   String? empID;
   String? scholarId;
   Student? loggedInStudent;
+  Teacher? loggedInTeacher;
+  Principal? loggedInPrincipal;
   UserProfile? userProfile;
   bool isUserLoggedIn = false;
   int groupValues = 1;

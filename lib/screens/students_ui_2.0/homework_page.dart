@@ -64,38 +64,44 @@ class _HomeWorkPageState extends State<HomeWorkPage> {
        body: FutureBuilder<List<Map<String, dynamic>>>(
          future: getHomeworkListForClassAndSection(classNumber: "10",section: "A"),
          builder: (BuildContext context, snapshot) {
-           return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
+           return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):SingleChildScrollView(
+             child: SizedBox(
+               height: MediaQuery.of(context).size.height,
 
-               children: [
-                 const Padding(
-                   padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
-                   child: Align(alignment: Alignment.centerLeft,
-                       child: Text("Today",
-                         style: TextStyle(fontSize: 20,
-                             // color: Colors.pink,
-                         ),)),
-                 ),
-                 Container(
-                   height: 550,
-                   width: 400,
-                   child: ListView.builder(
-                       shrinkWrap: true,
+               child: Column(
 
-                       itemCount: snapshot.data?.length,
-                       itemBuilder: (context, index) {
-                         final listOfMap = snapshot.data;
-                         print(listOfMap);
-                         Map<String, dynamic> map = listOfMap![index];
-                         final homework_heading = map["title"];
-                         final status = map["status"];
-                         return  Padding(
-                           padding: const EdgeInsets.symmetric(
-                               vertical: 4.0, horizontal: 10),
-                           child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
-                         );
-                       }),
-                 ),
-               ]
+                   children: [
+                     const Padding(
+                       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                       child: Align(alignment: Alignment.centerLeft,
+                           child: Text("Today",
+                             style: TextStyle(fontSize: 20,
+                                 // color: Colors.pink,
+                             ),)),
+                     ),
+                     Container(
+                       height: 550,
+                       width: 400,
+                       child: ListView.builder(
+                           shrinkWrap: true,
+
+                           itemCount: snapshot.data?.length,
+                           itemBuilder: (context, index) {
+                             final listOfMap = snapshot.data;
+                             print(listOfMap);
+                             Map<String, dynamic> map = listOfMap![index];
+                             final homework_heading = map["title"];
+                             final status = map["status"];
+                             return  Padding(
+                               padding: const EdgeInsets.symmetric(
+                                   vertical: 4.0, horizontal: 10),
+                               child: HomeWorkCard(title: homework_heading,status:status, date: map["subject"],),
+                             );
+                           }),
+                     ),
+                   ]
+               ),
+             ),
            );
          }),
     );

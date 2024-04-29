@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../../bloc/generic_bloc.dart';
 
 class ApplyLeavePage extends StatefulWidget {
   const ApplyLeavePage({Key? key});
@@ -14,12 +17,16 @@ class _ApplyLeavePageState extends State<ApplyLeavePage> {
   final TextEditingController _reasonController = TextEditingController();
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
+  var genericProvider;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+
   }
+
 
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
@@ -42,93 +49,95 @@ class _ApplyLeavePageState extends State<ApplyLeavePage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 8.0),
-            child: Card(
-              elevation: 0,
-              color: Colors.white,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8.0),
+              child: Card(
+                elevation: 0,
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.0),
+                          child: Text(
+                            "Instructions",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ),
+                      ),
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 2.0),
                         child: Text(
-                          "Instructions",
+                          "1. Same day leave can be applied before 7:00 AM",
                           style: TextStyle(
-                              color: Colors.blue,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 2.0),
-                      child: Text(
-                        "1. Same day leave can be applied before 7:00 AM",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2.0),
+                        child: Text(
+                          "2. Only Parent can apply for leave on behalf of their child.",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 2.0),
-                      child: Text(
-                        "2. Only Parent can apply for leave on behalf of their child.",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          applyLeaveTextField(
-            hintText: "dd MMM yyyy",
-            headingText: "From Date",
-            controller: _fromDateController,
-            onTap: () => _selectDate(context, _fromDateController),
-          ),
-          applyLeaveTextField(
-            hintText: "dd MMM yyyy",
-            headingText: "To Date",
-            controller: _toDateController,
-            onTap: () => _selectDate(context, _toDateController),
-          ),
-          applyLeaveTextField(
-            suffix: false,
-            hintText: "Enter comment here",
-            headingText: "Reason",
-            controller: _reasonController,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32.0),
-            child: SizedBox(
-              height: 35,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _applyLeave(context),
-                child: const Text(
-                  "APPLY",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff11489c),
+            applyLeaveTextField(
+              hintText: "dd MMM yyyy",
+              headingText: "From Date",
+              controller: _fromDateController,
+              onTap: () => _selectDate(context, _fromDateController),
+            ),
+            applyLeaveTextField(
+              hintText: "dd MMM yyyy",
+              headingText: "To Date",
+              controller: _toDateController,
+              onTap: () => _selectDate(context, _toDateController),
+            ),
+            applyLeaveTextField(
+              suffix: false,
+              hintText: "Enter comment here",
+              headingText: "Reason",
+              controller: _reasonController,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: SizedBox(
+                height: 35,
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _applyLeave(context),
+                  child: const Text(
+                    "APPLY",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff11489c),
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -205,7 +214,7 @@ class _ApplyLeavePageState extends State<ApplyLeavePage> {
         'appliedDate': appliedDate,
         'teacherApproval': 'Pending',
         'principalApproval': 'Pending',
-        'stuId': 'scholar_1', // Assuming '1' is the student ID
+        'stuId': genericProvider.scholarId, // Assuming '1' is the student ID
         'reason': reason,
       };
 

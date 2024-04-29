@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../../bloc/generic_bloc.dart';
 
 class TeacherNoticeView extends StatefulWidget {
   const TeacherNoticeView({Key? key}) : super(key: key);
@@ -12,7 +15,14 @@ class TeacherNoticeView extends StatefulWidget {
 
 class _TeacherNoticeViewState extends State<TeacherNoticeView> {
   String mainClass = "";
+  var genericProvider;
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    print(",,,,,,,,,,,,,,,,");
+    print(genericProvider.empID);
 
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -22,7 +32,7 @@ class _TeacherNoticeViewState extends State<TeacherNoticeView> {
           .collection('attendence')
           .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
           .collection('teachers')
-          .doc("teacher_1") // Assuming teacher ID is "teacher_1"
+          .doc(genericProvider.empID) // Assuming teacher ID is "teacher_1"
           .snapshots(),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot> studentSnapshot) {
@@ -41,7 +51,7 @@ class _TeacherNoticeViewState extends State<TeacherNoticeView> {
         Map<String, dynamic>? teacherData =
         studentSnapshot.data!.data() as Map<String, dynamic>?;
 
-        mainClass = teacherData?['class'];
+        mainClass = teacherData?['classs'];
 
         return StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance

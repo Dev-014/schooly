@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../teachers/time_table_new.dart';
+import '../../common_methods/time_table_new.dart';
 
 class TimeTable extends StatefulWidget {
   const TimeTable({super.key});

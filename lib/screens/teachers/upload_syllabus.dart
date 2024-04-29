@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../bloc/firebase_storage.dart';
 import '../../common_widgets/class_section_dropdown.dart';
-import '../../common_widgets/form_textfield.dart';
-import '../../common_widgets/new_drop_down.dart';
 import '../../common_widgets/subject_dropdown.dart';
 
 class UploadSyllabusPage extends StatefulWidget {
@@ -15,7 +13,6 @@ class UploadSyllabusPage extends StatefulWidget {
 }
 
 class _UploadSyllabusPageState extends State<UploadSyllabusPage> {
-  // String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
   TextEditingController textEditingController1 = TextEditingController();
   TextEditingController textEditingController2 = TextEditingController();
   TextEditingController textEditingController3 = TextEditingController();
@@ -25,10 +22,9 @@ class _UploadSyllabusPageState extends State<UploadSyllabusPage> {
 
   Future<void> uploadSyllabus(
       {required String syllabusUrl, required String clazz,required String subject}) async {
-    // String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
     DateTime now = DateTime.now();
     int currentYear = now.year;
-    String reportCardId = "class_"+clazz+"_"+currentYear.toString();
+    // String reportCardId = "class_"+clazz+"_"+currentYear.toString();
     Map<String, dynamic> syllabusData = {
       'subject_name': subject,
       'syllabus_url': syllabusUrl,
@@ -44,6 +40,14 @@ class _UploadSyllabusPageState extends State<UploadSyllabusPage> {
     }
   }
 
+  @override
+  void dispose() {
+     textEditingController1.dispose();
+     textEditingController2.dispose();
+     textEditingController3.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
 var subject;
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,7 @@ var subject;
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               size: 30,
             )),
@@ -69,7 +73,6 @@ var subject;
               "Upload Syllabus Page",
               style: TextStyle(fontSize: 18),
             )),
-        // backgroundColor: Colors.pink,
       ),
 
       body: Container(
@@ -79,57 +82,26 @@ var subject;
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
                 width: MediaQuery.of(context).size.width*.9,
-                color: Colors.white,
-                // height: 200,
+
                 child: ClassSectionDropdown(
                   maxWidth: MediaQuery.of(context).size.width*.84,
                   onSelect: (selectedClass, selectedSection) {
                      classs = selectedClass;
                     var sections = selectedSection;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected Class: $classs, Selected Section: $sections');
                   },
                 ),
 
               ),
-
-              // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: textEditingController1),
-
-
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
-            //   child: CustDropDown(
-            //       maxWidth: MediaQuery.of(context).size.width*.84,
-            //       hintText: "Subject",
-            //       items: [
-            //         CustDropdownMenuItem(value: "science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-            //         CustDropdownMenuItem(value: "social_science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-            //         CustDropdownMenuItem(value: "maths", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-            //         CustDropdownMenuItem(value: "english", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-            //         CustDropdownMenuItem(value: "hindi", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Hindi"))),
-            //
-            //       ],
-            //       onChanged: (value){
-            //         setState(() {
-            //           subject = value;
-            //
-            //         });
-            //       }),
-            // ),
               Container(
                   width: MediaQuery.of(context).size.width*.9,
-                  color: Colors.white,
-                  // height: 200,
                   child: SubjectDropdown(
                     maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
                     var subject = selectedSubject;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected subject: $subject');
                   },)),
 
               GestureDetector(
@@ -137,25 +109,19 @@ var subject;
                   var store = FirebaseStorageService();
                   String? file = await store.uploadFileToFirebase();
                   setState(() {
-                    print(" setState obj");
-                    print(file);
                     syllabusdUrl =  file ;
                     enabledStatus = true;
                   });
-
-                  print("object.....");
-                  print(file);
-
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
 
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.attach_file_outlined),
                       Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
+                        padding: EdgeInsets.only(left: 8.0),
                         child: Text("Attach Study Material"),
                       ),
                     ],

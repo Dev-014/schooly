@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class TextFieldWithLabelAndCountryCode extends StatelessWidget {
   final String labelText;
   final String? countryCode;
+  final FocusNode? focusNode;
   final TextEditingController controller;
 
   const TextFieldWithLabelAndCountryCode({
@@ -11,6 +12,7 @@ class TextFieldWithLabelAndCountryCode extends StatelessWidget {
     Key? key,
     required  this.controller,
     required this.labelText,
+    this.focusNode,
     this.countryCode,
   }) : super(key: key);
 
@@ -37,6 +39,7 @@ class TextFieldWithLabelAndCountryCode extends StatelessWidget {
             width: double.infinity,
             child: TextField(
               controller: controller,
+              focusNode: focusNode,
               cursorColor: Colors.pink,
               decoration: (countryCode==null)
                   ? InputDecoration(

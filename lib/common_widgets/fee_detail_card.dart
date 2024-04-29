@@ -85,7 +85,7 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(widget.paymentDate, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
+                      Text(widget.paymentDate.split("T").first, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey,overflow: TextOverflow.ellipsis),),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 4.0),
                         child: Icon(Icons.arrow_drop_down,),
@@ -116,7 +116,7 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                           padding: EdgeInsets.symmetric(vertical: 4.0),
                           child: Text("Due Date", style: TextStyle(fontWeight: FontWeight.w600),),
                         ),
-                        Text(widget.dueDate),
+                        Text(widget.dueDate.split("T").first),
                       ],
                     ),
                   Row(
@@ -128,7 +128,7 @@ class _FeeDetailCardState extends State<FeeDetailCard> {
                         padding: EdgeInsets.symmetric(vertical: 4.0),
                         child: Text("Payment Date", style: TextStyle(fontWeight: FontWeight.w600),),
                       ),
-                      Text(widget.paymentDate),
+                      Text(widget.paymentDate.split("T").first),
                     ],
                   ),
                   Row(

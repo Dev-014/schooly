@@ -1,11 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:practice/common_widgets/calender_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:practice/common_widgets/holiday_card.dart';
-import 'package:practice/common_widgets/homework_card.dart';
-import 'package:practice/screens/fee_details_page.dart';
 import 'package:practice/utils/constants_colors.dart';
 
 class Eventt {

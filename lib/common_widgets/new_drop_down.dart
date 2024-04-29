@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustDropDown<T> extends StatefulWidget {
@@ -222,10 +223,10 @@ class _CustDropDownState extends State<CustDropDown>
             : null,
         child: Container(
           padding: EdgeInsets.zero,
-          height: 58,
+          // height: 58,
           width: widget.maxWidth??MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-            color: Colors.white,
+            // color: Colors.white,
             borderRadius: BorderRadius.circular(12),),
           // decoration: _getDecoration(),
           child: Card(
@@ -235,102 +236,112 @@ class _CustDropDownState extends State<CustDropDown>
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             child: Row(
-              // mainAxisAlignment: MainAxisAlignment,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0, right: 8.0),
-                  child: Icon(
-                    Icons.account_balance_sharp,
-                    // color: Colors.grey,
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+                    child: Icon(
+                      Icons.account_balance_sharp,
+                      // color: Colors.grey,
+                    ),
                   ),
                 ),
                 _isAnyItemSelected
-                    ? Padding(
-                  padding:
-                  const EdgeInsets.only(left: 4.0), // change it here
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.zero,
-
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.15),
-
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(.3),
-                        ),
-                        borderRadius: BorderRadius.circular(12)),
-                    width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
-                    // width: MediaQuery.of(context).size.width - 56,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: _itemSelected,
+                    ? Expanded(
+                  flex: 6,
+                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.only(left : 0.0), // change it here
+                                        child: Container(
+                      // height: 50,
+                      padding: EdgeInsets.zero,
+                      
+                      decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(.15),
+                      
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(.3),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Icon(
-                            Icons.arrow_drop_down,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                    : Padding(
-                  padding:
-                  const EdgeInsets.only(left: 4.0), // change it here
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.zero,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.15),
-
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(.3),
-                        ),
-                        borderRadius: BorderRadius.circular(12)),
-
-                    // decoration: BoxDecoration(
-                    //     color: Colors.grey.withOpacity(.2),
-                    //     borderRadius: BorderRadius.circular(12)),
-                    width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
-                    // width: MediaQuery.of(context).size.width - 56,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-
-                              widget.hintText,
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-
-                              style: TextStyle(
-                                  // color: Colors.grey,
-                                  fontSize: 16),
+                          borderRadius: BorderRadius.circular(12)),
+                      width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
+                      // width: MediaQuery.of(context).size.width - 56,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: _itemSelected,
                             ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Icon(
-                            Icons.arrow_drop_down,
+                          Flexible(
+                            flex: 1,
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                                        ),
+                                      ),
+                    )
+                    : Expanded(
+                  flex: 6,
+                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.only(left: 0.0), // change it here
+                                        child: Container(
+                      height: 50,
+                      padding: EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(.15),
+                      
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(.3),
+                          ),
+                          borderRadius: BorderRadius.circular(12)),
+                      
+                      // decoration: BoxDecoration(
+                      //     color: Colors.grey.withOpacity(.2),
+                      //     borderRadius: BorderRadius.circular(12)),
+                      width: (widget.maxWidth??MediaQuery.of(context).size.width) - 56,
+                      // width: MediaQuery.of(context).size.width - 56,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                      
+                                widget.hintText,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                      
+                                style: TextStyle(
+                                    // color: Colors.grey,
+                                    fontSize: 16),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                            ),
+                          ),
+                        ],
+                      ),
+                                        ),
+                                      ),
                     ),
-                  ),
-                ),
               ],
             ),
           ),

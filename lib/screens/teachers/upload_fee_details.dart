@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 
+import '../../common_widgets/form_textfield.dart';
 import '../../utils/constants_colors.dart';
 
 
@@ -91,6 +92,8 @@ class UploadFeeDetail extends StatefulWidget {
 }
 
 class _UploadFeeDetailState extends State<UploadFeeDetail> {
+  TextEditingController _textController2 = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

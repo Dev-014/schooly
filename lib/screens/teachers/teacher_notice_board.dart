@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/teachers/teacher_notice_create.dart';
 import 'package:practice/screens/teachers/teacher_notice_view.dart';
+import 'package:practice/utils/constants_colors.dart';
 
 class TeacherNoticeBoard extends StatefulWidget {
   const TeacherNoticeBoard({Key? key}) : super(key: key);
@@ -15,8 +16,9 @@ class _TeacherNoticeBoardState extends State<TeacherNoticeBoard> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ConstantColors.backGroundColor,
         appBar: AppBar(
+
           title: const Align(
               alignment: Alignment.centerLeft,
               child: Text(

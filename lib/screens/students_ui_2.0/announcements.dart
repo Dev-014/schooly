@@ -63,71 +63,75 @@ class _AnnouncementState extends State<Announcement> with SingleTickerProviderSt
         body: FutureBuilder(
           future: getAnnouncement(),
           builder: (BuildContext context, snapshot){
-            return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            return (!snapshot.hasData)?
+            const Center(child: CircularProgressIndicator()):
+            SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
 
-                // Stack(
-                //   children: [
-                //     Container(
-                //       height: 50,
-                //       color: Colors.blue,
-                //     ),
-                //     Padding(
-                //     padding: const EdgeInsets.only(left: 16.0,top: 22,),
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //         color: Colors.grey,
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //       padding: EdgeInsets.symmetric(vertical: 0),
-                //       child: TabBar(
-                //
-                //         indicatorColor: Colors.black,
-                //         indicatorSize: TabBarIndicatorSize.label,
-                //         controller: _tabController,
-                //         tabs: const [
-                //           Tab(text: "Tab 1"),
-                //           Tab(text: "Tab 2"),
-                //           Tab(text: "Tab 3"),
-                //           Tab(text: "Tab 4"),
-                //           Tab(text: "Tab 5"),
-                //
-                //         ],
-                //       ),
-                //     ),
-                //   )],
-                // ),
-                // Expanded(
-                //   child: TabBarView(
-                //
-                //     controller: _tabController,
-                //     children:  [
-                Center(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height*.9,
-                      child: ListView.builder(
+                  // Stack(
+                  //   children: [
+                  //     Container(
+                  //       height: 50,
+                  //       color: Colors.blue,
+                  //     ),
+                  //     Padding(
+                  //     padding: const EdgeInsets.only(left: 16.0,top: 22,),
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.grey,
+                  //         borderRadius: BorderRadius.circular(8),
+                  //       ),
+                  //       padding: EdgeInsets.symmetric(vertical: 0),
+                  //       child: TabBar(
+                  //
+                  //         indicatorColor: Colors.black,
+                  //         indicatorSize: TabBarIndicatorSize.label,
+                  //         controller: _tabController,
+                  //         tabs: const [
+                  //           Tab(text: "Tab 1"),
+                  //           Tab(text: "Tab 2"),
+                  //           Tab(text: "Tab 3"),
+                  //           Tab(text: "Tab 4"),
+                  //           Tab(text: "Tab 5"),
+                  //
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   )],
+                  // ),
+                  // Expanded(
+                  //   child: TabBarView(
+                  //
+                  //     controller: _tabController,
+                  //     children:  [
+                  Center(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height*.9,
+                        child: ListView.builder(
 
 
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          print(snapshot.data![index]["title"]);
-                          print(snapshot.data![index]["time"]);
-                          print(snapshot.data![index]["category"]);
-                          return announcementCard(title: snapshot.data![index]["title"],time: snapshot.data![index]["time"],tag: snapshot.data![index]["category"]);
-                        },
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            print(snapshot.data![index]["title"]);
+                            print(snapshot.data![index]["time"]);
+                            print(snapshot.data![index]["category"]);
+                            return announcementCard(title: snapshot.data![index]["title"],time: snapshot.data![index]["time"],tag: snapshot.data![index]["category"]);
+                          },
 
-                      ),
-                    )),
-                // Center(child: Text("Tab 2 page")),
-                // Center(child: Text("Tab 3 page")),
-                // Center(child: Text("Tab 4 page")),
-                // Center(child: Text("Tab 5 page")),
+                        ),
+                      )),
+                  // Center(child: Text("Tab 2 page")),
+                  // Center(child: Text("Tab 3 page")),
+                  // Center(child: Text("Tab 4 page")),
+                  // Center(child: Text("Tab 5 page")),
 
-                //     ],
-                //   ),
-                // ),
-              ],
+                  //     ],
+                  //   ),
+                  // ),
+                ],
+              ),
             );
           }
         )
@@ -169,7 +173,7 @@ class _AnnouncementState extends State<Announcement> with SingleTickerProviderSt
                                     borderRadius: BorderRadius.circular(12)
                                   ),
                                 ),
-                                IconButton(onPressed: (){}, icon: Icon(Icons.accessibility_outlined,size: 22,))
+                                IconButton(onPressed: (){}, icon: Icon(Icons.more_vert,size: 22,))
                               ],
                             ),
                             Padding(

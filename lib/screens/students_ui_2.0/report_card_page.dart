@@ -24,8 +24,6 @@ class _ReportCardPageState extends State<ReportCardPage> {
         .get();
 
     querySnapshot.docs.forEach((doc) {
-      print("MMMMMMMMM");
-      print(doc);
       Map<String, dynamic> announcementItem = {
         'report_card_id': doc.id,
         'report_card_url': doc['report_card_url'],

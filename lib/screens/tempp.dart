@@ -55,26 +55,42 @@ class _TempState extends State<Temp> {
     });
   }
 
-
-  void markPresentAttendance(String studentID) {
+  void markPresentAttendance(String studentID) async{
     DateTime currentDate = DateTime.now();
     DateFormat formatter = DateFormat('dd_MM_yyyy');
     String formattedDate = formatter.format(currentDate);
-    FirebaseFirestore.instance
+    final attendanceRef = await FirebaseFirestore.instance
         .collection("NewSchool")
         .doc("G0ITybqOBfCa9vownMXU")
         .collection("attendence")
         .doc("y2Yes9Dv5shcWQl9N9r2")
-        .collection("attendance ")
-        .doc(studentID)
-        .update({
-      "attendance.${formattedDate}": "present"
-    }).then((value){
+        .collection("attendance ");
 
-      print("success");
-    }).catchError((error) {
-      print('Error updating student: $error');
-    });
+
+    try {
+      // Check if the document exists
+      final DocumentSnapshot docSnap = await attendanceRef.doc(studentID).get();
+
+      if (docSnap.exists) {
+        // Document exists, update it
+        await attendanceRef.doc(studentID).update({
+          "attendance.${formattedDate}": "present"
+        });
+        print('Document updated: $studentID');
+      } else {
+        // Document does not exist, create it
+        await  attendanceRef.doc(studentID).set({
+          "attendance":{"${formattedDate}": "present"}
+
+        });
+        print('Document created: $studentID');
+
+      }
+    } catch (e) {
+      print('Error updating attendance: $e');
+    }
+
+
   }
   void markAbsentAttendance(String studentID) {
     DateTime currentDate = DateTime.now();
@@ -186,7 +202,9 @@ class _TempState extends State<Temp> {
                         .collection("attendence")
                         .doc("y2Yes9Dv5shcWQl9N9r2")
                         .collection('classes')
-                        .doc("class_id_10thC"))
+                        .doc(genericProvider.loggedInTeacher.classs).collection("Sections").doc(
+                      genericProvider.loggedInTeacher.section
+                    ))
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {

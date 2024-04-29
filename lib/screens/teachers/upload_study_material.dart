@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/widgets.dart';
 import 'package:practice/bloc/firebase_storage.dart';
 import 'package:practice/common_widgets/drop_down_button.dart';
 import 'package:practice/common_widgets/multimedia_card.dart';
 import 'package:practice/common_widgets/new_drop_down.dart';
 import 'package:practice/utils/constants_colors.dart';
+import 'package:provider/provider.dart';
 
+import '../../bloc/generic_bloc.dart';
 import '../../common_widgets/class_section_dropdown.dart';
 import '../../common_widgets/form_textfield.dart';
 import '../../common_widgets/subject_dropdown.dart';
@@ -19,18 +23,53 @@ class StudyMaterialForm extends StatefulWidget {
 }
 
 class _StudyMaterialFormState extends State<StudyMaterialForm> {
-  TextEditingController _textController1 = TextEditingController();
-  TextEditingController _textController2 = TextEditingController();
-  TextEditingController _textController3 = TextEditingController();
+
   TextEditingController _textController4 = TextEditingController();
-  TextEditingController _textController5 = TextEditingController();
   String? section;
   String? clazz;
   String? subject;
+  String? sections;
+  String? classs;
+  String? subjects;
+
   bool get allDropdownsSelected => clazz != null && section != null && subject != null;
 
+  Future<List<Map<String, dynamic>>> getStudyMaterialListForClassAndSection(
+      ) async {
+    print(clazz);
+    print(section);
+    print(subject);
+    List<Map<String, dynamic>> studyMaterialList = [];
 
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material')
+    // .where('class', isEqualTo: classNumber)
+    // .where('section', isEqualTo: section)
+        .where("emp_id",isEqualTo: genericProvider.empID)
+    .where("class",isEqualTo: clazz).
+    where("section",isEqualTo: section).
+    where("subjectId",isEqualTo: subject)
+        .get();
+
+
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> studyMaterialItem = {
+        'id': doc.id,
+        'subject': doc['subjectId'],
+        'title': doc['title'],
+        'fileUrl': doc['fileUrl'],
+        'class': doc['class'],
+        'section':doc['section'],
+        'emp_id': doc['emp_id']
+      };
+      studyMaterialList.add(studyMaterialItem);
+    });
+    print("object");
+    print(studyMaterialList);
+    return studyMaterialList;
+  }
   Future<List<Map<String, dynamic>?>?> fetchStudyMaterials(String? subjectId, String? classId, String? sectionId) async {
+    print("ppppppppppp");
     final firestore = FirebaseFirestore.instance;
 
  if(subjectId != null || sectionId!=null||classId!=null){
@@ -104,44 +143,54 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
     Map<String, dynamic> materialData = {
       "id": materialId,
       'title': title,
+      'class': classId,
+      'section':sectionId,
       'fileUrl': fileUrl,
-      'uploadedBy': teacherUid,
+      'emp_id': teacherUid,
       'subjectId': subjectId,
     };
 
     // Add the study material data to the study_materials collection
-    await firestore.collection('study_material').doc(materialId).set(materialData);
+    // await firestore.collection('study_material').doc(materialId).set(materialData);
 ///NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/subjects/science/class_10/section_A/material_ids/material_id_teacher_id
-    final materialIdsPath = await firestore
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc("y2Yes9Dv5shcWQl9N9r2")
-        .collection('subjects')
-        .doc(subjectId)
-        .collection('class_$classId')
-        .doc(isForAllSections ? 'section_all' : 'section_$sectionId')
-        .collection('all_ids')
-        .doc("material_ids");
+//     final materialIdsPath = await firestore
+//         .collection('NewSchool')
+//         .doc("G0ITybqOBfCa9vownMXU")
+//         .collection('attendence')
+//         .doc("y2Yes9Dv5shcWQl9N9r2")
+//         .collection('subjects')
+//         .doc(subjectId)
+//         .collection('class_$classId')
+//         .doc(isForAllSections ? 'section_all' : 'section_$sectionId')
+//         .collection('all_ids')
+//         .doc("material_ids");
+    try {
+      final materialIdsPath = await firestore.collection(
+          "/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material")
+          .doc(materialId)
+          .set(materialData);
+      print(materialId);
+      print("Study Material Add successfully");
+    }catch(e){
+        print(e);
 
 
 
- try {
-   await materialIdsPath.update({
-     "ids": FieldValue.arrayUnion([materialId]),
-   });
- } catch(e){
-   print(e);
-   await materialIdsPath.set({
-     "ids": FieldValue.arrayUnion([materialId]),
-   });
+ //
+ // try {
+ //   await materialIdsPath.update({
+ //     "ids": FieldValue.arrayUnion([materialId]),
+ //   });
+ // } catch(e){
+ //   print(e);
+ //   await materialIdsPath.set({
+ //     "ids": FieldValue.arrayUnion([materialId]),
+ //   });
 
  }
 
 
-    print('Material IDs updated successfully!');
     // Add the material data to the study_materials collection
-    await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material').doc(materialId).set(materialData);
     // final materialIdsDoc = await firestore.doc(materialIdsPath).get();
     //
     // if (!materialIdsDoc.exists) {
@@ -168,30 +217,34 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
     // Create the study material data
 
     // Add the study material data to the study_materials collection
-    ///NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/subjects/science/class_10/section_A/material_ids/material_id_teacher_id
-    final materialIdsPath = await firestore
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc("y2Yes9Dv5shcWQl9N9r2")
-        .collection('subjects')
-        .doc(subjectId)
-        .collection('class_$classId')
-        .doc(isForAllSections ? 'section_all' : 'section_$sectionId')
-        .collection('all_ids')
-        .doc("material_ids");
+    // ///NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/subjects/science/class_10/section_A/material_ids/material_id_teacher_id
 
 
-    try {
-      await materialIdsPath.update({
-        "ids": FieldValue.arrayRemove([id]),
-      });
-    } catch(e){
-      print(e);
-
-    }
-    print('Material IDs updated successfully!');
+    // final materialIdsPath = await firestore
+    //     .collection('NewSchool')
+    //     .doc("G0ITybqOBfCa9vownMXU")
+    //     .collection('attendence')
+    //     .doc("y2Yes9Dv5shcWQl9N9r2")
+    //     .collection('subjects')
+    //     .doc(subjectId)
+    //     .collection('class_$classId')
+    //     .doc(isForAllSections ? 'section_all' : 'section_$sectionId')
+    //     .collection('all_ids')
+    //     .doc("material_ids");
+    //
+    //
+    // try {
+    //   await materialIdsPath.update({
+    //     "ids": FieldValue.arrayRemove([id]),
+    //   });
+    // } catch(e){
+    //   print(e);
+    //
+    // }
+    // print('Material IDs updated successfully!');
     // Add the material data to the study_materials collection
+    print("<<<<<<<<<<<<<<<<<");
+    print(id);
     await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material').doc(id).delete();
     // final materialIdsDoc = await firestore.doc(materialIdsPath).get();
     //
@@ -244,8 +297,20 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
   // List<String> myItems = ["Option 1", "Option 2", "Option 3"];
   Map<String, dynamic>? studyMaterialData;
   String? selectedValue;
+
+  var genericProvider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // print(genericProvider.isUserLoggedIn);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -279,323 +344,216 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
           // backgroundColor: Colors.pink,
         ),
         body: TabBarView(children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width*.9,
-                    color: Colors.white,
-                    // height: 200,
-                    child: ClassSectionDropdown(
-                      maxWidth: MediaQuery.of(context).size.width*.84,
-                      onSelect: (selectedClass, selectedSection) {
-                        var classs = selectedClass;
-                        var sections = selectedSection;
-                        // Use the selectedClass and selectedSection values here
-                        print('Selected Class: $classs, Selected Section: $sections');
-                      },
+          SingleChildScrollView(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 10,
                     ),
-
-                  ),
-                  // formTextFields(hintText: "Class", iconData: Icons.group,textEditingController: _textController1 ),
-                  // // CustDropDown(
-                  // //   hintText: "Subject",
-                  // //     items: [
-                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-                  // //       CustDropdownMenuItem(value: "value", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-                  // //     ],
-                  // //     onChanged: (){}),
-                  // formTextFields(
-                  //     hintText: "Section", iconData: Icons.hotel_class_outlined,textEditingController: _textController2),
-                  //
-                  Container(
+                    Container(
                       width: MediaQuery.of(context).size.width*.9,
                       color: Colors.white,
                       // height: 200,
-                      child: SubjectDropdown(
-                        maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                        var subject = selectedSubject;
-                        // Use the selectedClass and selectedSection values here
-                        print('Selected subject: $subject');
-                      },)),
+                      child: ClassSectionDropdown(
+                        maxWidth: MediaQuery.of(context).size.width*.84,
+                        onSelect: (selectedClass, selectedSection) {
+                           classs = selectedClass;
+                           sections = selectedSection;
+                          // Use the selectedClass and selectedSection values here
+                          print('Selected Class: $classs, Selected Section: $sections');
+                        },
+                      ),
 
-                  // formTextFields(hintText: "Subject", iconData: Icons.book, textEditingController: _textController3),
-                  formTextFields(
-                      hintText: "Assignment", maxLine: 4, iconData: Icons.assignment,textEditingController: _textController4),
-                  InkWell(
-                    onTap: () async{
-                      var store =   FirebaseStorageService();
-                      String? file = await store.uploadFileToFirebase();
-                      print("Oooooop");
-                      // if (file != null) {
-                      print(file);
-                      studyMaterialData = {
-                        "fileUrl": file,
-                        "title": _textController4.text,
-                        "uploaded_by": "Annma Thomas"
-                      };
-                      // }else{
-                      //   print("File is null");
-                      // }
-                      print(file);
+                    ),
 
-                      // await store..uploadFile(file!);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
+                    Container(
+                        width: MediaQuery.of(context).size.width*.9,
+                        // color: Colors.white,
+                        // height: 200,
+                        child: SubjectDropdown(
+                          maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                           subjects = selectedSubject;
+                          // Use the selectedClass and selectedSection values here
+                          print('Selected subject: $subjects');
+                        },)),
 
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.attach_file_outlined),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text("Attach Study Material"),
-                          ),
-                        ],
+                    formTextFields(
+                        hintText: "Assignment", maxLine: 4, iconData: Icons.assignment,textEditingController: _textController4),
+                    InkWell(
+                      onTap: () async{
+                        var store =   FirebaseStorageService();
+                        String? file = await store.uploadFileToFirebase();
+                        print("Oooooop");
+                        // if (file != null) {
+                        print(file);
+                        studyMaterialData = {
+                          "fileUrl": file,
+                          "title": _textController4.text,
+                          "uploaded_by": "Annma Thomas"
+                        };
+
+                        print(file);
+
+                        // await store..uploadFile(file!);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.attach_file_outlined),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text("Attach Study Material"),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                    child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () async{
-                            // addStudyMaterial(_textController3.text, _textController1.text, "study_material_index_1", _textController2.text, "study_material_new_teacher_id", studyMaterialData!);
-                            await  addStudyMaterial(subjectId: _textController3.text, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl", teacherUid: "teacherUid");
-                          },
-                          child: Text("Submit"),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20), // Adjust the value as needed
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                      child: Container(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async{
+                              // addStudyMaterial(_textController3.text, _textController1.text, "study_material_index_1", _textController2.text, "study_material_new_teacher_id", studyMaterialData!);
+                              await  addStudyMaterial(subjectId: subjects!, classId: classs!, sectionId: sections!, title: _textController4.text, fileUrl: "fileUrl", teacherUid: genericProvider.loggedInTeacher.empId);
+                            },
+                            child: Text("Submit"),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    20), // Adjust the value as needed
+                              ),
                             ),
-                          ),
-                        )),
-                  )
-                ],
+                          )),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all( 12.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all( 12.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
 
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClassSectionDropdown(
-                  horizontalDirection: true,
-                  maxWidth: MediaQuery.of(context).size.width*.445,
-                  onSelect: (selectedClass, selectedSection) {
-                    var classs = selectedClass;
-                    var sections = selectedSection;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected Class: $classs, Selected Section: $sections');
-                  },
-                ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClassSectionDropdown(
+                    horizontalDirection: true,
+                    maxWidth: MediaQuery.of(context).size.width*.44,
+                    onSelect: (selectedClass, selectedSection) {
+                      setState(() {
+                        clazz = selectedClass;
+                        section = selectedSection;
+                      });
 
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.min,
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Padding(
-                //         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                //         child: CustDropDown(
-                //             maxWidth: MediaQuery.of(context).size.width*.45,
-                //             hintText: "Class",
-                //             items: [
-                //               CustDropdownMenuItem(value: "10", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 10"))),
-                //               CustDropdownMenuItem(value: "9", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 9"))),
-                //               CustDropdownMenuItem(value: "8", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 8"))),
-                //               CustDropdownMenuItem(value: "6", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 6"))),
-                //
-                //               CustDropdownMenuItem(value: "5", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Class 5"))),
-                //             ],
-                //             onChanged: (value){
-                //               clazz = value;
-                //
-                //             }),
-                //       ),
-                //       Padding(
-                //         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                //         child: CustDropDown(
-                //             maxWidth: MediaQuery.of(context).size.width*.45,
-                //             hintText: "Section",
-                //             items: [
-                //               CustDropdownMenuItem(value: "A", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section A"))),
-                //               CustDropdownMenuItem(value: "B", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section B"))),
-                //               CustDropdownMenuItem(value: "C", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section C"))),
-                //               CustDropdownMenuItem(value: "D", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Section D"))),
-                //             ],
-                //             onChanged: (value){
-                //               section = value;
-                //             }),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                SubjectDropdown(
-                  maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                  var subject = selectedSubject;
-                  // Use the selectedClass and selectedSection values here
-                  print('Selected subject: $subject');
-                },),
-
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                //   child: CustDropDown(
-                //     maxWidth: MediaQuery.of(context).size.width*.92,
-                //     hintText: "Subject",
-                //       items: [
-                //         CustDropdownMenuItem(value: "science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Science"))),
-                //         CustDropdownMenuItem(value: "social_science", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Social Science"))),
-                //         CustDropdownMenuItem(value: "maths", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Maths"))),
-                //         CustDropdownMenuItem(value: "english", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("English"))),
-                //         CustDropdownMenuItem(value: "hindi", child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text("Hindi"))),
-                //
-                //       ],
-                //       onChanged: (value){
-                //       setState(() {
-                //         subject = value;
-                //
-                //       });
-                //       }),
-                // ),
-
-                if (allDropdownsSelected) // Only build FutureBuilder if all dropdowns are selected
-                  FutureBuilder<List<Map<String, dynamic>?>?>(
-                    future: fetchStudyMaterials(subject, clazz, section),
-                    builder: (BuildContext context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(child: Text('Error: ${snapshot.error}')),
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: const Center(child: Text('No data available')),
-                        );
-                      } else {
-                        return Column(
-
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
-                                child: Align(alignment: Alignment.centerLeft,
-                                    child: Text("Today",
-                                      style: TextStyle(fontSize: 20,
-                                        // color: Colors.pink,
-                                      ),)),
-                              ),
-                              Container(
-                                height: 550,
-                                width: 400,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-
-                                    itemCount: snapshot.data?.length,
-                                    itemBuilder: (context, index) {
-                                      final listOfMap = snapshot.data;
-                                      print(listOfMap);
-                                      Map<String, dynamic>? map = listOfMap![index];
-                                      final homework_heading = map!["title"];
-                                      // final status = map["status"];
-                                      return  Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4.0, horizontal: 10),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            MultiMediaCard(title: homework_heading, date: "English / Today",),
-                                            IconButton(onPressed: (){
-
-                                              deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
-                                              setState(() {
-
-                                              });
-                                            }, icon: Icon(Icons.delete))
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              ),
-                            ]
-                        );
-                      }
+                      print('Selected Class: $clazz, Selected Section: $section');
                     },
                   ),
-                // FutureBuilder<List<Map<String, dynamic>?>?>(
-                //     future: fetchStudyMaterials(subject, clazz, section),
-                //     builder: (BuildContext context, snapshot) {
-                //       return (!snapshot.hasData)?const Center(child: CircularProgressIndicator()):Column(
-                //
-                //           children: [
-                //             const Padding(
-                //               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
-                //               child: Align(alignment: Alignment.centerLeft,
-                //                   child: Text("Today",
-                //                     style: TextStyle(fontSize: 20,
-                //                       // color: Colors.pink,
-                //                     ),)),
-                //             ),
-                //             Container(
-                //               height: 550,
-                //               width: 400,
-                //               child: ListView.builder(
-                //                   shrinkWrap: true,
-                //
-                //                   itemCount: snapshot.data?.length,
-                //                   itemBuilder: (context, index) {
-                //                     final listOfMap = snapshot.data;
-                //                     print(listOfMap);
-                //                     Map<String, dynamic>? map = listOfMap![index];
-                //                     final homework_heading = map!["title"];
-                //                     // final status = map["status"];
-                //                     return  Padding(
-                //                       padding: const EdgeInsets.symmetric(
-                //                           vertical: 4.0, horizontal: 10),
-                //                       child: Row(
-                //                         mainAxisSize: MainAxisSize.min,
-                //                         children: [
-                //                           MultiMediaCard(title: homework_heading, date: "English / Today",),
-                //                           IconButton(onPressed: (){
-                //
-                //                             deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
-                //                           setState(() {
-                //
-                //                           });
-                //                             }, icon: Icon(Icons.delete))
-                //                         ],
-                //                       ),
-                //                     );
-                //                   }),
-                //             ),
-                //           ]
-                //       );
-                //     })
 
-              ],
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: SubjectDropdown(
+                      maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+                        setState(() {
+                          subject = selectedSubject;
+
+                        });
+                      // Use the selectedClass and selectedSection values here
+                      print('Selected subject: $subject');
+                    },),
+                  ),
+
+
+                  if (allDropdownsSelected)
+
+                    FutureBuilder<List<Map<String, dynamic>?>?>(
+                      future: getStudyMaterialListForClassAndSection(),
+                      builder: (BuildContext context, snapshot) {
+                        print("/////////////////////");// Only build FutureBuilder if all dropdowns are selected
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: const Center(child: CircularProgressIndicator()),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Center(child: Text('Error: ${snapshot.error}')),
+                          );
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: const Center(child: Text('No data available')),
+                          );
+                        } else {
+                          return Column(
+
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                                  child: Align(alignment: Alignment.centerLeft,
+                                      child: Text("Today",
+                                        style: TextStyle(fontSize: 20,
+                                          // color: Colors.pink,
+                                        ),)),
+                                ),
+                                Container(
+                                  height: 550,
+                                  width: 400,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+
+                                      itemCount: snapshot.data?.length,
+                                      itemBuilder: (context, index) {
+                                        final listOfMap = snapshot.data;
+                                        print(listOfMap);
+                                        Map<String, dynamic>? map = listOfMap![index];
+                                        final study_material_heading = map!["title"];
+                                        print("??????????");
+                                        print(listOfMap);
+                                        // final status = map["status"];
+                                        return  Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              MultiMediaCard(title: study_material_heading, date: "English / Today",),
+                                              IconButton(onPressed: (){
+
+                                                deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map!["id"]);
+                                                setState(() {
+
+                                                });
+                                              }, icon: Icon(Icons.delete))
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              ]
+                          );
+                        }
+                      },
+                    ),
+
+
+                ],
+              ),
             ),
           ),
 

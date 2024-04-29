@@ -1,10 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class LeaveRequestsPage extends StatelessWidget {
+import '../../bloc/generic_bloc.dart';
+
+class LeaveRequestsPage extends StatefulWidget {
   const LeaveRequestsPage({Key? key}) : super(key: key);
 
+  @override
+  State<LeaveRequestsPage> createState() => _LeaveRequestsPageState();
+}
+
+class _LeaveRequestsPageState extends State<LeaveRequestsPage> {
+  var genericProvider;
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    print(",,,,,,,,,,,,,,,,");
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -46,7 +61,7 @@ class LeaveRequestsPage extends StatelessWidget {
 
           // Filter leave applications based on student ID
           List<dynamic> studentLeaveRequests = leaveRequests
-              .where((leave) => leave['stuId'] == 'scholar_1')
+              .where((leave) => leave['stuId'] == genericProvider.scholarId)
               .toList();
 
           if (studentLeaveRequests.isEmpty) {

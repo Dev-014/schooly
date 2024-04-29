@@ -164,7 +164,6 @@ class _ClassNoticeBoardState extends State<ClassNoticeBoard> {
       padding: EdgeInsets.all(8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
