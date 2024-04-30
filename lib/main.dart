@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/screens/dashboard.dart';
 import 'package:practice/screens/notice_board_page.dart';
+import 'package:practice/screens/principal/principal_leave_page.dart';
 import 'package:practice/screens/sign_in_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:practice/screens/students_ui_2.0/leave_page.dart';
@@ -39,7 +40,7 @@ void main() async {
           ],
           supportedLocales: [Locale("en"), Locale("hi")],
           debugShowCheckedModeBanner: false,
-          home: TeacherNoticeBoard())
+          home: PrincipalLeavePage())
       // home: AttendanceCalculator(
       //   studentId: 'scholar_2',
       // )),
