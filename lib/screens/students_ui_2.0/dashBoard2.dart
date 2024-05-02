@@ -4,6 +4,8 @@ import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import 'package:go_router/go_router.dart';
 import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/routes/url_constants.dart';
+import 'package:practice/screens/principal/principal_leave_page.dart';
+import 'package:practice/screens/principal/upload_academic_calender.dart';
 import 'package:practice/screens/students_ui_2.0/feeDetil.dart';
 import 'package:practice/screens/students_ui_2.0/notice_board1.dart';
 import 'package:practice/screens/students_ui_2.0/student_notice_board.dart';
@@ -213,7 +215,7 @@ class _DashBoard2State extends State<DashBoard2> {
                             //       ),
                                   GestureDetector(
                                     onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const CalenderPage()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const UploadAcademicCalender()));
 
                                     },
                                     child: dashBoardCard(context: context, text: AppLocalizations.of(context)!.calendar, icon: Icons.calendar_month),
@@ -248,7 +250,7 @@ class _DashBoard2State extends State<DashBoard2> {
                                   ///ToDo : Need to update it according to Principal Profile
                                   GestureDetector(
                                     onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> TeacherLeavePage()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> PrincipalLeavePage()));
                                     },
                                     child:dashBoardCard(context: context, text: AppLocalizations.of(context)!.leave, icon: Icons.announcement_outlined),
                                   ),

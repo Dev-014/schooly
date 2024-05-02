@@ -1,5 +1,11 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:intl/intl.dart';
+import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/common_widgets/calender_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:practice/common_widgets/holiday_card.dart';
@@ -35,18 +41,69 @@ class _CalenderPageState extends State<CalenderPage> {
       throw Exception('Failed to get holidays from Google Calendar API.');
     }
   }
-  List<Eventt>? holidays;
+  List<Eventt>? holidaa = [] ;
+
+  EventList<Event>? holidays = EventList<Event>(events: {});
+
+  Future<EventList<Event>?> getAcademicCalender() async {
+
+    EventList<Event> holidays = EventList<Event>(events: {});
+    final DocumentSnapshot academicCalenderSnapshot = await FirebaseFirestore.instance
+        .collection('NewSchool')
+        .doc("G0ITybqOBfCa9vownMXU")
+        .collection('attendence')
+        .doc('y2Yes9Dv5shcWQl9N9r2')
+        .collection('academic_calender')
+        .doc("random_doc_id")
+        .get();
+
+    if (academicCalenderSnapshot.exists) {
+      Map<String, dynamic> data =
+      academicCalenderSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> academicCalenderData = data['academic_calender'];
+       academicCalenderData.forEach((key, value) {
+        DateTime attendanceDate = DateFormat('dd_MM_yyyy').parse(key);
+
+            holidays.add(
+                attendanceDate,
+                Event(
+                  date: attendanceDate,
+                  title: 'Holiday',
+                  icon: const Icon(Icons.circle, color: Colors.red),
+                  dot: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                    color: Colors.red,
+                    height: 10,
+                    width: 10,
+                  ),
+                ));
+
+            holidaa!.add(Eventt(
+              date: attendanceDate,
+              title: value.toString(),
+            ));
+          }
+
+      );
+       print(holidaa?.first);
+      return holidays;
+
+
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     print("object");
-getHolidays();
+var a = getHolidays();
+print(a);
 
     super.initState();
   }
 
   Future getHolidays()async{
-    holidays =  await _getHolidaysFromGoogleCalendar();
+    holidays =  await getAcademicCalender();
     setState(() {
 
     });
@@ -70,37 +127,49 @@ getHolidays();
 
       ),
       body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-
-            const Expanded(flex: 2,child: CalenderCard()),
-          (holidays==null)?const SizedBox():Expanded(
-            flex: 2,
-            child: SizedBox(
-              width: 400,
-              child: SingleChildScrollView(
-
-                child: Column(
-                  children: [
-                    const Align(
-                      alignment:Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                        child: Text("Holidays",style: TextStyle(fontSize: 18,
-                          // ,color: Colors.pink,
-                        ),),
-                      ),
-                    ),
-                    for(int i =0; i<holidays!.length;i++)
-                     HolidayCard(event: holidays?[i],)
-                  ],
-                ),
-              )
+        child:  Column(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: CalendarCarousel<Event>(
+                thisMonthDayBorderColor: Colors.grey,
+                daysTextStyle: const TextStyle(color: Colors.black),
+                markedDatesMap: holidays,
+                height: 400.0,
+                selectedDateTime: DateTime.now(),
+                todayButtonColor: Colors.yellow,
+                selectedDayButtonColor: Colors.yellow,
+                onDayPressed: (DateTime date, List<Event> events) {
+                  // Handle day press if needed
+                },
+              ),
             ),
-          )
+            const Align(
+              alignment:Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                child: Text("Holidays",style: TextStyle(fontSize: 18,
+                  // ,color: Colors.pink,
+                ),),
+              ),
+            ),
+
+            (holidays==null)?const SizedBox():Expanded(
+              flex: 2,
+              child: SizedBox(
+                  width: 400,
+                  child: SingleChildScrollView(
+
+                    child: Column(
+                      children: [
+                        for(var holiday in holidaa??[])
+                          HolidayCard(event: holiday,)
+                      ],
+                    ),
+                  )
+              ),
+            )
+
           ],
         ),
       ),
