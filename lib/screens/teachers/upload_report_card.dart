@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/common_widgets/loading_icon_text_button.dart';
 
 import '../../bloc/firebase_storage.dart';
 import '../../common_widgets/class_section_dropdown.dart';
@@ -104,8 +105,10 @@ class _UploadReportCardState extends State<UploadReportCard> {
                 formTextFields
                   (
                     hintText: "Scholar Id", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
-                GestureDetector(
-                  onTap: () async{
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: LoadingIconTextButton(text: "Attach Report Card", icon: Icons.attach_file_outlined, onPressed: () async{
                     var store = FirebaseStorageService();
                     String? file = await store.uploadFileToFirebase();
                     setState(() {
@@ -114,26 +117,42 @@ class _UploadReportCardState extends State<UploadReportCard> {
                       reportCardUrl =  file ;
                       enabledStatus = true;
                     });
-        
+
                     print("object.....");
                     print(file);
-        
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-        
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.attach_file_outlined),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("Attach Study Material"),
-                        ),
-                      ],
-                    ),
-                  ),
+
+                  }),
                 ),
+                // GestureDetector(
+                //   onTap: () async{
+                //     var store = FirebaseStorageService();
+                //     String? file = await store.uploadFileToFirebase();
+                //     setState(() {
+                //       print(" setState obj");
+                //       print(file);
+                //       reportCardUrl =  file ;
+                //       enabledStatus = true;
+                //     });
+                //
+                //     print("object.....");
+                //     print(file);
+                //
+                //   },
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: Row(
+                //
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: [
+                //         Icon(Icons.attach_file_outlined),
+                //         Padding(
+                //           padding: const EdgeInsets.only(left: 8.0),
+                //           child: Text("Attach Study Material"),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
         
                 Padding(
                   padding:

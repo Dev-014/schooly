@@ -5,6 +5,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/widgets.dart';
 import 'package:practice/bloc/firebase_storage.dart';
 import 'package:practice/common_widgets/drop_down_button.dart';
+import 'package:practice/common_widgets/loading_icon_text_button.dart';
 import 'package:practice/common_widgets/multimedia_card.dart';
 import 'package:practice/common_widgets/new_drop_down.dart';
 import 'package:practice/utils/constants_colors.dart';
@@ -298,6 +299,24 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
   Map<String, dynamic>? studyMaterialData;
   String? selectedValue;
 
+  Future<dynamic> uploadStudyMaterial()async {
+
+    print("nnn,n,n,,nn,");
+    var store =   FirebaseStorageService();
+    String? file = await store.uploadFileToFirebase();
+    print("Oooooop");
+    // if (file != null) {
+    print(file);
+    studyMaterialData = {
+      "fileUrl": file,
+      "title": _textController4.text,
+      "uploaded_by": "Annma Thomas"
+    };
+
+    print(file);
+
+  }
+
   var genericProvider;
   @override
   void initState() {
@@ -384,38 +403,58 @@ class _StudyMaterialFormState extends State<StudyMaterialForm> {
 
                     formTextFields(
                         hintText: "Assignment", maxLine: 4, iconData: Icons.assignment,textEditingController: _textController4),
-                    InkWell(
-                      onTap: () async{
-                        var store =   FirebaseStorageService();
-                        String? file = await store.uploadFileToFirebase();
-                        print("Oooooop");
-                        // if (file != null) {
-                        print(file);
-                        studyMaterialData = {
-                          "fileUrl": file,
-                          "title": _textController4.text,
-                          "uploaded_by": "Annma Thomas"
-                        };
 
-                        print(file);
+                    LoadingIconTextButton(
+                        text: "Attach Study Material", icon: Icons.attach_file_outlined, onPressed: ()async {
 
-                        // await store..uploadFile(file!);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
+                        await  uploadStudyMaterial();
+                      // print("nnn,n,n,,nn,");
+                      // var store =   FirebaseStorageService();
+                      // String? file = await store.uploadFileToFirebase();
+                      // print("Oooooop");
+                      // // if (file != null) {
+                      // print(file);
+                      // studyMaterialData = {
+                      //   "fileUrl": file,
+                      //   "title": _textController4.text,
+                      //   "uploaded_by": "Annma Thomas"
+                      // };
+                      //
+                      // print(file);
 
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.attach_file_outlined),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text("Attach Study Material"),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    }),
+                    // InkWell(
+                    //   onTap: () async{
+                    //     var store =   FirebaseStorageService();
+                    //     String? file = await store.uploadFileToFirebase();
+                    //     print("Oooooop");
+                    //     // if (file != null) {
+                    //     print(file);
+                    //     studyMaterialData = {
+                    //       "fileUrl": file,
+                    //       "title": _textController4.text,
+                    //       "uploaded_by": "Annma Thomas"
+                    //     };
+                    //
+                    //     print(file);
+                    //
+                    //     // await store..uploadFile(file!);
+                    //   },
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child: Row(
+                    //
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         Icon(Icons.attach_file_outlined),
+                    //         Padding(
+                    //           padding: const EdgeInsets.only(left: 8.0),
+                    //           child: Text("Attach Study Material"),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
                       padding:
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),

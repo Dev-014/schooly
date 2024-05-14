@@ -20,6 +20,8 @@ class ClassSectionDropdown extends StatefulWidget {
 class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
    String? selectedClass;
    String? selectedSection;
+   bool isClassSelected = false;
+   bool isSectionSelected = false;
    bool enableSectionDropDown = false;
    List<CustDropdownMenuItem> sectionDropdownItems = [];
 
@@ -115,6 +117,8 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                  setState(() {
                    selectedClass = value!;
                    selectedSection = null;
+                   isClassSelected = true;
+                   isSectionSelected = false;
                    // Reset section when class changes
                  });
 // Load section items for the selected class
@@ -125,6 +129,14 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                hintText: "Select Class",
                // hint: Text('Select Class'),
              ),
+             if(!isClassSelected)
+               Align(
+                 alignment: Alignment.centerLeft,
+                 child: Text(
+                   'Please select a class',
+                   style: TextStyle(color: Colors.red),
+                 ),
+               ),
              SizedBox(height: 20),
              CustDropDown<String>(
                maxWidth: widget.maxWidth,
@@ -135,6 +147,8 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                onChanged: (value) {
                  setState(() {
                    selectedSection = value;
+                   isSectionSelected = true;
+
                  });
 // Load section items for the selected class
                  widget.onSelect(selectedClass, selectedSection); // Callback to parent widget
@@ -144,82 +158,90 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
 
                // hint: Text('Select Section'),
              ),
+             if (!isSectionSelected)
+             Align(
+               alignment: Alignment.centerLeft,
+               child: Text(
+                 'Please select a section',
+                 style: TextStyle(color: Colors.red),
+               ),
+             ),
            ],
          );
        },
      );
 
-    // return StreamBuilder<QuerySnapshot>(
-    //   stream: FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes').snapshots(),
-    //   builder: (context, snapshot) {
-    //     if (!snapshot.hasData) {
-    //       return CircularProgressIndicator();
-    //     }
-    //     List<DropdownMenuItem<String>> classDropdownItems = [];
-    //     List<DropdownMenuItem<String>> sectionDropdownItems = [];
-    //     for (var classDoc in snapshot.data!.docs) {
-    //       String className = classDoc.id;
-    //       classDropdownItems.add(
-    //         DropdownMenuItem(
-    //           child: Text(className),
-    //           value: className,
-    //         ),
-    //       );
-    //       if (selectedClass == className) {
-    //         print("????????????");
-    //         print(classDoc.id);
-    //          FirebaseFirestore.instance
-    //             .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes')
-    //             .doc(classDoc.id)
-    //             .collection('Sections')
-    //             .get().then((value) {
-    //
-    //           var sectionSnapshot =  value.docs;
-    //           print(">>>>>>>>>>>>");
-    //           print(sectionSnapshot);
-    //           for (var sectionDoc in sectionSnapshot) {
-    //             String sectionName = sectionDoc.id;
-    //             sectionDropdownItems.add(
-    //               DropdownMenuItem(
-    //                 child: Text(sectionName),
-    //                 value: sectionName,
-    //               ),
-    //             );
-    //           }
-    //         });
-    //
-    //       }
-    //     }
-    //     return Column(
-    //       children: [
-    //         DropdownButton<String>(
-    //           value: selectedClass,
-    //           items: classDropdownItems,
-    //           onChanged: (value) {
-    //             setState(() {
-    //               print(">>>>>>>>>");
-    //               selectedClass = value!;
-    //               selectedSection = null; // Reset section when class changes
-    //             });
-    //           },
-    //           hint: Text('Select Class'),
-    //         ),
-    //         SizedBox(height: 20),
-    //         DropdownButton<String>(
-    //
-    //           value: selectedSection,
-    //           items: sectionDropdownItems,
-    //           onChanged: (value) {
-    //             setState(() {
-    //               selectedSection = value;
-    //             });
-    //           },
-    //           hint: Text('Select Section'),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 }
 
+// return StreamBuilder<QuerySnapshot>(
+//   stream: FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes').snapshots(),
+//   builder: (context, snapshot) {
+//     if (!snapshot.hasData) {
+//       return CircularProgressIndicator();
+//     }
+//     List<DropdownMenuItem<String>> classDropdownItems = [];
+//     List<DropdownMenuItem<String>> sectionDropdownItems = [];
+//     for (var classDoc in snapshot.data!.docs) {
+//       String className = classDoc.id;
+//       classDropdownItems.add(
+//         DropdownMenuItem(
+//           child: Text(className),
+//           value: className,
+//         ),
+//       );
+//       if (selectedClass == className) {
+//         print("????????????");
+//         print(classDoc.id);
+//          FirebaseFirestore.instance
+//             .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes')
+//             .doc(classDoc.id)
+//             .collection('Sections')
+//             .get().then((value) {
+//
+//           var sectionSnapshot =  value.docs;
+//           print(">>>>>>>>>>>>");
+//           print(sectionSnapshot);
+//           for (var sectionDoc in sectionSnapshot) {
+//             String sectionName = sectionDoc.id;
+//             sectionDropdownItems.add(
+//               DropdownMenuItem(
+//                 child: Text(sectionName),
+//                 value: sectionName,
+//               ),
+//             );
+//           }
+//         });
+//
+//       }
+//     }
+//     return Column(
+//       children: [
+//         DropdownButton<String>(
+//           value: selectedClass,
+//           items: classDropdownItems,
+//           onChanged: (value) {
+//             setState(() {
+//               print(">>>>>>>>>");
+//               selectedClass = value!;
+//               selectedSection = null; // Reset section when class changes
+//             });
+//           },
+//           hint: Text('Select Class'),
+//         ),
+//         SizedBox(height: 20),
+//         DropdownButton<String>(
+//
+//           value: selectedSection,
+//           items: sectionDropdownItems,
+//           onChanged: (value) {
+//             setState(() {
+//               selectedSection = value;
+//             });
+//           },
+//           hint: Text('Select Section'),
+//         ),
+//       ],
+//     );
+//   },
+// );

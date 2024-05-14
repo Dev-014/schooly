@@ -2,19 +2,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/routes/url_constants.dart';
+import 'package:practice/screens/calender_page.dart';
+import 'package:practice/screens/examination_page.dart';
+import 'package:practice/screens/fee_details_page.dart';
+import 'package:practice/screens/principal/principal_leave_page.dart';
 import 'package:practice/screens/students_ui_2.0/homework_page.dart';
 import 'package:practice/screens/profile_page.dart';
 import 'package:practice/screens/sign_in_page.dart';
 import 'package:practice/screens/students_ui_2.0/announcements.dart';
 import 'package:practice/screens/students_ui_2.0/dashboard.dart';
+import 'package:practice/screens/students_ui_2.0/leave_page.dart';
+import 'package:practice/screens/students_ui_2.0/report_card_page.dart';
 import 'package:practice/screens/students_ui_2.0/student_notice_board.dart';
 import 'package:practice/screens/students_ui_2.0/study_material.dart';
+import 'package:practice/screens/students_ui_2.0/syllabus.dart';
+import 'package:practice/screens/students_ui_2.0/time_table.dart';
 import 'package:practice/screens/students_ui_2.0/view_attendance_page.dart';
 import 'package:practice/screens/teachers/add_student.dart';
 import 'package:practice/screens/teachers/homework.dart';
 import 'package:practice/screens/teachers/teacher_leave_page.dart';
+import 'package:practice/screens/teachers/teacher_notice_board.dart';
+import 'package:practice/screens/teachers/upload_fee_details.dart';
+import 'package:practice/screens/teachers/upload_report_card.dart';
+import 'package:practice/screens/teachers/upload_study_material.dart';
+import 'package:practice/screens/teachers/upload_syllabus.dart';
 import 'package:practice/screens/verify_otp.dart';
 
+import '../screens/principal/upload_academic_calender.dart';
+import '../screens/students_ui_2.0/time_table_form.dart';
+import '../screens/teachers/upload_announcement.dart';
 import 'all_page_wrapper.dart';
 
 class RouteHandler {
@@ -158,6 +174,90 @@ List<RouteBase> _getRouteList() {
       path: UrlConstants.add_student,
       child: AddStudents(),
     ),
+    goRoutePathMaker(
+      path: UrlConstants.upload_academic_calender,
+      child: UploadAcademicCalender(),
+    ),
+
+    goRoutePathMaker(
+      path: UrlConstants.student_notice_board,
+      child: StudentNoticeBoard(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.teacher_notice_board,
+      child: TeacherNoticeBoard(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.time_table_form,
+      child: TimetableForm(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.upload_announcement,
+      child: UploadAnnouncement(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.study_material_form,
+      child: StudyMaterialForm(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.principal_leave_page,
+      child: PrincipalLeavePage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.profile,
+      child: ProfilePage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.attendance_calculator,
+      child: AttendanceCalculator(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.upload_feeDetail,
+      child: UploadFeeDetail(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.examination_page,
+      child: ExaminationPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.upload_syllabus_page,
+      child: UploadSyllabusPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.upload_reportCard,
+      child: UploadReportCard(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.calender_page,
+      child: CalenderPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.teacher_leave_page,
+      child: TeacherLeavePage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.report_card,
+      child: ReportCardPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.syllabus_page,
+      child: SyllabusPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.time_table,
+      child: TimeTable(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.leave_page,
+      child: LeavePage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.fee_details,
+      child: FeeDetailsPage(),
+    ),
+
+
+
     goRoutePathMaker(
       path: UrlConstants.add_teacher,
       child: AddStudents(),

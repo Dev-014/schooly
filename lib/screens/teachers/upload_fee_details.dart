@@ -29,7 +29,7 @@ Future<void> uploadFeeDataFromExcel({required BuildContext context}) async {
 
   var excel = Excel.decodeBytes(bytes);
 
-  // Access the sheet containing fee details
+  // Access the sheet containing fee
   var sheet = excel['Sheet1']; // Update with your sheet name
   print(sheet.sheetName);
   // Iterate through rows to extract and upload data to Firestore

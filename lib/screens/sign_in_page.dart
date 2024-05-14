@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:practice/bloc/generic_bloc.dart';
 import 'package:practice/bloc/http_request.dart';
+import 'package:practice/common_widgets/snack_bar.dart';
 import 'package:practice/l10n/l10n.dart';
 import 'package:practice/modals/principal.dart';
 import 'package:practice/routes/url_constants.dart';
@@ -27,6 +28,9 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   var genericProvider;
   final _focusNode = FocusNode();
+
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -134,93 +138,102 @@ class _SignInPageState extends State<SignInPage> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
 
-          child: Column(
-            children: [
-              // Top half of the screen with the logo.
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20))),
-                  child:  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-                        const Icon(
-                          Icons.ice_skating,
-                          color: Colors.white,
-                        ),
-                        Text(
-                            ( AppLocalizations.of(context)==null)?"bb":AppLocalizations.of(context)!.signIn,
-                          style: TextStyle(fontSize: 40, color: Colors.white),
-                        ),
-                        Row(
+              child: Column(
+                children: [
+                  // Top half of the screen with the logo.
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20))),
+                      child: Center(
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+
+                            const Icon(
+                              Icons.ice_skating,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              (AppLocalizations.of(context) == null)
+                                  ? "bb"
+                                  : AppLocalizations.of(context)!.signIn,
+                              style: TextStyle(
+                                  fontSize: 40, color: Colors.white),
+                            ),
                             Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                Text("Principal",style: TextStyle(color: Colors.white),),
+                                Row(
+                                  children: [
+                                    Padding(padding: EdgeInsets.symmetric(
+                                        horizontal: 8), child:
+                                    Text("Principal",
+                                      style: TextStyle(color: Colors.white),),
+                                    ),
+                                    Radio(
+                                        value: 0,
+                                        groupValue: groupValue,
+                                        activeColor: Colors.white,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            groupValue = value;
+
+                                            genericProvider.setUserProfile(
+                                                profile: "Principal");
+                                          });
+                                        }
+                                    ),
+                                  ],
                                 ),
-                                Radio(
-                                    value: 0,
-                                    groupValue: groupValue,
-                                    activeColor: Colors.white,
-                                    onChanged: (value){
-                                      setState(() {
-                                        groupValue = value;
+                                Row(
+                                  children: [
+                                    Padding(padding: EdgeInsets.symmetric(
+                                        horizontal: 8), child:
+                                    Text("Teacher",
+                                      style: TextStyle(color: Colors.white),),
+                                    ), Radio(
+                                        value: 1,
+                                        groupValue: groupValue,
+                                        activeColor: Colors.white,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            groupValue = value;
+                                            genericProvider.setUserProfile(
+                                                profile: "Teacher");
 
-                                        genericProvider.setUserProfile(profile:"Principal");
-                                      });
-
-                                    }
+                                            // genericProvider.userProfile = UserProfile.teacher;
+                                          });
+                                        }),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                Text("Teacher",style: TextStyle(color: Colors.white),),
-                                    ),                              Radio(
-                                    value:1,
-                                    groupValue:groupValue,
-                                    activeColor: Colors.white,
-                                    onChanged: (value){
+                                Row(
+                                  children: [
+                                    Padding(padding: EdgeInsets.symmetric(
+                                        horizontal: 8), child:
+                                    Text("Student",
+                                      style: TextStyle(color: Colors.white),),
+                                    ),
+                                    Radio(
+                                        value: 2,
+                                        groupValue: groupValue,
+                                        activeColor: Colors.white,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            groupValue = value;
 
-                                      setState(() {
-                                        groupValue = value;
-                                        genericProvider.setUserProfile(profile:"Teacher");
-
-                                        // genericProvider.userProfile = UserProfile.teacher;
-                                      });
-                                    }),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 8),child:
-                                Text("Student",style: TextStyle(color: Colors.white),),
-                                  ),
-                            Radio(
-                                value: 2,
-                                groupValue: groupValue,
-                                activeColor: Colors.white,
-                                onChanged: (value){
-                              setState(() {
-                                groupValue = value;
-
-                               genericProvider.setUserProfile(profile:"Student");
-                              });
-
-                              }
-                            ),
-                              ],
-                            ),
+                                            genericProvider.setUserProfile(
+                                                profile: "Student");
+                                          });
+                                        }
+                                    ),
+                                  ],
+                                ),
 
                           ],
                         )

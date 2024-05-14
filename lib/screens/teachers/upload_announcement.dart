@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/common_widgets/common_button.dart';
 import 'package:practice/common_widgets/form_textfield.dart';
 
 class UploadAnnouncement extends StatefulWidget {
@@ -16,7 +17,7 @@ class _UploadAnnouncementState extends State<UploadAnnouncement> {
   TextEditingController textEditingController3 = TextEditingController();
 
 
-  Future<void> uploadAnnouncement( String description, String title,   String category) async {
+  Future<dynamic> uploadAnnouncement( String description, String title,   String category) async {
     DateTime now = DateTime.now();
     String currentTime = "${now.hour}:${now.minute}:${now.second}";
     String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
@@ -89,22 +90,30 @@ class _UploadAnnouncementState extends State<UploadAnnouncement> {
                 Padding(
                   padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                  child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          uploadAnnouncement(textEditingController3.text, textEditingController1.text, textEditingController2.text);
-                          // addHomeWork(subjectId: "hindi", classId: '10', sectionId: "A", title: "chapter : 10", fileUrl: "fileUrl", teacherUid: "teacherUid");
-                        },
-                        child: Text("Submit"),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // Adjust the value as needed
-                          ),
-                        ),
-                      )),
+                  child: LoaderElevatedButton(
+                    buttonText: "Submit",
+                    onPressed: ()async{
+
+                             var a =  uploadAnnouncement(textEditingController3.text, textEditingController1.text, textEditingController2.text);
+
+                    },
+                  ),
+                  // child: Container(
+                  //     width: double.infinity,
+                  //     height: 50,
+                  //     child: ElevatedButton(
+                  //       onPressed: () {
+                  //         uploadAnnouncement(textEditingController3.text, textEditingController1.text, textEditingController2.text);
+                  //         // addHomeWork(subjectId: "hindi", classId: '10', sectionId: "A", title: "chapter : 10", fileUrl: "fileUrl", teacherUid: "teacherUid");
+                  //       },
+                  //       child: Text("Submit"),
+                  //       style: ElevatedButton.styleFrom(
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(
+                  //               20), // Adjust the value as needed
+                  //         ),
+                  //       ),
+                  //     )),
                 )
               ],
             ),

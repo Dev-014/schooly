@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/common_classes/validators.dart';
+import 'package:practice/common_widgets/common_button.dart';
 import 'package:practice/common_widgets/form_textfield.dart';
 
 import '../../common_widgets/class_section_dropdown.dart';
@@ -84,6 +86,8 @@ class _AddStudentsState extends State<AddStudents> {
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60,
@@ -108,85 +112,123 @@ class _AddStudentsState extends State<AddStudents> {
             )),
       ),
       body: SizedBox(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                formTextFields(
-                    hintText: "Enter Student Name",
-                    textEditingController: _textController1),
-                Container(
-                    child: ClassSectionDropdown(
-                  maxWidth: MediaQuery.of(context).size.width * .81,
-                  onSelect: (selectedClass, selectedSection) {
-                    classs = selectedClass;
-                    section = selectedSection;
-                  },
-                )),
-                formTextFields(
-                    hintText: "Scholar Id",
-                    iconData: Icons.perm_identity,
-                    textEditingController: _textController2),
-                formTextFields(
-                    hintText: "Enter Student Roll Number",
-                    iconData: Icons.numbers,
-                    textEditingController: _textController3),
-                formTextFields(
-                    hintText: "Enter Date Of Birth",
-                    iconData: Icons.date_range,
-                    textEditingController: _textController4),
-                formTextFields(
-                    hintText: "Enter Email Id",
-                    iconData: Icons.email,
-                    textEditingController: _textController9),
-                formTextFields(
-                    hintText: "Enter Blood Group",
-                    iconData: Icons.water_drop,
-                    textEditingController: _textController5),
-                formTextFields(
-                    hintText: "Enter Emergency Contact",
-                    iconData: Icons.quick_contacts_dialer,
-                    textEditingController: _textController6),
-                formTextFields(
-                    hintText: "Enter Father's Name",
-                    iconData: Icons.male,
-                    textEditingController: _textController7),
-                formTextFields(
-                    hintText: "Enter Mother's Name",
-                    iconData: Icons.female,
-                    textEditingController: _textController8),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 44,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        addStudent(
-                            scholarId: _textController2.text,
-                            name: _textController1.text,
-                            classs: classs,
-                            section: section,
-                            rollNumber: _textController3.text,
-                            dob: _textController4.text,
-                            bloodGroup: _textController5.text,
-                            emergencyContact: _textController6.text,
-                            fathersName: _textController7.text,
-                            mothersName: _textController8.text,
-                            emailId: _textController9.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+        child: Form(
+          autovalidateMode: AutovalidateMode.always, // Add this line
+
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  formTextFields(
+                    isRequired: true,
+                      validator: Validator.validateName,
+                      hintText: "Student Name",
+                      textEditingController: _textController1),
+                  Container(
+                      child: ClassSectionDropdown(
+                                          maxWidth: MediaQuery.of(context).size.width * .81,
+                                          onSelect: (selectedClass, selectedSection) {
+                                              classs = selectedClass;
+                                              section = selectedSection;
+
+                                          },
+                                        )),
+                  formTextFields(
+                    isRequired: true,
+                      hintText: "Scholar Id",
+                      iconData: Icons.perm_identity,
+                      validator: Validator.validateScholarId,
+                      textEditingController: _textController2),
+                  formTextFields(
+                      isRequired: true,
+
+                      hintText: "Student Roll Number",
+                      iconData: Icons.numbers,
+                      validator: Validator.validateRollNumber,
+                      textEditingController: _textController3),
+                  formTextFields(
+                      isRequired: true,
+                      hintText: "Date Of Birth",
+                      iconData: Icons.date_range,
+                      validator:Validator.validateDateOfBirth,
+                      textEditingController: _textController4),
+                  formTextFields(
+                      isRequired: true,
+                      hintText: "Email Id",
+                      validator: Validator.validateEmail,
+                      iconData: Icons.email,
+                      textEditingController: _textController9),
+                  formTextFields(
+                      isRequired: true,
+                    validator: Validator.validateBloodGroup,
+                      hintText: "Blood Group",
+                      iconData: Icons.water_drop,
+                      textEditingController: _textController5),
+                  formTextFields(
+                      isRequired: true,
+                    validator: Validator.validateEmergencyContact,
+                      hintText: "Emergency Contact",
+                      iconData: Icons.quick_contacts_dialer,
+                      textEditingController: _textController6),
+                  formTextFields(
+                    isRequired: true,
+                      validator: Validator.validateFathersName,
+                      hintText: "Father's Name",
+                      iconData: Icons.male,
+                      textEditingController: _textController7),
+                  formTextFields(
+                      isRequired: true,
+                    validator: Validator.validateMothersName,
+                      hintText: "Mother's Name",
+                      iconData: Icons.female,
+                      textEditingController: _textController8),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: LoaderElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            if (classs != null && section != null) {
+                            _formKey.currentState!.save();
+    await addStudent(
+    scholarId: _textController2.text,
+    name: _textController1.text,
+    classs: classs,
+    section: section,
+    rollNumber: _textController3.text,
+    dob: _textController4.text,
+    bloodGroup: _textController5.text,
+    emergencyContact: _textController6.text,
+    fathersName: _textController7.text,
+    mothersName: _textController8.text,
+    emailId: _textController9.text);
+    }
+                            // else {
+                            //   setState(() {
+                            //     isClassSelected = selectedClass == null;
+                            //     isSectionSelected = selectedSection == null;
+                            //   });
+                            // }
+                          }
+                          _formKey.currentState!.reset();
+
+                        },
+                        // style: ElevatedButton.styleFrom(
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(20),
+                        //   ),
+                        // ),
+                       buttonText : "Submit",
                       ),
-                      child: Text("Submit"),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/common_methods/showSnackBar.dart';
 import 'package:practice/common_widgets/drop_down_button.dart';
 import 'package:practice/common_widgets/new_drop_down.dart';
 import 'package:practice/common_widgets/subject_dropdown.dart';
@@ -10,6 +11,7 @@ import 'package:practice/utils/constants_colors.dart';
 import 'package:provider/provider.dart';
 
 import '../../common_widgets/class_section_dropdown.dart';
+import '../../common_widgets/common_button.dart';
 import '../../common_widgets/homework_card.dart';
 
 class HomeWorkForm extends StatefulWidget {
@@ -30,20 +32,26 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
     // required String teacherUid,
     bool isForAllSections = false,
   }) async {
-    final firestore = FirebaseFirestore.instance;
-    Map<String, dynamic> materialData = {
-      'title': title,
-      'fileUrl': fileUrl,
-      'emp_id': genericProvider.empID,
-      'subject': subjectId,
-      'class':classId,
-      'section':sectionId,
-      'status': false
-    };
+    try {
+      final firestore = FirebaseFirestore.instance;
+      Map<String, dynamic> materialData = {
+        'title': title,
+        'fileUrl': fileUrl,
+        'emp_id': genericProvider.empID,
+        'subject': subjectId,
+        'class': classId,
+        'section': sectionId,
+        'status': false
+      };
 
-    // Add the material data to the study_materials collection
-    await firestore.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works').doc().set(materialData);
-
+      // Add the material data to the study_materials collection
+      await firestore.collection(
+          '/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/home_works')
+          .doc()
+          .set(materialData);
+    }catch(e){
+      showSnackBar(text: e.toString(), context: context);
+    }
     print('Material IDs updated successfully!');
   }
 
@@ -192,43 +200,51 @@ class _HomeWorkFormState extends State<HomeWorkForm> {
 
                       homeWorkTextFields(controller: _textController4,
                           hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
-                      InkWell(
-                        onTap: () {
-              
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-              
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.attach_file_outlined),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Text("Attach Study Material"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //
+                      //   },
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Row(
+                      //
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         Icon(Icons.attach_file_outlined),
+                      //         Padding(
+                      //           padding: const EdgeInsets.only(left: 8.0),
+                      //           child: Text("Attach Study Material"),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       Padding(
                         padding:
                         const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                        child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                addHomeWork(subjectId: subject, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
-                              },
-                              child: Text("Submit"),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // Adjust the value as needed
-                                ),
-                              ),
-                            )),
+                        child: LoaderElevatedButton(
+                          textColor: Colors.black,
+                          buttonText: "Submit",
+                          onPressed: ()async
+                          {await   addHomeWork(subjectId: subject, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
+                          },
+                        )
+
+                        // Container(
+                        //     width: double.infinity,
+                        //     height: 50,
+                        //     child: ElevatedButton(
+                        //       onPressed: () {
+                        //         addHomeWork(subjectId: subject, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl");
+                        //       },
+                        //       child: Text("Submit"),
+                        //       style: ElevatedButton.styleFrom(
+                        //         shape: RoundedRectangleBorder(
+                        //           borderRadius: BorderRadius.circular(
+                        //               20), // Adjust the value as needed
+                        //         ),
+                        //       ),
+                        //     )),
                       )
                     ],
                   ),
