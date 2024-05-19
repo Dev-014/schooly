@@ -2,35 +2,39 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/routes/url_constants.dart';
-import 'package:practice/screens/calender_page.dart';
-import 'package:practice/screens/examination_page.dart';
-import 'package:practice/screens/fee_details_page.dart';
-import 'package:practice/screens/principal/principal_leave_page.dart';
-import 'package:practice/screens/students_ui_2.0/homework_page.dart';
+import 'package:practice/screens/examination/examination_page.dart';
+import 'package:practice/screens/fee_detail/student/student_fee_details_page.dart';
+import 'package:practice/screens/leave_page/principal/principal_leave_page.dart';
+import 'package:practice/screens/homework/student/student_homework.dart';
 import 'package:practice/screens/profile_page.dart';
-import 'package:practice/screens/sign_in_page.dart';
-import 'package:practice/screens/students_ui_2.0/announcements.dart';
-import 'package:practice/screens/students_ui_2.0/dashboard.dart';
-import 'package:practice/screens/students_ui_2.0/leave_page.dart';
-import 'package:practice/screens/students_ui_2.0/report_card_page.dart';
-import 'package:practice/screens/students_ui_2.0/student_notice_board.dart';
-import 'package:practice/screens/students_ui_2.0/study_material.dart';
-import 'package:practice/screens/students_ui_2.0/syllabus.dart';
-import 'package:practice/screens/students_ui_2.0/time_table.dart';
-import 'package:practice/screens/students_ui_2.0/view_attendance_page.dart';
-import 'package:practice/screens/teachers/add_student.dart';
-import 'package:practice/screens/teachers/homework.dart';
-import 'package:practice/screens/teachers/teacher_leave_page.dart';
-import 'package:practice/screens/teachers/teacher_notice_board.dart';
-import 'package:practice/screens/teachers/upload_fee_details.dart';
-import 'package:practice/screens/teachers/upload_report_card.dart';
-import 'package:practice/screens/teachers/upload_study_material.dart';
-import 'package:practice/screens/teachers/upload_syllabus.dart';
-import 'package:practice/screens/verify_otp.dart';
+import 'package:practice/screens/auth/sign_in_page.dart';
+import 'package:practice/screens/leave_page/student/leave_page.dart';
+import 'package:practice/screens/report_card/student/report_card_page.dart';
+import 'package:practice/screens/notice_board/student/student_notice_board.dart';
+import 'package:practice/screens/study_material/student/study_material.dart';
+import 'package:practice/screens/syllabus/student/syllabus.dart';
+import 'package:practice/screens/add_student.dart';
+import 'package:practice/screens/announcement/teacher/teacher_announcement_page.dart';
+import 'package:practice/screens/fee_detail/teacher/teacher_fee_detail.dart';
+import 'package:practice/screens/homework/teacher/teacher_homework.dart';
+import 'package:practice/screens/leave_page/teacher/teacher_leave_page.dart';
+import 'package:practice/screens/notice_board/teacher/teacher_notice_board.dart';
 
-import '../screens/principal/upload_academic_calender.dart';
-import '../screens/students_ui_2.0/time_table_form.dart';
-import '../screens/teachers/upload_announcement.dart';
+import 'package:practice/screens/generic/upload/upload_syllabus.dart';
+import 'package:practice/screens/auth/verify_otp.dart';
+import 'package:practice/screens/report_card/teacher/teacher_report_card.dart';
+import 'package:practice/screens/syllabus/teacher/teacher_syllabus_page.dart';
+import 'package:practice/screens/time_table/teacher/teacher_time_table_page.dart';
+
+import '../screens/academic_calender/academic_calender_page.dart';
+import '../screens/attendance/attendance_page.dart';
+import '../screens/generic/upload/upload_academic_calender.dart';
+import '../screens/generic/upload/upload_time_table.dart';
+import '../screens/announcement/student/student_announcement_page.dart';
+import '../screens/home_page.dart';
+import '../screens/time_table/student/student_time_table_page.dart';
+import '../screens/study_material/teacher/teacher_study_material.dart';
+import '../screens/generic/upload/upload_announcement.dart';
 import 'all_page_wrapper.dart';
 
 class RouteHandler {
@@ -69,7 +73,7 @@ class RouteHandler {
         Future.delayed(Duration.zero, () {
           context.go(UrlConstants.dashboard);
         });
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       },
       routes: <RouteBase>[
         ShellRoute(
@@ -99,7 +103,7 @@ class RouteHandler {
       routes: <RouteBase>[
         goRoutePathMaker(
           path: UrlConstants.sign_in,
-          child: SignInPage(),
+          child: const SignInPage(),
         ),
         goRoutePathMaker(path: UrlConstants.verify_otp, child: VerifyOtpPage())
       ],
@@ -185,19 +189,19 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.teacher_notice_board,
-      child: TeacherNoticeBoard(),
+      child: const TeacherNoticeBoard(),
     ),
     goRoutePathMaker(
       path: UrlConstants.time_table_form,
-      child: TimetableForm(),
+      child: const TeacherTimeTablePage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.upload_announcement,
-      child: UploadAnnouncement(),
+      child: const TeacherAnnouncementPage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.study_material_form,
-      child: StudyMaterialForm(),
+      child: const TeacherStudyMaterial(),
     ),
     goRoutePathMaker(
       path: UrlConstants.principal_leave_page,
@@ -209,11 +213,11 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.attendance_calculator,
-      child: AttendanceCalculator(),
+      child: ViewAttendancePage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.upload_feeDetail,
-      child: UploadFeeDetail(),
+      child: TeacherFeeDetail(),
     ),
     goRoutePathMaker(
       path: UrlConstants.examination_page,
@@ -221,15 +225,15 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.upload_syllabus_page,
-      child: UploadSyllabusPage(),
+      child: TeacherSyllabusPage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.upload_reportCard,
-      child: UploadReportCard(),
+      child: const TeacherReportCardPage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.calender_page,
-      child: CalenderPage(),
+      child: AcademicCalenderPage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.teacher_leave_page,
@@ -272,7 +276,7 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.announcement,
-      child: Announcement()
+      child: ViewAnnouncement()
     ),
     goRoutePathMaker(
       path: UrlConstants.view_leave,
@@ -284,7 +288,7 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.view_attendance,
-      child: AttendanceCalculator(),
+      child: ViewAttendancePage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.sign_in,

@@ -31,8 +31,7 @@ class AllPageWrapper extends StatefulWidget {
 }
 
 class _AllPageWrapperState extends State<AllPageWrapper> {
-  // late final adminServiceBloc =
-  // Provider.of<AdminServiceBloc>(context, listen: false);
+
   late final Future _future;
 
   @override
@@ -44,15 +43,6 @@ class _AllPageWrapperState extends State<AllPageWrapper> {
     });
   }
 
-  // Future getUser() async {
-  //   return adminServiceBloc.getSelectedUserId().isEmpty
-  //       ? adminServiceBloc.getAllUsers(
-  //     GetAllUsersRequest(
-  //       pageToken: Int64(1),
-  //     ),
-  //   )
-  //       : Future.value(1);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,32 +57,6 @@ class _AllPageWrapperState extends State<AllPageWrapper> {
 
         return  widget.screen;
 
-        //   SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: Container(
-        //     height: MediaQuery.of(context).size.height,
-        //     width: MediaQuery.of(context).size.width,
-        //     constraints: const BoxConstraints(
-        //       minWidth: 1000,
-        //     ),
-        //     child: Row(
-        //       children: [
-        //
-        //         Expanded(
-        //           child: Column(
-        //             children: [
-        //
-        //               Expanded(
-        //                 flex: 5,
-        //                 child: widget.screen,
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // );
       },
     );
   }

@@ -8,8 +8,7 @@ Widget? futureBuilderDataCheck(
     }
     return MaterialApp(home: Center(child: Text("somethingWentWrong")));
   }
-//   print("MMMMMMJNBFJbj");
-// print(snapshot.data);
+
   if (!snapshot.hasData) {
     return MaterialApp(
       home: Center(
@@ -18,7 +17,6 @@ Widget? futureBuilderDataCheck(
           )),
     );
   }
-  // print("1<<<<<<<<<<<<<<,");
-  // print(snapshot.data);
+
   return null;
 }

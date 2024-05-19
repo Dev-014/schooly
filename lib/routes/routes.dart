@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:practice/screens/sign_in_page.dart';
-import 'package:practice/screens/students_ui_2.0/dashboard.dart';
-import 'package:practice/screens/verify_otp.dart';
+import 'package:practice/screens/auth/sign_in_page.dart';
+import 'package:practice/screens/auth/verify_otp.dart';
+
+import '../screens/home_page.dart';
 
 class Routes {
   static final Map<String, PageRouteBuilder> _routes = {

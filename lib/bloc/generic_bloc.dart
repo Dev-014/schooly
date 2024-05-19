@@ -15,6 +15,8 @@ class GenericProvider extends ChangeNotifier {
   UserProfile? userProfile;
   bool isUserLoggedIn = false;
   int groupValues = 1;
+
+
   void groupValue() {
     groupValues = 0;
   }
@@ -23,6 +25,7 @@ class GenericProvider extends ChangeNotifier {
     isUserLoggedIn = true;
     notifyListeners();
   }
+
   void setUserProfile({required String profile}) {
     if (profile == "Student") {
       userProfile = UserProfile.student;
