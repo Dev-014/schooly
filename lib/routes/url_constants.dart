@@ -21,8 +21,8 @@ class UrlConstants{
   static String sign_in = "/sign_in";
   static String add_homework = "/add_homework";
   static String upload_academic_calender = "/upload_academic_calender";
-  static String student_notice_board = "/student_notice_board ";
-  static String teacher_notice_board = "/teacher_notice_board ";
+  static String student_notice_board = "/student_notice_board";
+  static String teacher_notice_board = "/teacher_notice_board";
   static String time_table_form = "/time_table_form";
   static String upload_announcement = "/upload_announcement";
   static String study_material_form  = "/study_material_form";

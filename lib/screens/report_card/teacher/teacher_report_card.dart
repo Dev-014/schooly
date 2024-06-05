@@ -12,6 +12,10 @@ class TeacherReportCardPage extends StatefulWidget {
 class _TeacherReportCardPageState extends State<TeacherReportCardPage> {
   @override
   Widget build(BuildContext context) {
-    return PTWrapper(tabBarView1: UploadReportCard(), tabBarView2: SizedBox(), firstTabTitle: "REPORT CARD", title: "Report Card");
+    return PTWrapper(
+        tabBarView1: UploadReportCard(),
+        tabBarView2: SizedBox(),
+        firstTabTitle: "REPORT CARD",
+        title: "Report Card");
   }
 }

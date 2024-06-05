@@ -259,9 +259,6 @@ List<RouteBase> _getRouteList() {
       path: UrlConstants.fee_details,
       child: FeeDetailsPage(),
     ),
-
-
-
     goRoutePathMaker(
       path: UrlConstants.add_teacher,
       child: AddStudents(),
@@ -281,10 +278,6 @@ List<RouteBase> _getRouteList() {
     goRoutePathMaker(
       path: UrlConstants.view_leave,
       child: TeacherLeavePage(),
-    ),
-    goRoutePathMaker(
-      path: UrlConstants.notice_board,
-      child: StudentNoticeBoard()
     ),
     goRoutePathMaker(
       path: UrlConstants.view_attendance,
