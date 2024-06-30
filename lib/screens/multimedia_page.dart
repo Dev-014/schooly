@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
 
 import '../widgets/multimedia_card.dart';
 
 class MultiMediaPage extends StatefulWidget {
-  final List<Map<String, dynamic>?>? listOfStudyMaterial;
+  final List<StudyMaterial>? listOfStudyMaterial;
   const MultiMediaPage({this.listOfStudyMaterial, super.key});
 
   @override
@@ -66,8 +67,8 @@ class _MultiMediaPageState extends State<MultiMediaPage> {
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
               child: MultiMediaCard(
                   title:
-                  widget.listOfStudyMaterial?[i]?["title"] ?? "Got Null",
-                  date: "date"),
+                  widget.listOfStudyMaterial?[i].title ?? "Got Null",
+                  date:  widget.listOfStudyMaterial?[i].subjectId ?? "Got Null" ),
             )
         ],
       ),

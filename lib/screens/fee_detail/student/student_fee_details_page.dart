@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/modals/fetch_service/fetchService.pbserver.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/services/other/fee_detail/fee_detail_services.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
@@ -34,10 +36,9 @@ class _FeeDetailsPageState extends State<FeeDetailsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: FutureBuilder(
-              future: FeeDetailService.getFeeDetails(scholarID: genericProvider.loggedInStudent.scholarId),
+            child: FutureBuilder<FetchFeeDetailsResponse>(
+              future: GetService.getFeeDetails(token: genericProvider.sessionToken, context: context),
               builder: (context, snapshot) {
-                Map<String, Map<String, dynamic>>? mapOfMaps = snapshot.data;
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
@@ -45,36 +46,28 @@ class _FeeDetailsPageState extends State<FeeDetailsPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 }
-                if (snapshot.hasData) {
-                  print(snapshot.data);
-                }
+                if (snapshot.hasData)
+                  print("?????");
+                  FetchFeeDetailsResponse? res = snapshot.data ;
 
-                return SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: mapOfMaps!.keys.map((outerKey) {
-                      final innerMap = mapOfMaps[outerKey];
-                      if (innerMap != null) {
-                        print(innerMap);
-                        var paymentDate = innerMap["payment date"] ?? "-";
-                        var paymentAmount = innerMap["payment amount"] ?? "-";
-                        var dueDate = innerMap["due date"] ?? "-";
-                        var status = innerMap["status"] ?? "-";
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FeeDetailCard(
-                            title: "title",
-                            paymentDate: paymentDate,
-                            paymentAmount: paymentAmount,
-                            dueDate: dueDate,
-                            status: status,
-                          ),
-                        );
-                      } else {
-                        return SizedBox(); // Handle missing inner map
-                      }
-                    }).toList(),
-                  ),
+
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    itemCount: res!.details.length,
+                      itemBuilder: (BuildContext context, index){
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
+                      child: FeeDetailCard(
+                        title: "title",
+                        paymentDate: res.details[index].paymentDate,
+                        paymentAmount: res!.details[index].amount,
+                        dueDate: res!.details[index].dueDate,
+                        status: res!.details[index].paymentStatus,
+                      ),
+                    );
+                  }),
                 );
               },
             ),

@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option go_package = "school/internal/models/fetchService";
+
+import "academic_service/academicService.proto";
+import "user_service/userService.proto";
+
+message FetchClassesResponse {
+   repeated Class classes = 1;
+}
+
+message FetchSectionsResponse {
+   repeated Section sections = 1;
+}
+
+message FetchSubjectsResponse {
+   repeated Subject subjects = 1;
+}
+
+message FetchAnnouncementResponse {
+   repeated Announcement announcements = 1;
+   bool isLast = 2;
+}
+
+message FetchNoticesResponse {
+   repeated Notice notices = 1;
+   bool isLast = 2;
+}
+
+message FetchHomeworksResponse {
+   repeated Homework homeworks = 1;
+   bool isLast = 2;
+}
+
+message Syllabus {
+   string subject_id = 1;
+   string name = 2;
+   string class_id = 3;
+   string file_url = 4;
+}
+
+message FetchSyllabusResponse {
+   repeated Syllabus syllabus = 1;
+}
+
+message FetchStudyMaterialResponse {
+   repeated StudyMaterial study_materials = 1;
+}
+
+message FetchReportCardResponse {
+   repeated ReportCard report_cards = 1;
+}
+
+message FetchStudentResponse {
+   repeated Student students = 1;
+}
+
+message FetchTeacherResponse {
+   repeated Teacher teachers = 1;
+}
+
+message FetchLeaveResponse {
+   repeated Leave leaves = 1;
+}
+
+message FetchAttendanceResponse {
+   int64 working_days = 1;
+   int64 total_presents = 2;
+   map<string, bool> attendance = 3;
+}
+
+message FetchFeeDetailsResponse {
+   repeated FeeDetail details = 1;
+}
+
+
+
+
+
+
+

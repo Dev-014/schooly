@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
+import 'package:provider/provider.dart';
 
 
 class TimeTable extends StatefulWidget {
@@ -47,13 +50,15 @@ class _TimeTableState extends State<TimeTable> {
       print('Error fetching timetable: $e');
     }
   }
-  //
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   fetchTimetableForDay("5", "B");
-  //   super.initState();
-  // }
+
+  var genericProvider ;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // fetchTimetableForDay("5", "B");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,24 +102,25 @@ class _TimeTableState extends State<TimeTable> {
           ),
         ),
         body: FutureBuilder(
-            future: fetchTimetableForDay("5", "B"),
+            future:     GetService.getTimeTable(token: genericProvider.sessionToken,context: context),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
+                print("<<><><><><><><><><>>>");
                 return Center(
                     child: Text('Error: ${snapshot.error}snapshot.error}'));
               } else {
                 var timetableData = snapshot.data as Map<String, dynamic>?;
                 // print("<<<<<object>>>>>");
                 // print(timetableData);
-                var mondayLectures = timetableData?['Monday'] ?? [];
+                var mondayLectures = timetableData?['Monday']["schedule"] ?? [];
                 print(mondayLectures);
-                var tuesdayLectures = timetableData?['Tuesday'] ?? [];
-                var wednesdayLectures = timetableData?['Wednesday'] ?? [];
-                var thursdayLectures = timetableData?['Thursday'] ?? [];
-                var fridayLectures = timetableData?['Friday'] ?? [];
-                var saturdayLectures = timetableData?['Saturday'] ?? [];
+                var tuesdayLectures = timetableData?['Tuesday']["schedule"] ?? [];
+                var wednesdayLectures = timetableData?['Wednesday']["schedule"] ?? [];
+                var thursdayLectures = timetableData?['Thursday']["schedule"]?? [];
+                var fridayLectures = timetableData?['Friday'] ["schedule"]?? [];
+                var saturdayLectures = timetableData?['Saturday'] ["schedule"]?? [];
 
 
                 return TabBarView(children: [
@@ -186,8 +192,8 @@ Widget lecturesList({required List<dynamic> listOflectures}){
                           child: Icon(Icons.watch_later_outlined,size: 15,),
                         ),
                         Text(
-                            '${lecture['timeSlot']}'),
-                        Text(" with ${lecture['teacher']}")
+                            '${lecture['slot']}'),
+                        // Text(" with ${lecture['teacher']}")
 
 
 

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/modals/teacher.dart';
+import 'package:practice/services/other/leave_page/leave_page_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
@@ -25,74 +27,42 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
   }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU") // Update with your document ID
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-          .collection('teachers')
-          .doc(genericProvider.empID) // Assuming teacher ID is "teacher_1"
-          .snapshots(),
-      builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot> teacherSnapshot) {
+    Teacher1 teacherData = genericProvider.loggedInTeacher;
+    // teacherSnapshot.data!.data() as Map<String, dynamic>?;
 
-        if (teacherSnapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (!teacherSnapshot.hasData ||
-            teacherSnapshot.data!.data() == null) {
-          print("teacherSnapshot");
-          print(teacherSnapshot.data?.data());
-          return Center(
-            child: Text('No  data found.'),
-          );
-        }
+    teacherClass = teacherData.classs!;
+    teacherSection = teacherData.section!;
 
-        // Retrieve teacher's class and section
-        Map<String, dynamic>? teacherData =
-        teacherSnapshot.data!.data() as Map<String, dynamic>?;
 
-        teacherClass = teacherData?['classs'];
-        teacherSection = teacherData?['Section'];
-
-        return StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('NewSchool')
-              .doc("G0ITybqOBfCa9vownMXU") // Update with your document ID
-              .collection('attendence')
-              .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-              .collection('leave_application')
-              .doc(
-              "student") // Assuming widget.studentId is the student's document ID
-              .snapshots(),
+        return FutureBuilder<List<dynamic>?>(
+          future: LeavePageService.getStudentLeaves(),
           builder: (BuildContext context,
-              AsyncSnapshot<DocumentSnapshot> studentSnapshot) {
+               studentSnapshot) {
 
             if (studentSnapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (!studentSnapshot.hasData ||
-                studentSnapshot.data!.data() == null) {
-
-              return Center(
-                child: Text('No student leave data found.'),
-              );
             }
+            // else if (!studentSnapshot.hasData ||
+            //     studentSnapshot.data!.data() == null) {
+            //
+            //   return Center(
+            //     child: Text('No student leave data found.'),
+            //   );
+            // }
 
             // Retrieve student leave requests
-            Map<String, dynamic>? leaveData =
-            studentSnapshot.data!.data() as Map<String, dynamic>?;
+            // Map<String, dynamic>? leaveData =
+            // studentSnapshot.data as Map<String, dynamic>?;
 
-            if (leaveData == null || !leaveData.containsKey('studentLeave')) {
-              return Center(
-                child: Text('No leave requests found for this student.'),
-              );
-            }
+            // if (leaveData == null || !leaveData.containsKey('studentLeave')) {
+            //   return Center(
+            //     child: Text('No leave requests found for this student.'),
+            //   );
+            // }
 
-            List<dynamic> leaveRequests = leaveData['studentLeave'];
+            List<dynamic> leaveRequests = studentSnapshot.data!;
 
             List<String> stuIds = leaveRequests
                 .map<String>((leave) => leave['stuId'] as String)
@@ -178,8 +148,7 @@ class _TeacherStudentApprovalState extends State<TeacherStudentApproval> {
             );
           },
         );
-      },
-    );
+
   }
 
   Future<List<Map<String, dynamic>>> fetchStudentData(

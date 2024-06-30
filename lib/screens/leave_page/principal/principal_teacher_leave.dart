@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/services/other/leave_page/leave_page_service.dart';
 
 class PrincipalTeacherApproval extends StatefulWidget {
   const PrincipalTeacherApproval({Key? key}) : super(key: key);
@@ -80,14 +81,14 @@ class _PrincipalTeacherApprovalState extends State<PrincipalTeacherApproval> {
                               icon: Icon(Icons.check),
                               onPressed: () {
                                 // Approve leave
-                                approveLeave(leaveRequest);
+                                LeavePageService.approveTeacherLeave(leaveRequest);
                               },
                             ),
                             IconButton(
                               icon: Icon(Icons.close),
                               onPressed: () {
                                 // Reject leave
-                                rejectLeave(leaveRequest);
+                                LeavePageService.rejectTeacherLeave(leaveRequest);
                               },
                             ),
                           ],
@@ -104,58 +105,5 @@ class _PrincipalTeacherApprovalState extends State<PrincipalTeacherApproval> {
     );
   }
 
-  void approveLeave(Map<String, dynamic> leaveRequest) {
-    // Update leave request in Firestore with approval status
-    FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('leave_application')
-        .doc('teacher')
-        .update({
-      'teacherLeave': FieldValue.arrayRemove([leaveRequest]),
-    }).then((value) {
-      // Update the leave request with approval status
-      leaveRequest['principalApproval'] = 'Approved';
-      FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU")
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2')
-          .collection('leave_application')
-          .doc('teacher')
-          .update({
-        'teacherLeave': FieldValue.arrayUnion([leaveRequest]),
-      });
-    });
-  }
 
-  void rejectLeave(Map<String, dynamic> leaveRequest) {
-    // Update leave request in Firestore with rejection status
-    FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('leave_application')
-        .doc('teacher')
-        .update({
-      'teacherLeave': FieldValue.arrayRemove([leaveRequest]),
-    }).then((value) {
-      // Update the leave request with rejection status
-      leaveRequest['principalApproval'] =
-      'Rejected'; // Assuming principal approval is also rejected after teacher's rejection
-      FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU")
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2')
-          .collection('leave_application')
-          .doc('teacher')
-          .update({
-        'teacherLeave': FieldValue.arrayUnion([leaveRequest]),
-      });
-    });
-  }
 }

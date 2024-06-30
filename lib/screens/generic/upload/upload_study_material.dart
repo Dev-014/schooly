@@ -1,4 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/services/firebase_storage.dart';
+import 'package:practice/widgets/loader_button.dart';
+import 'package:practice/widgets/newTextField.dart';
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
@@ -18,8 +26,9 @@ class UploadStudyMaterial extends StatefulWidget {
 class _UploadStudyMaterialState extends State<UploadStudyMaterial> {
   String? sections;
   String? classs;
+  String? classId;
   String? subjects;
-  String? uploadedFileUrl;
+  Uint8List? file;
   TextEditingController _textController4 = TextEditingController();
 
 
@@ -56,9 +65,11 @@ class _UploadStudyMaterialState extends State<UploadStudyMaterial> {
                 // height: 200,
                 child: ClassSectionDropdown(
                   maxWidth: MediaQuery.of(context).size.width*.84,
-                  onSelect: (selectedClass, selectedSection) {
+                  onSelect: (selectedClass, selectedSection,classID,subjectName) {
                     classs = selectedClass;
                     sections = selectedSection;
+                    classId = classID;
+                    subjects = subjectName;
                     // Use the selectedClass and selectedSection values here
                     print('Selected Class: $classs, Selected Section: $sections');
                   },
@@ -66,24 +77,25 @@ class _UploadStudyMaterialState extends State<UploadStudyMaterial> {
 
               ),
 
-              Container(
-                  width: MediaQuery.of(context).size.width*.9,
-                  // color: Colors.white,
-                  // height: 200,
-                  child: SubjectDropdown(
-                    maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                    subjects = selectedSubject;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected subject: $subjects');
-                  },)),
+              // Container(
+              //     width: MediaQuery.of(context).size.width*.9,
+              //     // color: Colors.white,
+              //     // height: 200,
+              //     child: SubjectDropdown(
+              //       classId: classId!,
+              //       maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+              //       subjects = selectedSubject;
+              //       // Use the selectedClass and selectedSection values here
+              //       print('Selected subject: $subjects');
+              //     },)),
 
-              formTextFields(
+              NewTempFormField(labelText: "Assignment",
                   hintText: "Assignment", maxLine: 4, iconData: Icons.assignment,textEditingController: _textController4),
 
               LoaderIconTextButton(
                   text: "Attach Study Material", icon: Icons.attach_file_outlined, onPressed: ()async {
 
-                 uploadedFileUrl =  await  StudyMaterialServices.uploadStudyMaterialFile();
+                 file =  await  FirebaseStorageService.uploadFiles();
 
               }),
 
@@ -93,17 +105,19 @@ class _UploadStudyMaterialState extends State<UploadStudyMaterial> {
                 child: Container(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
+                    child: LoaderElevatedButton(
                       onPressed: () async{
-                        await  StudyMaterialServices.addStudyMaterial(subjectId: subjects!, classId: classs!, sectionId: sections!, title: _textController4.text, fileUrl: uploadedFileUrl??"", teacherUid: genericProvider.loggedInTeacher.empId);
+                          StudyMaterial studyMaterial = StudyMaterial(classId: classId!,title: subjects,sectionId: sections,subjectId: subjects);
+                         AddService.addStudyMaterial(studyMaterial: studyMaterial,token:  genericProvider.sessionToken,context: context,list: file);
+                        // await  StudyMaterialServices.addStudyMaterial(subjectId: subjects!, classId: classs!, sectionId: sections!, title: _textController4.text, fileUrl: uploadedFileUrl??"", teacherUid: genericProvider.loggedInTeacher.empId);
                       },
-                      child: Text("Submit"),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Adjust the value as needed
-                        ),
-                      ),
+                      buttonText: "Submit",
+                      // style: ElevatedButton.styleFrom(
+                      //   shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(
+                      //         20), // Adjust the value as needed
+                      //   ),
+                      // ),
                     )),
               )
             ],

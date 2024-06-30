@@ -1,19 +1,19 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Teacher {
+class Teacher1 {
   String teacherName;
   String? classs;
   String? section;
   String? empId;
   String? email;
-  Teacher({required this.teacherName,  this.classs,  this.section, required this.empId,this.email});
+  Teacher1({required this.teacherName,  this.classs,  this.section, required this.empId,this.email});
 
-  factory Teacher.fromFirestore(
+  factory Teacher1.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       ) {
     Map<String, dynamic> data = snapshot.data()!;
-    return Teacher(
+    return Teacher1(
       teacherName: data['teacher_name'],
       classs: data['classs']?? "Not Allotted",
       section: data['Section'],

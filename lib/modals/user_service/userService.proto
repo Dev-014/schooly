@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+option go_package = "school/internal/models/userService";
+
+//import "google/protobuf/any.proto";
+
+message Details {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string phone_number = 4;
+  string email = 5;
+  string blood_group = 6;
+  int32 roles = 7;
+}
+
+enum Types {
+  STUDENT = 0;
+  TEACHER = 1;
+  STAFF = 2;
+}
+
+enum Roles {
+  student = 0;
+  principal = 1;
+  teacher = 2;
+  classTeacher = 3;
+  staff = 4;
+}
+
+message User {
+  Student student = 1;
+  Teacher teacher = 2;
+  Staff staff = 3;
+  Types type = 4;
+}
+
+message Student {
+  Details details = 1;
+  int64 roll_number = 2;
+  string class_id = 3;
+  string section_id = 4;
+  string uploaded_by = 5;
+}
+
+message Teacher {
+  Details details = 1;
+  bool is_class_teacher = 2;
+  optional string class_id = 3;
+  optional string section_id = 4;
+  string uploaded_by = 5;
+}
+
+message Staff {
+  Details details = 1;
+  string uploaded_by = 5;
+}
+
+
+
+
+
+
+// super admin can add user
+
+// APIs
+
+/*
+
+    - createUser
+
+    // Authentication Flow:
+
+    - sendOtpForLogin
+    - verifyOtpForLogin
+
+
+    schoolCollection
+        - school
+              - students
+              - teachers
+              - staff
+
+              - Role - student - monitor
+              - Role - teacher - class teacher
+              - Role Staff - viewer, editor, admin/owner
+
+
+
+
+
+ */
+
+
+
+
+
+
+

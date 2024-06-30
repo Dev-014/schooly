@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:practice/screens/generic/upload/upload_study_material.dart';
+import 'package:practice/screens/generic/view/view_study_material.dart';
 import 'package:practice/widgets/pt_wrapper.dart';
 
-import '../../generic/view/view_study_material.dart';
 
 class TeacherStudyMaterial extends StatefulWidget {
   const TeacherStudyMaterial({super.key});

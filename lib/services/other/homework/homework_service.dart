@@ -18,8 +18,8 @@ class HomeWorkService{
     required BuildContext context,
     bool isForAllSections = false,
   }) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
+    final firestore = FirebaseFirestore.instance;    try {
+
       Map<String, dynamic> materialData = {
         'title': title,
         'fileUrl': fileUrl,

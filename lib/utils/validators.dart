@@ -15,6 +15,7 @@ class Validator {
   }
 
   static String? validateRollNumber(String? value) {
+    print("<<<<validateRollNumber>>>>");
     return requiredField(value);
   }
 

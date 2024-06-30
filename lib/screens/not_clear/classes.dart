@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:practice/screens/not_clear/class_notice_board.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/widgets/loader_button.dart';
+import 'package:practice/widgets/student_wrapper.dart';
+import 'package:provider/provider.dart';
+
+import '../../bloc/generic_bloc.dart';
 
 class Classes extends StatefulWidget {
   const Classes({super.key});
@@ -11,29 +16,8 @@ class Classes extends StatefulWidget {
 class _ClassesState extends State<Classes> {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      backgroundColor: Color(0xff15162b),
-      appBar: AppBar(
-        backgroundColor: Color(0xff15162b),
-        title: Text("Classes",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),),
-        actions: [CircleAvatar(backgroundColor: Colors.grey,radius: 15,)],
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: (){},child: Icon(Icons.add,),backgroundColor:Color(0xff5842d3) ,),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context){return ClassNoticeBoard();}));
-            },child: classCard("Class 10A")),
-            classCard("Class 9A"),
-            classCard("Class 8A"),
-            classCard("Class 7A"),
-            classCard("Class 6A"),
-            classCard("Class 5B"),
-          ],
-        ),
-      ),
-    );
+    return  StudentWrapper(widget:
+        AddClass(), title: "Add Class");
   }
 
   Padding classCard(String className) {
@@ -97,5 +81,37 @@ child:   Container(
   ),
 ),
 );
+  }
+}
+
+
+class AddClass extends StatefulWidget {
+  const AddClass({super.key});
+
+  @override
+  State<AddClass> createState() => _AddClassState();
+}
+
+class _AddClassState extends State<AddClass> {
+  var genericProvider;
+  @override
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return  SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: LoaderElevatedButton(onPressed: ()async{
+
+           await  AddService.addClasses(context: context,token: genericProvider.sessionToken);
+          },buttonText: "Upload Class&Subject",),
+        ),
+      ),
+    );
   }
 }

@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+option go_package = "school/internal/models/academicService";
+
+message AddClassRequest {
+  Class class = 1;
+  repeated Subject subjects = 2;
+}
+
+message Class {
+  uint32 grade = 1;
+  string teacher_id = 2;
+  string session = 3;
+}
+
+message Subject {
+  string id = 1;
+  string name = 2;
+  string class_id = 3;
+  string file_path = 4;
+  string school_id = 5;
+  string uploaded_by = 6;
+}
+
+message StudyMaterial {
+  string id = 1;
+  string subject_id = 2;
+  string class_id = 3;
+  string section_id = 4;
+  string title = 5;
+  string file_path = 6;
+  string uploaded_by = 7;
+  int64 uploaded_at = 8;
+  string school_id = 9;
+}
+
+enum SectionType {
+  ALL = 0;
+  GRADE = 1;
+}
+
+message Section {
+  string name = 1;
+  SectionType type = 2;
+  map<string, bool> grades = 3;
+}
+
+enum Category {
+  Examination = 0;
+}
+
+message Announcement {/* by teachers -  entire school *  - only for teachers as well*/
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  Category category = 4;
+  int64 timestamp = 5;
+  string uploaded_by = 6;
+  bool visibility = 7;
+}
+
+message Homework {/*  class and section */
+  string id = 1;
+  string subject_id = 2;
+  string class_id = 3;
+  string section_id = 4;
+  string title = 5;
+  string description = 6;
+  string uploaded_by = 7;
+  int64 timestamp = 8;
+  string file_path = 9;
+  string school_id = 10;
+}
+
+enum NoticeType {
+  SCHOOL = 0;
+  CLASS = 1;
+  SECTION = 2;
+}
+
+message Notice {/*   class specific and for entire school */
+  string id = 1;
+  string title = 2;
+  string content = 3;
+  string file_path = 4;
+  int64 created_at = 5;
+  string uploaded_by = 6;
+  NoticeType type = 7;
+  optional string class_id = 8;
+  optional string section_id = 9;
+}
+
+enum Status {
+  PENDING = 0;
+  APPROVED = 1;
+  REJECTED = 2;
+}
+
+message Leave {
+  string id = 1;
+  string name = 2;
+  string reviewer_id = 3;
+  int64 from = 4;
+  int64 to = 5;
+  int64 created_at = 6;
+  int64 updated_at = 7;
+  string reason = 8;
+  Status status = 9;
+  string school_id = 10;
+  string user_id = 11;
+}
+
+message ReportCard {
+  string id = 1;
+  uint32 grade = 2;
+  string user_id = 3;
+  string uploaded_by = 4;
+  string file_path = 5;
+  string school_id = 6;
+}
+
+message Slot {
+  string slot = 1;
+  string subject = 2;
+}
+
+message DaySchedule {
+  repeated Slot schedule = 1;
+}
+
+
+message TimeTable {
+  string id = 1;
+  string class_id = 2;
+  string section_id = 3;
+  map<string, DaySchedule> data = 4;
+}
+
+message AssignClass {
+  string teacher_id = 1;
+  string class_id = 2;
+  string section_id = 3;
+}
+
+enum AttendanceType {
+  STUDENT_ATTENDANCE = 0;
+  TEACHER_ATTENDANCE = 1;
+}
+
+message MarkAttendance {
+  map<string, bool> attendance = 1;
+  string class_id = 2;
+  string section_id = 3;
+  AttendanceType type = 4;
+}
+
+message UpdateLeaveStatus {
+  string leave_id = 1;
+  Status status = 2;
+}
+
+message FeeDetail {
+  string quarter = 1;
+  string amount = 2;
+  string payment_date = 3;
+  string payment_status = 4;
+  string due_date = 5;
+}
+
+

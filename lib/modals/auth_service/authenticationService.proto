@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "school/internal/models/authenticationService";
+
+message SendOtpForLogin {
+  string phone_number = 1;
+  string school_id = 2;
+}
+
+message VerifyOtpForLogin {
+  string phone_number = 1;
+  string otp = 2;
+  string school_id = 3;
+}
+
+
+
+
+
+
+
+
+

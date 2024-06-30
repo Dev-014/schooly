@@ -1,6 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/widgets/loader_button.dart';
+import 'package:practice/widgets/newTextField.dart';
+import 'package:provider/provider.dart';
+
+import '../../../bloc/generic_bloc.dart';
 import '../../../services/firebase_storage.dart';
 import '../../../widgets/class_section_dropdown.dart';
 import '../../../widgets/form_textfield.dart';
@@ -19,31 +28,42 @@ class _UploadReportCardState extends State<UploadReportCard> {
   TextEditingController textEditingController1 = TextEditingController();
   TextEditingController textEditingController2 = TextEditingController();
   TextEditingController textEditingController3 = TextEditingController();
-  String? reportCardUrl;
+  Uint8List? reportCardUrl;
   bool enabledStatus = false;
+  var classs;
+  var sections;
+  var subjects;
 
-  Future<void> uploadReportCard(
-      {required String reportCardUrl, required String scholarId,required String clazz}) async {
-    // String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
-    DateTime now = DateTime.now();
-    int currentYear = now.year;
-    String reportCardId = "class_"+clazz+"_"+currentYear.toString();
-    Map<String, dynamic> reportCardData = {
-      'class': clazz,
-      'report_card_id': reportCardId,
-      'report_card_url': reportCardUrl,
-      'scholar_id': "12094",
-    };
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/$scholarId/report_cards').doc(reportCardId)
-          .set(reportCardData);
-      print('Report Card uploaded successfully!');
-    } catch (e) {
-      print('Error uploading report card: $e');
-    }
+  var genericProvider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
   }
+  // Future<void> uploadReportCard(
+  //     {required String reportCardUrl, required String scholarId,required String clazz}) async {
+  //   // String docId = FirebaseFirestore.instance.collection('announcement').doc().id;
+  //   DateTime now = DateTime.now();
+  //   int currentYear = now.year;
+  //   String reportCardId = "class_"+clazz+"_"+currentYear.toString();
+  //   Map<String, dynamic> reportCardData = {
+  //     'class': clazz,
+  //     'report_card_id': reportCardId,
+  //     'report_card_url': reportCardUrl,
+  //     'scholar_id': "12094",
+  //
+  //   };
+  //
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/students/$scholarId/report_cards').doc(reportCardId)
+  //         .set(reportCardData);
+  //     print('Report Card uploaded successfully!');
+  //   } catch (e) {
+  //     print('Error uploading report card: $e');
+  //   }
+  // }
 
 
   @override
@@ -64,10 +84,14 @@ class _UploadReportCardState extends State<UploadReportCard> {
                 // color: Colors.white,
                 // height: 200,
                 child: ClassSectionDropdown(
+                  disableSubject: true,
+                  disableSection: true,
                   maxWidth: MediaQuery.of(context).size.width*.87,
-                  onSelect: (selectedClass, selectedSection) {
-                    var classs = selectedClass;
-                     var sections = selectedSection;
+                  onSelect: (selectedClass, selectedSection,classID,subjectName) {
+                     classs = selectedClass;
+                      sections = selectedSection;
+                      subjects = subjectName;
+
                     // Use the selectedClass and selectedSection values here
                     print('Selected Class: $classs, Selected Section: $sections');
                   },
@@ -76,57 +100,30 @@ class _UploadReportCardState extends State<UploadReportCard> {
               ),
 
 
-              formTextFields
-                (
-                  hintText: "Scholar Id", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
+              NewTempFormField
+                (labelText: "Scholar Id", hintText: "Scholar Id", iconData: Icons.hotel_class_outlined,textEditingController: textEditingController2),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LoaderIconTextButton(text: "Attach Report Card", icon: Icons.attach_file_outlined, onPressed: () async{
-                  var store = FirebaseStorageService();
-                  String? file = await store.uploadFileToFirebase();
+                  Uint8List? file = await FirebaseStorageService.uploadFiles();
                   setState(() {
-                    print(" setState obj");
-                    print(file);
+                    // print(" setState obj");
+                    // ReportCard reportCard = ReportCard(grade: int.parse(classs), userId: textEditingController2.text);
+
+                    // print("""token: ${genericProvider.sessionToken},filename: "", reportCard: ${reportCard},list: ${reportCardUrl}""");
+
+                    // print(file);
                     reportCardUrl =  file ;
                     enabledStatus = true;
                   });
 
-                  print("object.....");
-                  print(file);
+                  // print("object.....");
+                  // print(file);
 
                 }),
               ),
-              // GestureDetector(
-              //   onTap: () async{
-              //     var store = FirebaseStorageService();
-              //     String? file = await store.uploadFileToFirebase();
-              //     setState(() {
-              //       print(" setState obj");
-              //       print(file);
-              //       reportCardUrl =  file ;
-              //       enabledStatus = true;
-              //     });
-              //
-              //     print("object.....");
-              //     print(file);
-              //
-              //   },
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Row(
-              //
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: [
-              //         Icon(Icons.attach_file_outlined),
-              //         Padding(
-              //           padding: const EdgeInsets.only(left: 8.0),
-              //           child: Text("Attach Study Material"),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+
 
               Padding(
                 padding:
@@ -134,21 +131,19 @@ class _UploadReportCardState extends State<UploadReportCard> {
                 child: Container(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
-                      onPressed:(enabledStatus)? (){
-                        uploadReportCard( scholarId:textEditingController2.text, reportCardUrl: reportCardUrl!, clazz: textEditingController1.text);
-                      }: null,
+                    child: LoaderElevatedButton(
+                      onPressed:(enabledStatus)? ()async {
+                        ReportCard reportCard = ReportCard(grade: int.parse(classs), userId: textEditingController2.text);
+                          AddService.addReportCard(token: genericProvider
+                              .sessionToken,
+                              filename: "file",
+                              reportCard: reportCard,
+                              list: reportCardUrl!,
+                              context: context);
+                        }: null,
 
-                      child: Text("Submit"),
+                      buttonText: "Submit",
 
-                      style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor: Colors.grey.shade200,
-                        textStyle: TextStyle(color: enabledStatus? Colors.white: Colors.black),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Adjust the value as needed
-                        ),
-                      ),
                     )),
               )
             ],

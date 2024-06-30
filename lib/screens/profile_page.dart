@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../bloc/generic_bloc.dart';
 import '../modals/teacher.dart';
+import '../modals/user_service/userService.pb.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,18 +22,18 @@ class _ProfilePageState extends State<ProfilePage> {
   var genericProvider;
   Student? student;
   Teacher? teacher;
-  Principal? principal;
+  Teacher? principal;
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
     if(genericProvider.userProfile==UserProfile.student) {
-      student = genericProvider.loggedInStudent;
+      student = genericProvider.student;
     }
     else if(genericProvider.userProfile == UserProfile.teacher){
-      teacher = genericProvider.loggedInTeacher;
+      teacher = genericProvider.teacher;
 
     }else{
-      principal = genericProvider.loggedInPrincipal;
+      principal = genericProvider.teacher;
     }
 
     // TODO: implement initState
@@ -78,10 +79,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 24.0,bottom: 2),
-                          child: Text(student!.studentName,style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
+                          child: Text(student?.details.firstName ?? "",style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
                         ),
                       ),
-                      Expanded(child: Text("Class"+student!.classs,style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),))
+                      Expanded(child: Text("Class${student?.classId ?? ""}",style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),))
 
                     ],
                   )
@@ -102,14 +103,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
 
-                            profileFields(field_heading: "Roll Number",value: student!.rollNumber.toString()),
-                            profileFields(field_heading: "Date of Birth",value: student!.dateOfBirth??"DOB"),
-                            profileFields(field_heading: "Blood Group",value: student?.bloodGroup??"Blood Group"),
-                            profileFields(field_heading: "Emergency Contact",value: student?.emergencyContact??"9999999999"),
-                            profileFields(field_heading: "Position in Class",value: student?.classs??"10"),
-                            profileFields(field_heading: "Father's Name",value: student?.fathersName??"Ravindra"),
+                            profileFields(field_heading: "Roll Number",value: student?.rollNumber.toString() ??""),
+                            profileFields(field_heading: "Date of Birth",value: "DOB"),
+                            profileFields(field_heading: "Blood Group",value: "Blood Group"),
+                            profileFields(field_heading: "Emergency Contact",value: student?.details.phoneNumber??"9999999999"),
+                            profileFields(field_heading: "Position in Class",value: student?.classId??"10"),
+                            profileFields(field_heading: "Father's Name",value: student?.details.lastName??"Ravindra"),
                             profileFields(
-                                field_heading: "Mother's Name", divider: true,value: student?.mothersName??"Shivani"),
+                                field_heading: "Mother's Name", divider: true,value: ""),
 
 
                             Padding(
@@ -161,10 +162,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 24.0,bottom: 2),
-                      child: Text(teacher!.teacherName,style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
+                      child: Text(teacher?.details.firstName ?? "",style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
                     ),
                   ),
-                  Expanded(child: Text("Class"+teacher!.classs!,style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),))
+                  Expanded(child: Text("Class ${teacher?.classId ?? ""}" ,style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),))
 
                 ],
               )
@@ -185,11 +186,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
 
-                        profileFields(field_heading: "Emp ID",value: teacher!.empId.toString()),
+                        profileFields(field_heading: "Emp ID",value: teacher?.details.id ?? ""),
                         profileFields(field_heading: "Date of Birth",value: "DOB"),
                         profileFields(field_heading: "Blood Group",value:"Blood Group"),
-                        profileFields(field_heading: "Emergency Contact",value: student?.emergencyContact??"9999999999"),
-                        profileFields(field_heading: "Email",value: teacher?.email??"10"),
+                        profileFields(field_heading: "Emergency Contact",value: student?.details.phoneNumber??"9999999999"),
+                        profileFields(field_heading: "Email",value: teacher?.details.lastName??"10"),
                         profileFields(field_heading: "Father's Name",value:"Father's Name"),
                         profileFields(
                             field_heading: "Mother's Name", divider: true,value: "Mother's Name"),
@@ -244,7 +245,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 24.0,bottom: 2),
-                      child: Text(principal!.principalName,style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
+                      child: Text(principal!.details.firstName,style: const TextStyle(fontSize: 26,color: Colors.black,fontWeight: FontWeight.w500),),
                     ),
                   ),
                   Expanded(child: Text("School",style:  TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.w200),))
@@ -268,11 +269,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
 
-                        profileFields(field_heading: "Email",value: principal!.email.toString()),
+                        profileFields(field_heading: "Email",value: principal!.details.id.toString()),
                         profileFields(field_heading: "Date of Birth",value: "DOB"),
                         profileFields(field_heading: "Blood Group",value: "Blood Group"),
                         profileFields(field_heading: "Emergency Contact",value: "9999999999"),
-                        profileFields(field_heading: "Emp Id",value: principal?.empId),
+                        profileFields(field_heading: "Emp Id",value: principal?.details.id),
                         profileFields(field_heading: "Father's Name",value: "fathersName"),
                         profileFields(
                             field_heading: "Mother's Name", divider: true,value: "mothersName"),

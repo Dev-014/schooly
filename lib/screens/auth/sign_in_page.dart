@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/modals/auth_service/authenticationService.pb.dart';
 
 import 'package:practice/modals/principal.dart';
+import 'package:practice/routes/url_constants.dart';
 
 import 'package:practice/screens/auth/forget_password.dart';
 
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import 'package:practice/services/auth/auth.dart';
+import 'package:practice/utils/string_constants.dart';
 import 'package:provider/provider.dart';
 import '../../modals/student.dart';
 import '../../modals/teacher.dart';
@@ -56,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
           genericProvider.scholarId = docId;
           print("<<<<<<<<<<object>>>>>>>>>>");
           print(docSnapshot.data());
-          genericProvider.loggedInStudent = Student.fromFirestore(docSnapshot);
+          genericProvider.loggedInStudent = Student1.fromFirestore(docSnapshot);
 
           genericProvider.setUserLoginToTrue();
           return true;
@@ -76,7 +81,7 @@ class _SignInPageState extends State<SignInPage> {
           if (docSnapshot.exists) {
             // Update provider variable
             genericProvider.empID = docId;
-            genericProvider.loggedInTeacher = Teacher.fromFirestore(docSnapshot);
+            genericProvider.loggedInTeacher = Teacher1.fromFirestore(docSnapshot);
 
             genericProvider.setUserLoginToTrue();
             return true;
@@ -96,7 +101,7 @@ class _SignInPageState extends State<SignInPage> {
             if (docSnapshot.exists) {
               genericProvider.empID = docId;
               genericProvider.loggedInPrincipal =
-                  Principal.fromFirestore(docSnapshot);
+                  Principal1.fromFirestore(docSnapshot);
 
               genericProvider.setUserLoginToTrue();
               return true;
@@ -160,77 +165,77 @@ class _SignInPageState extends State<SignInPage> {
                               style: TextStyle(
                                   fontSize: 40, color: Colors.white),
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Padding(padding: EdgeInsets.symmetric(
-                                        horizontal: 8), child:
-                                    Text("Principal",
-                                      style: TextStyle(color: Colors.white),),
-                                    ),
-                                    Radio(
-                                        value: 0,
-                                        groupValue: groupValue,
-                                        activeColor: Colors.white,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            groupValue = value;
-
-                                            genericProvider.setUserProfile(
-                                                profile: "Principal");
-                                          });
-                                        }
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Padding(padding: EdgeInsets.symmetric(
-                                        horizontal: 8), child:
-                                    Text("Teacher",
-                                      style: TextStyle(color: Colors.white),),
-                                    ), Radio(
-                                        value: 1,
-                                        groupValue: groupValue,
-                                        activeColor: Colors.white,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            groupValue = value;
-                                            genericProvider.setUserProfile(
-                                                profile: "Teacher");
-
-                                            // genericProvider.userProfile = UserProfile.teacher;
-                                          });
-                                        }),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Padding(padding: EdgeInsets.symmetric(
-                                        horizontal: 8), child:
-                                    Text("Student",
-                                      style: TextStyle(color: Colors.white),),
-                                    ),
-                                    Radio(
-                                        value: 2,
-                                        groupValue: groupValue,
-                                        activeColor: Colors.white,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            groupValue = value;
-
-                                            genericProvider.setUserProfile(
-                                                profile: "Student");
-                                          });
-                                        }
-                                    ),
-                                  ],
-                                ),
-
-                          ],
-                        )
+                        //     Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         Row(
+                        //           children: [
+                        //             Padding(padding: EdgeInsets.symmetric(
+                        //                 horizontal: 8), child:
+                        //             Text("Principal",
+                        //               style: TextStyle(color: Colors.white),),
+                        //             ),
+                        //             Radio(
+                        //                 value: 0,
+                        //                 groupValue: groupValue,
+                        //                 activeColor: Colors.white,
+                        //                 onChanged: (value) {
+                        //                   setState(() {
+                        //                     groupValue = value;
+                        //
+                        //                     genericProvider.setUserProfile(
+                        //                         profile: "Principal");
+                        //                   });
+                        //                 }
+                        //             ),
+                        //           ],
+                        //         ),
+                        //         Row(
+                        //           children: [
+                        //             Padding(padding: EdgeInsets.symmetric(
+                        //                 horizontal: 8), child:
+                        //             Text("Teacher",
+                        //               style: TextStyle(color: Colors.white),),
+                        //             ), Radio(
+                        //                 value: 1,
+                        //                 groupValue: groupValue,
+                        //                 activeColor: Colors.white,
+                        //                 onChanged: (value) {
+                        //                   setState(() {
+                        //                     groupValue = value;
+                        //                     genericProvider.setUserProfile(
+                        //                         profile: "Teacher");
+                        //
+                        //                     // genericProvider.userProfile = UserProfile.teacher;
+                        //                   });
+                        //                 }),
+                        //           ],
+                        //         ),
+                        //         Row(
+                        //           children: [
+                        //             Padding(padding: EdgeInsets.symmetric(
+                        //                 horizontal: 8), child:
+                        //             Text("Student",
+                        //               style: TextStyle(color: Colors.white),),
+                        //             ),
+                        //             Radio(
+                        //                 value: 2,
+                        //                 groupValue: groupValue,
+                        //                 activeColor: Colors.white,
+                        //                 onChanged: (value) {
+                        //                   setState(() {
+                        //                     groupValue = value;
+                        //
+                        //                     genericProvider.setUserProfile(
+                        //                         profile: "Student");
+                        //                   });
+                        //                 }
+                        //             ),
+                        //           ],
+                        //         ),
+                        //
+                        //   ],
+                        // )
                       ],
                     ),
                   ),
@@ -256,10 +261,7 @@ class _SignInPageState extends State<SignInPage> {
                           countryCode: '+91 ',
                         ),
                         // Password text field.
-                         TextFieldWithLabelAndCountryCode(
-                           controller: controller2,
-                          labelText:  AppLocalizations.of(context)!.password,
-                        ),
+
                         // Sign in button.
                         Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -268,20 +270,17 @@ class _SignInPageState extends State<SignInPage> {
                             height: 44,
                             child: ElevatedButton(
                               onPressed: ()async {
-                                var check = await checkDocumentAndLogin(controller.text.trim(), context);
-                                if(check){
-                                // genericProvider.setUserProfile(profile: "Teacher");
-                                print(")))00000p00p0p0p0p0p0p0");
-                                print(genericProvider.userProfile);
-                  
-                                setState(() {
-                                  // genericProvider
-                                  //     .isUserLoggedIn = true;
-                                  genericProvider.setUserLoginToTrue();
-                                  print(genericProvider.isUserLoggedIn);
-                                  print(genericProvider.userProfile);
-                                });}
-                               // final response = await  HttpRequest().sendOtpRequest(mobileNumber: controller.text, school_id: "XrMZE54KzuJlz6ayc7Gh");
+// context.go(StringConstants.verifyOtpForLogin);
+                                genericProvider.schoolId = "XrMZE54KzuJlz6ayc7Gh";
+                                genericProvider.phoneNumber = controller.text.trim();
+                                ;
+                                final check = await  AuthServices.sendOtpForLoginRequest(context: context,sendOtpForLogin: SendOtpForLogin(phoneNumber: controller.text.trim(),schoolId: "XrMZE54KzuJlz6ayc7Gh") );
+
+                                // var check = await checkDocumentAndLogin(controller.text.trim(), context);
+                                if(check!){
+                                  navigateToRoute(context: context, routePath: UrlConstants.verify_otp);
+
+                                }
                                // if(response!){
                   
                   
@@ -307,6 +306,7 @@ class _SignInPageState extends State<SignInPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
+
                                   builder: (context) => const ForgetPasswordPage(),
                                 ));
                           },
@@ -327,4 +327,10 @@ class _SignInPageState extends State<SignInPage> {
       );
 
   }
+}
+
+void navigateToRoute({ required BuildContext context,required String routePath }) {
+  GoRouter.optionURLReflectsImperativeAPIs =true;
+  GoRouter.of(context).push(routePath);
+
 }

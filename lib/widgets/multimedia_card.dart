@@ -50,9 +50,13 @@ class _MultiMediaCardState extends State<MultiMediaCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text(widget.title,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+                  Container(
+                    width: MediaQuery.of(context).size.width*.50,
+
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                      child: Text(widget.title,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,overflow: TextOverflow.clip, ),softWrap: true,),
+                    ),
                   ),
                   Text("Syllabus for 2023 batch", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),
                   Text("12 pages / 360 KB", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),),

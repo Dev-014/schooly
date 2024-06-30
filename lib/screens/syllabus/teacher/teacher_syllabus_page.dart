@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/generic/upload/upload_syllabus.dart';
+import 'package:practice/screens/generic/view/view_syllabus.dart';
 import 'package:practice/widgets/pt_wrapper.dart';
 
 class TeacherSyllabusPage extends StatefulWidget {
@@ -12,6 +13,6 @@ class TeacherSyllabusPage extends StatefulWidget {
 class _TeacherSyllabusPageState extends State<TeacherSyllabusPage> {
   @override
   Widget build(BuildContext context) {
-    return PTWrapper(tabBarView1: UploadSyllabus(), tabBarView2: SizedBox(), firstTabTitle: "SYLLABUS", title: "Syllabus");
+    return PTWrapper(tabBarView1: UploadSyllabus(), tabBarView2: ViewSyllabus(), firstTabTitle: "SYLLABUS", title: "Syllabus");
   }
 }

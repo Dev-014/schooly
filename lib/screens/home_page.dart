@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:practice/screens/announcement/student/student_announcement_page.dart';
 
 import 'package:provider/provider.dart';
 import 'package:practice/bloc/generic_bloc.dart';
 
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
+import '../modals/academic_service/academicService.pb.dart';
+import '../services/attendance/mark_attendance.dart';
 import 'attendance/principal/teacher_attendance.dart';
 import 'attendance/teacher/take_student_attendance.dart';
 import 'dashBoard.dart';
@@ -36,20 +39,17 @@ class _MenuPageState extends State<MenuPage> {
   final List<Widget> _teacherPages = [
     DashBoard(),
     TakeStudentAttendance(),
+    ViewAnnouncement(isTeacher: true,),
     Container(),
-    // Your second page widget
-    Container(), // Your third page widget
   ];
   final List<Widget> _pages = [
     DashBoard(),
     Container(),
-    // Your second page widget
-    Container(), // Your third page widget
   ];
   final List<Widget> _principalPages = [
     DashBoard(),
     TeachersAttendance(),
-    Container(),
+    ViewAnnouncement(isTeacher: true,),
     // Your second page widget
     Container(), // Your third page widget
   ];
@@ -71,51 +71,102 @@ class _MenuPageState extends State<MenuPage> {
           title: Text("St Joseph school "),
 
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            items: [
-              BottomNavigationBarItem(
-                icon: Column(
-                  children: [
-                    Icon(
-                      Icons.dashboard,
-                      color: Colors.black,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(AppLocalizations.of(context)!.dashboard),
-                    )
-                  ],
-                ),
-                label: "",
-              ),
-              if (genericProvider.userProfile == UserProfile.teacher ||
-                  genericProvider.userProfile == UserProfile.principal)
-                BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.calendar_month,
-                      color: Colors.black,
-                    ),
-                    label: AppLocalizations.of(context)!.attendance),
+        bottomNavigationBar: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(topRight: Radius.circular(16),topLeft: Radius.circular(16))
+          ),
+          height: 70,
+          child: BottomNavigationBar(
+            selectedItemColor: Colors.black87,
+            unselectedItemColor: Colors.grey.withOpacity(.8),
+            selectedFontSize: 0,
+              unselectedFontSize: 0,
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
 
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.headphones,
-                    color: Colors.black,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.dashboard,
+                          // color: Colors.black,
+                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(top: 4.0),
+                        //   child: Text(AppLocalizations.of(context)!.dashboard),
+                        // )
+                      ],
+                    ),
                   ),
-                  label: "Support"),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.black,
-                  ),
-                  label: "Logout")
-            ]),
-        body: (genericProvider.userProfile == UserProfile.principal)?_principalPages.elementAt(_currentIndex):(genericProvider.userProfile == UserProfile.teacher)?_teacherPages.elementAt(_currentIndex):_pages.elementAt(_currentIndex));
+                  label: "",
+                ),
+                if (genericProvider.userProfile == UserProfile.teacher ||
+                    genericProvider.userProfile == UserProfile.principal)
+                  BottomNavigationBarItem(
+                      icon: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Icon(
+                          Icons.calendar_month,
+                          // color: Colors.black,
+                        ),
+                      ),
+                      label: AppLocalizations.of(context)!.attendance),
+                if (genericProvider.userProfile == UserProfile.teacher ||
+                    genericProvider.userProfile == UserProfile.principal)
+                BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Icon(
+                        Icons.headphones,
+                        // color: Colors.black,
+                      ),
+                    ),
+                    label: "Support"),
+
+                BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Icon(
+                        Icons.logout,
+                        // color: Colors.black,
+                      ),
+                    ),
+                    label: "Logout")
+              ]),
+        ),
+        body: (genericProvider.userProfile == UserProfile.principal)?_principalPages.elementAt(_currentIndex):(genericProvider.userProfile == UserProfile.teacher)?_teacherPages.elementAt(_currentIndex):_pages.elementAt(_currentIndex),
+
+      floatingActionButton: _currentIndex == 1
+          ? FloatingActionButton(
+        onPressed:( genericProvider.userProfile == UserProfile.principal)?() {
+
+          // Handle FAB action
+          MarkAttendances.markAttendance(markAttendance: MarkAttendance(
+            sectionId: genericProvider.teacher.sectionId,
+            classId: genericProvider.teacher.classId,
+            attendance: genericProvider.markedAttendance,
+            type: AttendanceType.TEACHER_ATTENDANCE,
+          ), token: genericProvider.sessionToken, context: context);
+        }: () {
+
+          // Handle FAB action
+          MarkAttendances.markAttendance(markAttendance: MarkAttendance(
+            sectionId: genericProvider.teacher.sectionId,
+            classId: genericProvider.teacher.classId,
+            attendance: genericProvider.markedAttendance,
+            type: AttendanceType.STUDENT_ATTENDANCE,
+          ), token: genericProvider.sessionToken, context: context);
+        },
+        child: Text("Submit",),
+      )
+          : null,);
   }
 }

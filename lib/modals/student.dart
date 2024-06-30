@@ -1,7 +1,7 @@
 
  import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Student {
+class Student1 {
   String studentName;
   String classs;
   String? section;
@@ -13,14 +13,14 @@ class Student {
   String? fathersName;
   String? mothersName;
   String? bloodGroup;
-   Student({required this.studentName, required this.classs, required this.section, required this.rollNumber, required this.scholarId,this.email,this.bloodGroup,this.dateOfBirth,this.emergencyContact,this.fathersName,this.mothersName});
+   Student1({required this.studentName, required this.classs, required this.section, required this.rollNumber, required this.scholarId,this.email,this.bloodGroup,this.dateOfBirth,this.emergencyContact,this.fathersName,this.mothersName});
 
 
-  factory Student.fromFirestore(
+  factory Student1.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       ) {
    Map<String, dynamic> data = snapshot.data()!;
-   return Student(
+   return Student1(
     studentName: data['student_name'],
     classs: data['classs'],
     section: data['Section'],

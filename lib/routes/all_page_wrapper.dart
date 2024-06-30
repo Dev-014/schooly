@@ -38,7 +38,7 @@ class _AllPageWrapperState extends State<AllPageWrapper> {
   void initState() {
     super.initState();
 
-    _future = Future.delayed(Duration(seconds: 2),(){
+    _future = Future.delayed(Duration(seconds: 0),(){
       return true;
     });
   }

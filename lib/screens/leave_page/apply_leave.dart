@@ -1,19 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fixnum/fixnum.dart';
+
+
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/utils/string_constants.dart';
 import 'package:provider/provider.dart';
 
-import '../../../bloc/generic_bloc.dart';
+import '../../bloc/generic_bloc.dart';
+import '../../services/other/leave_page/leave_page_service.dart';
 
-class TeacherApplyLeave extends StatefulWidget {
-  const TeacherApplyLeave({Key? key}) : super(key: key);
+class ApplyLeavePage extends StatefulWidget {
+  final bool isStudent;
+  const ApplyLeavePage({ required this.isStudent ,Key? key});
 
   @override
-  State<TeacherApplyLeave> createState() => _TeacherApplyLeaveState();
+  State<ApplyLeavePage> createState() => _ApplyLeavePageState();
 }
 
-class _TeacherApplyLeaveState extends State<TeacherApplyLeave> {
+class _ApplyLeavePageState extends State<ApplyLeavePage> {
   late DateTime _selectedDate;
+  late DateTime _fromDate;
+  late DateTime _toDate;
   final TextEditingController _reasonController = TextEditingController();
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
@@ -27,6 +37,7 @@ class _TeacherApplyLeaveState extends State<TeacherApplyLeave> {
 
   }
 
+
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
@@ -39,23 +50,23 @@ class _TeacherApplyLeaveState extends State<TeacherApplyLeave> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        controller.text = DateFormat('dd MMM yyyy').format(_selectedDate);
+        controller.text = (_selectedDate.millisecondsSinceEpoch ~/ 1000).toString();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
         child: Column(
           children: [
             const Padding(
               padding: EdgeInsets.only(bottom: 8.0),
               child: Card(
                 elevation: 0,
-                // color: Colors.white,
+                color: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Column(
@@ -124,7 +135,12 @@ class _TeacherApplyLeaveState extends State<TeacherApplyLeave> {
                 height: 35,
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => _applyLeave(context),
+                  onPressed: (){
+                    Int64 fromDate = Int64(DateTime.parse(_fromDateController.text.trim()).millisecondsSinceEpoch ~/ 1000);
+                    Int64 toDate = Int64(DateTime.parse(_toDateController.text.trim()).millisecondsSinceEpoch) ~/ 1000;
+                    AddService.requestLeave(leave: Leave(reason: _reasonController.text.trim(),from:fromDate,to: toDate), token: genericProvider.sessionToken, context: context);
+
+                  },
                   child: const Text(
                     "APPLY",
                     style: TextStyle(fontSize: 16, color: Colors.white),
@@ -183,102 +199,7 @@ class _TeacherApplyLeaveState extends State<TeacherApplyLeave> {
     );
   }
 
-  Future<void> _applyLeave(BuildContext context) async {
-    // Extract values entered by the user
-    String reason = _reasonController.text.trim();
-    String fromDate = _fromDateController.text.trim();
-    String toDate = _toDateController.text.trim();
 
-    // Check if any of the fields are empty
-    if (reason.isEmpty || fromDate.isEmpty || toDate.isEmpty) {
-      // Show an error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please fill in all fields'),
-      ));
-      return; // Exit the method early if any field is empty
-    }
 
-    // Get the current timestamp for the appliedDate field
-    Timestamp appliedDate = Timestamp.now();
+}
 
-    try {
-      // Generate the leave ID
-      String leaveId = await _generateLeaveId();
-
-      // Construct the data to be saved to Firestore
-      Map<String, dynamic> leaveData = {
-        'id': leaveId,
-        'fromDate': fromDate,
-        'toDate': toDate,
-        'appliedDate': appliedDate,
-        'principalApproval': 'Pending',
-        'tId': genericProvider.empID, // Assuming '1' is the student ID
-        'reason': reason,
-      };
-
-      // Add the leave application data to Firestore
-      await FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU") // Update with your document ID
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-          .collection('leave_application')
-          .doc(
-          "teacher") // Assuming widget.studentId is the student's document ID
-          .update({
-        'teacherLeave': FieldValue.arrayUnion([leaveData])
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Leave application submitted successfully'),
-      ));
-    } catch (error) {
-      print('Error submitting leave application: $error');
-      // Show an error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-        Text('Failed to submit leave application. Please try again later.'),
-      ));
-    }
-  }
-
-  Future<String> _generateLeaveId() async {
-    // Query Firestore to get the studentLeave document
-    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-    await FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('leave_application')
-        .doc('teacher')
-        .get();
-
-    // Get the studentLeave data
-    Map<String, dynamic> leaveData = documentSnapshot.data() ?? {};
-
-    // Extract the list of leave applications
-    List<dynamic> leaveApplications = leaveData['teacherLeave'] ?? [];
-
-    // If there are no existing leave applications, return 1 as the initial leave ID
-    if (leaveApplications.isEmpty) {
-      return '1';
-    }
-
-    // Find the maximum leave ID among the existing leave applications
-    int maxLeaveId = 0;
-    for (var leave in leaveApplications) {
-      int? leaveId = int.tryParse(leave['id'] ?? '');
-      if (leaveId != null && leaveId > maxLeaveId) {
-        maxLeaveId = leaveId;
-      }
-    }
-
-    // Calculate the next leave ID by adding 1 to the maximum leave ID
-    int nextLeaveId = maxLeaveId + 1;
-
-    // Return the next leave ID as a string
-    return nextLeaveId.toString();
-  }
-
-}// TODO Implement this library.

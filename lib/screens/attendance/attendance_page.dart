@@ -1,10 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel, EventList;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
 import 'package:provider/provider.dart';
@@ -32,56 +36,49 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
     // deleteValuesFromMap();
+    GetService.getAttendance(token: genericProvider.sessionToken, context: context);
     // scholarId = genericProvider.scholarId;
     super.initState();
     calculateAttendance();
   }
-  Future<void> deleteValuesFromMap() async {
-    final firestore = FirebaseFirestore.instance;
-    final docRef = firestore.doc("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/attendance /scholar_id");
+  // Future<void> deleteValuesFromMap() async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final docRef = firestore.doc("/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/attendance /scholar_id");
+  //
+  //   // Get the document
+  //   final docSnapshot = await docRef.get();
+  //
+  //   if (!docSnapshot.exists) {
+  //     return; // Handle document not found (optional)
+  //   }
+  //
+  //   // Get the existing map (assuming there's a field with a map)
+  //   final existingMap = docSnapshot.data()!['attendance'] as Map<String, dynamic>; // Replace 'mapField' with the actual field name
+  //
+  //   // Filter the map, keeping only entries where key doesn't start with the prefix
+  //   final filteredMap = existingMap.entries.fold({}, (acc, entry) =>
+  //   !entry.key.toString().startsWith("1710") ? { ...acc, entry.key: entry.value } : acc);
+  //
+  //   // Update the document with the modified data
+  //   await docRef.update({'attendance': filteredMap}); // Replace 'mapField' with the actual field name
+  //
+  //   print("Values starting with '1710' deleted from map in document.");
+  // }
 
-    // Get the document
-    final docSnapshot = await docRef.get();
-
-    if (!docSnapshot.exists) {
-      return; // Handle document not found (optional)
-    }
-
-    // Get the existing map (assuming there's a field with a map)
-    final existingMap = docSnapshot.data()!['attendance'] as Map<String, dynamic>; // Replace 'mapField' with the actual field name
-
-    // Filter the map, keeping only entries where key doesn't start with the prefix
-    final filteredMap = existingMap.entries.fold({}, (acc, entry) =>
-    !entry.key.toString().startsWith("1710") ? { ...acc, entry.key: entry.value } : acc);
-
-    // Update the document with the modified data
-    await docRef.update({'attendance': filteredMap}); // Replace 'mapField' with the actual field name
-
-    print("Values starting with '1710' deleted from map in document.");
-  }
 
   void calculateAttendance() async {
-    var id = (genericProvider.userProfile == UserProfile.teacher)?genericProvider.empID:genericProvider.scholarId;
-    final DocumentSnapshot attendanceSnapshot = await FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('attendance ')
-        .doc(id)
-        .get();
+    FetchAttendanceResponse  attendanceSnapshot = await GetService.getAttendance(token: genericProvider.sessionToken, context: context);
 
-    if (attendanceSnapshot.exists) {
-      Map<String, dynamic> data =
-      attendanceSnapshot.data() as Map<String, dynamic>;
-      Map<String, dynamic> attendanceData = data['attendance'];
+
+
+      Map<String, dynamic> attendanceData = attendanceSnapshot.attendance;
 
       attendanceData.forEach((key, value) {
-        DateTime attendanceDate = DateFormat('dd_MM_yyyy').parse(key);
+        DateTime attendanceDate = DateFormat('dd-MM-yyyy').parse(key);
         if ((fromDate == null || toDate == null) ||
             (attendanceDate.isAfter(fromDate!) &&
                 attendanceDate.isBefore(toDate!))) {
-          if (value == 'present') {
+          if (value == true) {
             totalPresentDays++;
             presentDates.add(key);
             _markedDates.add(
@@ -97,7 +94,7 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
                     width: 10,
                   ),
                 ));
-          } else if (value == 'absent') {
+          } else if (value == false) {
             totalAbsentDays++;
             absentDates.add(key);
             _markedDates.add(
@@ -121,9 +118,7 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
       setState(() {
         totalPresentPercentage = (totalPresentDays / totalDays) * 100;
       });
-    } else {
-      print('Attendance data not found for student ${genericProvider.scholarId}');
-    }
+
   }
 
   Future<void> _selectDateRange(BuildContext context) async {
@@ -153,12 +148,14 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
   @override
   Widget build(BuildContext context) {
     return StudentWrapper(widget:  Column(
+      mainAxisSize: MainAxisSize.min,
     children: <Widget>[
     CalendarCarousel<Event>(
+      headerMargin: EdgeInsets.symmetric(vertical: 4.0),
       thisMonthDayBorderColor: Colors.grey,
       daysTextStyle: const TextStyle(color: Colors.black),
       markedDatesMap: _markedDates,
-      height: 420.0,
+      height: MediaQuery.of(context).size.height*.5,
       selectedDateTime: DateTime.now(),
       todayButtonColor: Colors.yellow,
       selectedDayButtonColor: Colors.yellow,
@@ -167,11 +164,31 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
       },
     ),
     const SizedBox(height: 20),
-    Text('Total Present Days: $totalPresentDays'),
-    Text('Total Absent Days: $totalAbsentDays'),
-    Text('Total Days: $totalDays'),
-    Text(
-    'Total Present Percentage: ${totalPresentPercentage.toStringAsFixed(2)}%'),
+    Expanded(
+      flex: 2,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: 400
+        ),
+
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            runSpacing: 15,
+            spacing: 15,
+
+            children: [
+              smallAttendanceCard(context: context,text: 'Present Days: $totalPresentDays'),
+              smallAttendanceCard(context: context,text: 'Absent Days: $totalAbsentDays', colors: Colors.red),
+              smallAttendanceCard(context: context,text: 'Total Days: $totalDays',colors: Colors.blue),
+              smallAttendanceCard(context: context,text: 'Total Present Percentage: ${totalPresentPercentage.toStringAsFixed(2)}%',colors: Colors.blue),
+            ],
+          ),
+        ),
+      ),
+    )
     ],
     ),
     floatingActionButton: FloatingActionButton(
@@ -180,4 +197,20 @@ class _ViewAttendancePageState extends State<ViewAttendancePage> {
     ),
         title: "Attendance");
   }
+
+  Container smallAttendanceCard({
+    required BuildContext context,
+    required String text,
+     Color? colors
+
+  }) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 2 - 40.0, // Calculate width for 3 columns
+      height: MediaQuery.of(context).size.width / 2 - 40.0,
+      padding: EdgeInsets.all(24),decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(14),
+    color: (colors==null)?Colors.green: colors,
+  ),child: Center(child: Text(text,style: TextStyle(color: Colors.white),)));
+  }
 }
+

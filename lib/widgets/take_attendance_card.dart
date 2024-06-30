@@ -1,30 +1,36 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/snack_bar.dart';
 import 'package:practice/widgets/textFieldWidget.dart';
+import 'package:provider/provider.dart';
 
+import '../bloc/generic_bloc.dart';
+import '../services/get_service /get_service.dart';
 import 'button_widget.dart';
 
 class TakeAttendanceCard extends StatefulWidget {
-  String _id, email, studentName;
-  int attendedClass, totalClass, __v;
-  Function editSubject, attendedClassFun, notAttendedClassFun, deleteSubject;
+   final String id, email, studentName;
+  int attendedClass, totalClass;
+  Function? editSubject, attendedClassFun, notAttendedClassFun, deleteSubject;
+  Map<String, bool>? markedAttendance;
 
-  TakeAttendanceCard(
-      this._id,
-      this.email,
-      this.studentName,
-      this.attendedClass,
-      this.totalClass,
-      this.__v,
-      this.editSubject,
-      this.attendedClassFun,
-      this.notAttendedClassFun,
-      this.deleteSubject,
-      );
+  TakeAttendanceCard({
+   required this.id,
+    required this.email,
+    this.markedAttendance,
+    required this.studentName,
+    required this.attendedClass,
+    required this.totalClass,
+    required this.editSubject,
+    required this.attendedClassFun,
+    required this.notAttendedClassFun,
+    required this.deleteSubject,
+  });
 
 
 
@@ -151,7 +157,7 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
     }
 
 
-    editAttendance(studentID: widget._id,date: dateController.text,status: _total.text );
+    editAttendance(studentID: widget.id,date: dateController.text,status: _total.text );
   }
 
   void attendedClass() {
@@ -159,14 +165,14 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
       // widget.totalClass++;
       widget.attendedClass++;
     });
-    widget.attendedClassFun();
+    widget.attendedClassFun!();
   }
 
   void notAttendedClass() {
     setState(() {
       // widget.totalClass++;
     });
-    widget.notAttendedClassFun();
+    widget.notAttendedClassFun!();
   }
 
   get status {
@@ -192,162 +198,251 @@ class _TakeAttendanceCardState extends State<TakeAttendanceCard> {
     return "Please attend next ${x} classes.";
   }
 
-  void showDeleteBox() {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.error,
-      animType: AnimType.scale,
-      title: 'Are you sure?',
-      desc: 'This action cannot be undone.',
-      btnCancelOnPress: () {},
-      btnOkOnPress: () {
-        widget.deleteSubject(widget._id);
-      },
-      btnCancelText: "CANCEL",
-      btnOkText: "OK",
-    ).show();
-  }
+  // void showDeleteBox() {
+  //   AwesomeDialog(
+  //     context: context,
+  //     dialogType: DialogType.error,
+  //     animType: AnimType.scale,
+  //     title: 'Are you sure?',
+  //     desc: 'This action cannot be undone.',
+  //     btnCancelOnPress: () {},
+  //     btnOkOnPress: () {
+  //       widget.deleteSubject(widget.id);
+  //     },
+  //     btnCancelText: "CANCEL",
+  //     btnOkText: "OK",
+  //   ).show();
+  // }
+  var genericProvider;
+  Map<String, bool> attendanceMap = {};
+  bool isAttended = false;
+  // void getAttendanceMap()async{
+  //
+  //   Map<String, bool> mapofAtt = await GetService.getTodayAttendance(token: genericProvider.sessionToken, context: context);
+  //   attendanceMap.addAll(mapofAtt) ;
+  //   print( attendanceMap[widget.id]);
+  // }
+  void initState() {
+    // documentSnap = _fetchData();
+    // print("LLLLLLLL");
+    print(widget.id);
+    genericProvider = Provider.of<GenericProvider>(context, listen: false);
 
+    print("isAttended");
+    print(widget.markedAttendance);
+    isAttended = widget.markedAttendance?[widget.id] ?? false;
+    print(widget.markedAttendance?[widget.id]);
+    print(isAttended);
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     const textStyle = TextStyle(
       fontSize: 16,
       color: Colors.black,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.bold,
       letterSpacing: 0.2,
     );
-    return Container(
+    return Card(
       margin: const EdgeInsets.fromLTRB(8, 10, 8, 5),
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      height: 125,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Colors.white
-          // boxShadow: const [
-          //   BoxShadow(
-          //     color: Colors.white,
-          //     blurStyle: BlurStyle.outer,
-          //     blurRadius: 4.0,
-          //     // offset: Offset(0.0, 0.0),
-          //   )
-          // ]
-        // color: Colors.red
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.55,
-                child: Text(
+      color: ConstantColors.backGroundColor,
+      elevation: 6,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+
+
+        height: 80,
+
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+
+            borderRadius: BorderRadius.circular(15),
+          color: isAttended ? Colors.green.withOpacity(.2) : Colors.white,
+            // boxShadow: const [
+            //   BoxShadow(
+            //     color: Colors.white,
+            //     blurStyle: BlurStyle.outer,
+            //     blurRadius: 4.0,
+            //     // offset: Offset(0.0, 0.0),
+            //   )
+            // ]
+          // color: Colors.red
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 18.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black87,
+
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+
+
+                  )
+                ),
+                width: 10,
+                height: 80,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 7.0,bottom: 4),
+                  child: Text(
+                    "Name",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey
+                    ),
+                  ),
+                ),
+                Text(
                   widget.studentName,
                   style: textStyle,
-                ),
-              ),
-              Text(
-                "Attendance ${widget.attendedClass}/${widget.totalClass}",
-                style: textStyle,
-              ),
-              // Text(
-              //   "Status: ${status}",
-              //   style: TextStyle(
-              //     fontSize: 15.1,
-              //     color: Colors.black,
-              //     fontWeight: FontWeight.w500,
-              //     letterSpacing: 0.2,
-              //   ),
-              // ),
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: IconButton(
-                      onPressed: () {
-                        showEditBox();
-                      },
-                      icon: const Icon(
-                        Icons.edit,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: IconButton(
-                        onPressed: () {
-                          showDeleteBox();
-                        },
-                        icon: const Icon(
-                          Icons.delete,
-                          size: 20,
-                        )),
-                  ),
-                ],
-              )
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              CircularPercentIndicator(
-                radius: 35.0,
-                lineWidth: 7.0,
-                percent: widget.attendedClass == 0 && widget.totalClass == 0
-                    ? 0
-                    : (widget.attendedClass / widget.totalClass),
-                center: widget.attendedClass == 0 && widget.totalClass == 0
-                    ? Text(
-                  "0%",
-                  style: textStyle,
                 )
-                    : Text(
-                  "${(widget.attendedClass / widget.totalClass * 100).toStringAsFixed(0)}%",
-                  style: textStyle,
-                ),
-                progressColor:
-                (widget.attendedClass / widget.totalClass * 100) >= 75
-                    ? Colors.green
-                    : Colors.red,
-              ),
-              Row(
+                // Text(
+                //   "${widget._id}",
+                //   style: textStyle,
+                // ),
+
+
+
+                // Text(
+                //   "Status: ${status}",
+                //   style: TextStyle(
+                //     fontSize: 15.1,
+                //     color: Colors.black,
+                //     fontWeight: FontWeight.w500,
+                //     letterSpacing: 0.2,
+                //   ),
+                // ),
+                // Row(
+                //   children: [
+                //     CircleAvatar(
+                //       backgroundColor: Colors.white,
+                //       child: IconButton(
+                //         onPressed: () {
+                //           showEditBox();
+                //         },
+                //         icon: const Icon(
+                //           Icons.edit,
+                //           size: 20,
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 10),
+                //     CircleAvatar(
+                //       backgroundColor: Colors.white,
+                //       child: IconButton(
+                //           onPressed: () {
+                //             showDeleteBox();
+                //           },
+                //           icon: const Icon(
+                //             Icons.delete,
+                //             size: 20,
+                //           )),
+                //     ),
+                //   ],
+                // )
+              ],
+            ),
+            Spacer(flex: 3,),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0,right: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: IconButton(
-                      color: Colors.black,
-                      onPressed: () {
-                        attendedClass();
-                      },
-                      icon: const Icon(
-                        Icons.check,
-                      ),
-                    ),
-                  ),
+                  IconButton(onPressed: (){
+                    setState(() {
+                      isAttended =true;
+
+                      attendedClass();
+                    });
+                  }, icon: const Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  )),
+                  // CircleAvatar(
+                  //   backgroundColor: Colors.green,
+                  //   child: IconButton(
+                  //     color: Colors.black,
+                  //     onPressed: () {
+                  //       setState(() {
+                  //         isAttended =true;
+                  //
+                  //         attendedClass();
+                  //       });
+                  //     },
+                  //     icon: const Icon(
+                  //       Icons.check,
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 10),
-                  CircleAvatar(
-                    backgroundColor: Colors.red,
-                    child: IconButton(
-                      color: Colors.black,
-                      onPressed: () {
-                        notAttendedClass();
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                      ),
-                    ),
-                  ),
+                  IconButton(onPressed: (){
+
+                    setState(() {
+                      isAttended =false;
+                      notAttendedClass();
+                    });
+                  }, icon: Icon(Icons.close,color: Colors.red,)),
+                  // CircleAvatar(
+                  //   backgroundColor: Colors.red,
+                  //   child: IconButton(
+                  //     color: Colors.black,
+                  //     onPressed: () {
+                  //       setState(() {
+                  //         isAttended =false;
+                  //         notAttendedClass();
+                  //       });
+                  //
+                  //     },
+                  //     icon: const Icon(
+                  //       Icons.close,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
-              )
-            ],
-          )
-        ],
+              ),
+            )
+
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     // CircularPercentIndicator(
+            //     //   radius: 35.0,
+            //     //   lineWidth: 7.0,
+            //     //   percent: widget.attendedClass == 0 && widget.totalClass == 0
+            //     //       ? 0
+            //     //       : (widget.attendedClass / widget.totalClass),
+            //     //   center: widget.attendedClass == 0 && widget.totalClass == 0
+            //     //       ? Text(
+            //     //     "0%",
+            //     //     style: textStyle,
+            //     //   )
+            //     //       : Text(
+            //     //     "${(widget.attendedClass / widget.totalClass * 100).toStringAsFixed(0)}%",
+            //     //     style: textStyle,
+            //     //   ),
+            //     //   progressColor:
+            //     //   (widget.attendedClass / widget.totalClass * 100) >= 75
+            //     //       ? Colors.green
+            //     //       : Colors.red,
+            //     // ),
+            //   ],
+            // )
+          ],
+        ),
       ),
     );
   }

@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/widgets/student_wrapper.dart';
+import 'package:provider/provider.dart';
 
+import '../../../bloc/generic_bloc.dart';
 import '../../../widgets/constant_text_widget.dart';
 
 
 class ViewAnnouncement extends StatefulWidget {
-  const ViewAnnouncement({super.key});
+  final bool isTeacher;
+  const ViewAnnouncement({this.isTeacher = false,super.key});
 
   @override
   State<ViewAnnouncement> createState() => _ViewAnnouncementState();
@@ -15,39 +20,57 @@ class ViewAnnouncement extends StatefulWidget {
 class _ViewAnnouncementState extends State<ViewAnnouncement> with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
-  Future<List<Map<String, dynamic>>> getAnnouncement() async {
-    List<Map<String, dynamic>> announcementList = [];
+  var genericProvider;
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/announcements/announcement_index1/all')
-        .get();
-
-    querySnapshot.docs.forEach((doc) {
-      print("MMMMMMMMM");
-      print(doc);
-      Map<String, dynamic> announcementItem = {
-        'id': doc.id,
-        'description': doc['description'],
-        'title': doc['title'],
-        'time': doc['time'],
-        'category': doc['category']
-      };
-      announcementList.add(announcementItem);
-    });
-    print("object");
-    print(announcementList);
-    return announcementList;
-  }
   @override
   void initState() {
     super.initState();
-    getAnnouncement();
+    genericProvider = Provider.of<GenericProvider>(context, listen: false);
+
+
     _tabController = TabController(vsync: this, length: 5);
   }
   @override
   Widget build(BuildContext context) {
-    return  StudentWrapper(widget: FutureBuilder(
-        future: getAnnouncement(),
+    return (widget.isTeacher)? FutureBuilder<FetchAnnouncementResponse>(
+        future: GetService.getAnnouncement(token:genericProvider.sessionToken,context: context),
+        builder: (BuildContext context, snapshot){
+          return (!snapshot.hasData)?
+          const Center(child: CircularProgressIndicator()):
+          SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height*.9,
+                      child: ListView.builder(
+
+
+                        itemCount: snapshot.data!.announcements.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // print(snapshot.data![index]["title"]);
+                          // print(snapshot.data![index]["time"]);
+                          // print(snapshot.data![index]["category"]);
+                          return announcementCard(title: snapshot.data!.announcements[index].title,time: snapshot.data!.announcements[index].timestamp.toString(),tag: snapshot.data!.announcements[index].category.name);
+                        },
+
+                      ),
+                    )),
+                // Center(child: Text("Tab 2 page")),
+                // Center(child: Text("Tab 3 page")),
+                // Center(child: Text("Tab 4 page")),
+                // Center(child: Text("Tab 5 page")),
+
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+          );
+        }
+    ):StudentWrapper(widget: FutureBuilder<FetchAnnouncementResponse>(
+        future: GetService.getAnnouncement(token:genericProvider.sessionToken,context: context),
         builder: (BuildContext context, snapshot){
           return (!snapshot.hasData)?
           const Center(child: CircularProgressIndicator()):
@@ -98,12 +121,12 @@ class _ViewAnnouncementState extends State<ViewAnnouncement> with SingleTickerPr
                       child: ListView.builder(
 
 
-                        itemCount: snapshot.data!.length,
+                        itemCount: snapshot.data!.announcements.length,
                         itemBuilder: (BuildContext context, int index) {
-                          print(snapshot.data![index]["title"]);
-                          print(snapshot.data![index]["time"]);
-                          print(snapshot.data![index]["category"]);
-                          return announcementCard(title: snapshot.data![index]["title"],time: snapshot.data![index]["time"],tag: snapshot.data![index]["category"]);
+                          // print(snapshot.data![index]["title"]);
+                          // print(snapshot.data![index]["time"]);
+                          // print(snapshot.data![index]["category"]);
+                          return announcementCard(title: snapshot.data!.announcements[index].title,time: snapshot.data!.announcements[index].timestamp.toString(),tag: snapshot.data!.announcements[index].category.name);
                         },
 
                       ),

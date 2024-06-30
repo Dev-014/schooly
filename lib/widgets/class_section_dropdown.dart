@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
+import 'package:provider/provider.dart';
 
+import '../bloc/generic_bloc.dart';
+import '../modals/academic_service/academicService.pb.dart';
 import 'new_drop_down.dart';
 
 class ClassSectionDropdown extends StatefulWidget {
   double maxWidth;
   bool horizontalDirection;
   bool disableSection ;
-  final void Function(String? selectedClass, String? selectedSection) onSelect;
+  bool disableSubject;
+  final void Function(String? selectedClass, String? selectedSection, String? classId,String subject) onSelect;
 
   ClassSectionDropdown({
     required this.maxWidth,
     required this.onSelect,
     this.disableSection = false,
-    this.horizontalDirection = false
+    this.horizontalDirection = false,
+    this.disableSubject = false
   });
   @override
   _ClassSectionDropdownState createState() => _ClassSectionDropdownState();
@@ -22,21 +29,52 @@ class ClassSectionDropdown extends StatefulWidget {
 class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
    String? selectedClass;
    String? selectedSection;
+   String? selectedSubject;
+   String? classId;
    bool isClassSelected = false;
    bool isSectionSelected = false;
    bool enableSectionDropDown = false;
+   bool enableSubjectDropDown = false;
    List<CustDropdownMenuItem> sectionDropdownItems = [];
+   List<CustDropdownMenuItem> subjectDropdownItems = [];
 
-   void _loadSectionItems(String selectedClass) {
-     FirebaseFirestore.instance
-         .collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes')
-         .doc(selectedClass)
-         .collection('Sections')
-         .get()
+   var genericProvider;
+   @override
+   void initState() {
+
+     genericProvider = Provider.of<GenericProvider>(context,listen: false);
+     super.initState();
+   }
+
+   void _loadSubjectItems( {required String selectedClass,required String classId}) {
+     GetService.getSubjects(token: genericProvider.sessionToken, classId: classId)
+         .then((value) {
+           print("List of subjects");
+           print(value);
+      subjectDropdownItems.clear();
+
+       for (var i = 0; i< value!.length ; i++) {
+         String subjectName = value[i].name;
+         subjectDropdownItems.add(
+           CustDropdownMenuItem(
+             value: subjectName,
+             child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text(subjectName)),
+           ),
+         );
+       }
+       setState(() {
+         enableSubjectDropDown =true;
+       }); // Update the state to rebuild the widget with the new section items
+     });
+   }
+
+   void _loadSectionItems( {required String selectedClass,required String classId}) {
+     GetService.getSections(token: genericProvider.sessionToken, classId: classId)
          .then((value) {
        sectionDropdownItems.clear();
-       for (var sectionDoc in value.docs) {
-         String sectionName = sectionDoc.id;
+
+       for (var i = 0; i< value!.length ; i++) {
+         String sectionName = value[i].name;
          sectionDropdownItems.add(
            CustDropdownMenuItem(
              child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text(sectionName)),
@@ -51,18 +89,18 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
    }
   @override
   Widget build(BuildContext context) {
-     return StreamBuilder<QuerySnapshot>(
-       stream: FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes').snapshots(),
+     return FutureBuilder<List<Class>>(
+       future: GetService.getClasses(token: genericProvider.sessionToken),
        builder: (context, snapshot) {
          if (!snapshot.hasData) {
            return Center(child: CircularProgressIndicator());
          }
          List<CustDropdownMenuItem> classDropdownItems = [];
-         for (var classDoc in snapshot.data!.docs) {
-           String className = classDoc.id;
+         for (var classDoc in snapshot.data!) {
+           String className = classDoc.grade.toString();
            classDropdownItems.add(
              CustDropdownMenuItem(
-               value: className,
+               value: classDoc ,
                child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text(className)),
 
              ),
@@ -79,12 +117,15 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                  maxWidth: widget.maxWidth,
                  items: classDropdownItems,
                  onChanged: (value) {
+                   Class classs  = value as Class;
                    setState(() {
-                     selectedClass = value!;
+                     selectedClass = classs.grade.toString();
                      selectedSection = null;
+                     // classId = classs.id;
+                     classId = classs.grade.toString();
                    });
-                   _loadSectionItems(selectedClass!);
-                   widget.onSelect(selectedClass, selectedSection);
+                   _loadSectionItems(selectedClass: selectedClass!, classId: classs.grade.toString());
+                   widget.onSelect(selectedClass, selectedSection,classId,"");
                  },
                  hintText: "Select Class",
                ),
@@ -96,10 +137,11 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                  enabled: enableSectionDropDown,
                  items: sectionDropdownItems,
                  onChanged: (value) {
+
                    setState(() {
                      selectedSection = value;
                    });
-                   widget.onSelect(selectedClass, selectedSection);
+                   widget.onSelect(selectedClass, selectedSection,classId,"");
                  },
                  hintText: "Select Section",
                ),
@@ -116,16 +158,21 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                // value: selectedClass,
                items: classDropdownItems,
                onChanged: (value) {
+                 Class classs  = value as Class;
+
                  setState(() {
-                   selectedClass = value!;
+                   selectedClass = classs.grade.toString()!;
                    selectedSection = null;
                    isClassSelected = true;
                    isSectionSelected = false;
+                   classId = classs.grade.toString()!;
+                   // classId = classs.id;
                    // Reset section when class changes
                  });
 // Load section items for the selected class
-                 _loadSectionItems(selectedClass!);
-                 widget.onSelect(selectedClass, selectedSection); // Callback to parent widget
+                 _loadSubjectItems(selectedClass: selectedClass!, classId: classId??"");
+                 _loadSectionItems(selectedClass: selectedClass!, classId: classId??"");
+                 widget.onSelect(selectedClass, selectedSection,classId,""); // Callback to parent widget
 
                },
                hintText: "Select Class",
@@ -153,8 +200,9 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                    isSectionSelected = true;
 
                  });
+
 // Load section items for the selected class
-                 widget.onSelect(selectedClass, selectedSection); // Callback to parent widget
+                 widget.onSelect(selectedClass, selectedSection,classId??"",""); // Callback to parent widget
 
                },
                hintText: "Select Section",
@@ -169,6 +217,33 @@ class _ClassSectionDropdownState extends State<ClassSectionDropdown> {
                  style: TextStyle(color: Colors.red),
                ),
              ),
+            if(!widget.disableSubject)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Column(
+                    children: [
+                      CustDropDown<String>(
+
+                        borderRadius: 0,
+
+                        borderWidth: 0,
+                        maxWidth: widget.maxWidth,
+                        // value: selectedClass,
+                        items: subjectDropdownItems,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSubject = value!;
+                            // Reset section when class changes
+                          });
+                          widget.onSelect(selectedClass,selectedSection,classId,selectedSubject!); // Callback to parent widget
+
+                        },
+                        hintText: "Select Subject",
+                        // hint: Text('Select Class'),
+                      ),]
+                ),
+              )
+
            ],
          );
        },

@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AnnouncementService{
 
-  static Future<dynamic> uploadAnnouncement( String description, String title,   String category) async {
+  static Future<dynamic> uploadAnnouncement(
+      {required String description,required String title,required String category}) async {
     DateTime now = DateTime.now();
     String currentTime = "${now.hour}:${now.minute}:${now.second}";
     String docId = FirebaseFirestore.instance.collection('announcement').doc().id;

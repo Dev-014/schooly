@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:practice/screens/generic/upload/upload_notice_board.dart';
 import 'package:practice/screens/notice_board/teacher/upload_notice_board.dart';
 import 'package:practice/screens/notice_board/teacher/view_notice_board.dart';
 import 'package:practice/utils/constants_colors.dart';
 
-class TeacherNoticeBoard extends StatefulWidget {
-  const TeacherNoticeBoard({Key? key}) : super(key: key);
+class TeacherNoticeBoards extends StatefulWidget {
+  const TeacherNoticeBoards({Key? key}) : super(key: key);
 
   @override
-  State<TeacherNoticeBoard> createState() => _TeacherNoticeBoardState();
+  State<TeacherNoticeBoards> createState() => _TeacherNoticeBoardsState();
 }
 
-class _TeacherNoticeBoardState extends State<TeacherNoticeBoard> {
+class _TeacherNoticeBoardsState extends State<TeacherNoticeBoards> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -57,7 +58,9 @@ class _TeacherNoticeBoardState extends State<TeacherNoticeBoard> {
         body: TabBarView(
           children: [
             TeacherNoticeView(),
-            TeacherNoticeCreate(),
+
+            UploadNoticeBoard(),
+            // TeacherNoticeCreate(),
           ],
         ),
       ),

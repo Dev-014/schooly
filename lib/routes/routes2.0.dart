@@ -1,11 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/routes/url_constants.dart';
+import 'package:practice/screens/add_teacher.dart';
+import 'package:practice/screens/auth/select_profiles_page.dart';
 import 'package:practice/screens/examination/examination_page.dart';
 import 'package:practice/screens/fee_detail/student/student_fee_details_page.dart';
 import 'package:practice/screens/leave_page/principal/principal_leave_page.dart';
 import 'package:practice/screens/homework/student/student_homework.dart';
+import 'package:practice/screens/not_clear/classes.dart';
+import 'package:practice/screens/not_clear/section.dart';
 import 'package:practice/screens/profile_page.dart';
 import 'package:practice/screens/auth/sign_in_page.dart';
 import 'package:practice/screens/leave_page/student/leave_page.dart';
@@ -39,9 +42,9 @@ import 'all_page_wrapper.dart';
 
 class RouteHandler {
   final GlobalKey<NavigatorState> _rootNavigatorKey =
-  GlobalKey<NavigatorState>(debugLabel: 'root');
+      GlobalKey<NavigatorState>(debugLabel: 'root');
   final GlobalKey<NavigatorState> _shellNavigatorKey =
-  GlobalKey<NavigatorState>(debugLabel: 'shell');
+      GlobalKey<NavigatorState>(debugLabel: 'shell');
 
   GoRouter? _loggedInRouter;
   GoRouter? _router;
@@ -105,7 +108,14 @@ class RouteHandler {
           path: UrlConstants.sign_in,
           child: const SignInPage(),
         ),
-        goRoutePathMaker(path: UrlConstants.verify_otp, child: VerifyOtpPage())
+        goRoutePathMaker(
+          path: UrlConstants.verify_otp,
+          child: VerifyOtpPage(),
+        ),
+        goRoutePathMaker(
+          path: UrlConstants.select_user,
+          child: SelectProfilePage(),
+        ),
       ],
     );
   }
@@ -168,7 +178,7 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.dashboard,
-      child:  MenuPage(),
+      child: MenuPage(),
     ),
     goRoutePathMaker(
       path: UrlConstants.verify_otp,
@@ -189,7 +199,7 @@ List<RouteBase> _getRouteList() {
     ),
     goRoutePathMaker(
       path: UrlConstants.teacher_notice_board,
-      child: const TeacherNoticeBoard(),
+      child:  TeacherNoticeBoards(),
     ),
     goRoutePathMaker(
       path: UrlConstants.time_table_form,
@@ -260,11 +270,9 @@ List<RouteBase> _getRouteList() {
       child: FeeDetailsPage(),
     ),
 
-
-
     goRoutePathMaker(
       path: UrlConstants.add_teacher,
-      child: AddStudents(),
+      child: AddTeacher(),
     ),
     goRoutePathMaker(
       path: UrlConstants.home_work,
@@ -275,28 +283,36 @@ List<RouteBase> _getRouteList() {
       child: StudyMaterial(section: "c", clazz: '10'),
     ),
     goRoutePathMaker(
-      path: UrlConstants.announcement,
-      child: ViewAnnouncement()
-    ),
+        path: UrlConstants.announcement, child: ViewAnnouncement()),
     goRoutePathMaker(
       path: UrlConstants.view_leave,
       child: TeacherLeavePage(),
     ),
     goRoutePathMaker(
-      path: UrlConstants.notice_board,
-      child: StudentNoticeBoard()
-    ),
+        path: UrlConstants.notice_board, child: StudentNoticeBoard()),
     goRoutePathMaker(
       path: UrlConstants.view_attendance,
       child: ViewAttendancePage(),
     ),
     goRoutePathMaker(
-      path: UrlConstants.sign_in,
-      child: SignInPage()
+      path: UrlConstants.add_classes,
+      child: Classes(),
     ),
     goRoutePathMaker(
-        path: UrlConstants.add_homework,
-        child: HomeWorkForm()
+      path: UrlConstants.add_sections,
+      child: AddSectionPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.select_user,
+      child: SelectProfilePage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.sign_in,
+      child: SignInPage(),
+    ),
+    goRoutePathMaker(
+      path: UrlConstants.add_homework,
+      child: HomeWorkForm(),
     ),
     // goRoutePathMaker(
     //   path: UrlConstants.sshConnect,

@@ -1,10 +1,17 @@
 
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/services/firebase_storage.dart';
+import 'package:practice/widgets/loader_button.dart';
+import 'package:provider/provider.dart';
 
+import '../../../bloc/generic_bloc.dart';
 import '../../../utils/constants_colors.dart';
 
 
@@ -104,7 +111,13 @@ class UploadAcademicCalender extends StatefulWidget {
 
 class _UploadAcademicCalenderState extends State<UploadAcademicCalender> {
   TextEditingController _textController2 = TextEditingController();
-
+  var genericProvider;
+  @override
+  void initState() {
+    genericProvider = Provider.of<GenericProvider>(context, listen: false);
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,18 +153,14 @@ class _UploadAcademicCalenderState extends State<UploadAcademicCalender> {
               child: Container(
                   width: double.infinity,
                   height: 50,
-                  child: ElevatedButton(
+                  child: LoaderElevatedButton(
                     onPressed: () async{
+                      Uint8List? list = await FirebaseStorageService.uploadFiles();
                       // addStudyMaterial(_textController3.text, _textController1.text, "study_material_index_1", _textController2.text, "study_material_new_teacher_id", studyMaterialData!);
-                      createAcademicCalendarFromExcel();
+                      // createAcademicCalendarFromExcel();
+                      AddService.addAcademicCalender(filename: "filename", token: genericProvider.sessionToken, list: list!,context: context);
                     },
-                    child: Text("Upload Files"),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            20), // Adjust the value as needed
-                      ),
-                    ),
+                    buttonText: ("Upload Files"),
                   )),
             )
 

@@ -1,7 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/services/firebase_storage.dart';
 import 'package:practice/services/other/time_table/time_table_service.dart';
+import 'package:practice/widgets/loader_button.dart';
+import 'package:practice/widgets/loader_icon_text_button.dart';
+import 'package:provider/provider.dart';
 
+import '../../../bloc/generic_bloc.dart';
 import '../../../widgets/class_section_dropdown.dart';
 
 class UploadTimetable extends StatefulWidget {
@@ -16,9 +24,19 @@ class _UploadTimetableState extends State<UploadTimetable> {
   TextEditingController _textController2 = TextEditingController();
   String? section;
   String? clazz;
+  String? classId;
   String? subject;
-  FilePickerResult? result;
+  Uint8List? result;
+  var classs ;
+  var sections;
+  var genericProvider;
 
+  @override
+  void initState() {
+    super.initState();
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+
+  }
   @override
   void dispose() {
     _textController1.dispose();
@@ -43,60 +61,41 @@ class _UploadTimetableState extends State<UploadTimetable> {
               ),
               Container(
                 child: ClassSectionDropdown(
+                  disableSubject: true,
                   maxWidth: MediaQuery.of(context).size.width * .81,
-                  onSelect: (selectedClass, selectedSection) {
-                    var classs = selectedClass;
-                    var sections = selectedSection;
+                  onSelect: (selectedClass, selectedSection,classID,subjectName) {
+                     classs = selectedClass;
+                     sections = selectedSection;
+                    classId = classID;
+
                     // Use the selectedClass and selectedSection values here
                     print(
                         'Selected Class: $classs, Selected Section: $sections');
                   },
                 ),
               ),
-              InkWell(
-                onTap: () async {
-                  result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: [
-                      'xlsx',
-                    ],
-                    withData: true, // Ensure you get the file read stream
-                  );
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.attach_file_outlined),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text("Attach Study Material"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              LoaderIconTextButton(text: "Attach Time Table ", icon: Icons.attach_file_outlined, onPressed: ()async{
+                result =await FirebaseStorageService.uploadFiles();
+
+              }),
+
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 20),
                 child: Container(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
+                    child: LoaderElevatedButton(
                       onPressed: () async {
-                        TimeTableService.uploadTimetableDataToFirestore(
-                            result: result!,
-                            section: _textController2.text,
-                            clazz: _textController1.text);
+                        print("""filename: "filename", token: ${genericProvider.sessionToken}, list: result, classId: ${classId}, sectionId: ${sections}""");
+                        AddService.addTimeTable(filename: "filename", token: genericProvider.sessionToken, list: result!, classId: classId!, sectionId: sections!,context: context);
+                        // TimeTableService.uploadTimetableDataToFirestore(
+                        //     result: result!,
+                        //     section: sections,
+                        //     clazz: classs);
                       },
-                      child: Text("Submit"),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Adjust the value as needed
-                        ),
-                      ),
+                      buttonText: "Submit",
+
                     )),
               )
             ],

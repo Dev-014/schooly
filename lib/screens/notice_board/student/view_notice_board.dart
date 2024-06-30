@@ -13,13 +13,13 @@ class StudentNoticeView extends StatefulWidget {
 }
 
 class _StudentNoticeViewState extends State<StudentNoticeView> {
-  var genericProvider;
-  String mainClass = "";
-@override
-  void initState() {
-  genericProvider = Provider.of<GenericProvider>(context,listen: false);
-    super.initState();
-  }
+    var genericProvider;
+    String mainClass = "";
+  @override
+    void initState() {
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+      super.initState();
+    }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(

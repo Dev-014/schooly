@@ -65,6 +65,26 @@ class FirebaseStorageService {
 
     return downloadUrl;
   }
+  static Future<Uint8List?> uploadFiles() async {
+    try{
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'pdf'
+      ],
+      withData: true, // Ensure you get the file read stream
+    );
+    final file = result!.files.first.bytes;
+
+
+    // Do something with the downloadUrl
+
+    return file;
+    }catch(e){
+      print(e);
+    }
+
+  }
 
 
   // Future<String> uploadFile(File file) async {

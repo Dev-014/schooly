@@ -1,11 +1,19 @@
+import 'dart:typed_data';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/services/api_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
+import '../../../services/firebase_storage.dart';
 import '../../../services/other/homework/homework_service.dart';
 import '../../../widgets/class_section_dropdown.dart';
 import '../../../widgets/loader_button.dart';
-import '../../../widgets/subject_dropdown.dart';
+import '../../../widgets/loader_icon_text_button.dart';
+import '../../../widgets/newTextField.dart';
 
 class UploadHomework extends StatefulWidget {
   const UploadHomework({super.key});
@@ -16,22 +24,22 @@ class UploadHomework extends StatefulWidget {
 
 class _UploadHomeworkState extends State<UploadHomework> {
 
-
-  TextEditingController _textController1 = TextEditingController();
-  TextEditingController _textController2 = TextEditingController();
-  TextEditingController _textController3 = TextEditingController();
   TextEditingController _textController4 = TextEditingController();
-  TextEditingController _textController5 = TextEditingController();
 
   String? selectedValue;
   var genericProvider;
   var subject;
+  Uint8List? file;
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
+
     // TODO: implement initState
     super.initState();
   }
+  var classs ;
+  var sections ;
+  var classId;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -51,29 +59,46 @@ class _UploadHomeworkState extends State<UploadHomework> {
                 // height: 200,
                 child: ClassSectionDropdown(
                   maxWidth: MediaQuery.of(context).size.width*.84,
-                  onSelect: (selectedClass, selectedSection) {
-                    var classs = selectedClass;
-                    var sections = selectedSection;
+                  onSelect: (selectedClass, selectedSection,classID,subjectName) {
+                    print("???????????");
+                    print("""selectedClass: $selectedClass,selectedSection: $selectedSection, classID : $classID, subjectId : $subjectName""");
+                     classs = selectedClass;
+                     sections = selectedSection;
+                     classId = classID;
+                     subject =subjectName;
+
+
                     // Use the selectedClass and selectedSection values here
-                    print('Selected Class: $classs, Selected Section: $sections');
+                    // print('Selected Class: $classs, Selected Section: $sections');
                   },
                 ),
 
               ),
-              Container(
-                  width: MediaQuery.of(context).size.width*.9,
-                  // color: Colors.white,
-                  // height: 200,
-                  child: SubjectDropdown(
-                    maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                    subject = selectedSubject;
-                    // Use the selectedClass and selectedSection values here
-                    print('Selected subject: $subject');
-                  },)),
 
 
-              homeWorkTextFields(controller: _textController4,
+
+              NewTempFormField(textEditingController: _textController4,labelText: "Assignment",
                   hintText: "Assignment", maxLine: 4, iconData: Icons.assignment),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LoaderIconTextButton(text: "Attach Homework Material", icon: Icons.attach_file_outlined, onPressed: () async{
+                   file = await FirebaseStorageService.uploadFiles();
+                  setState(() {
+                    // print(" setState obj");
+                    // ReportCard reportCard = ReportCard(grade: int.parse(classs), userId: textEditingController2.text);
+
+                    // print("""token: ${genericProvider.sessionToken},filename: "", reportCard: ${reportCard},list: ${reportCardUrl}""");
+
+                    // print(file);
+
+                    // enabledStatus = true;
+                  });
+
+                  // print("object.....");
+                  // print(file);
+
+                }),
+              ),
 
               Padding(
                   padding:
@@ -81,8 +106,13 @@ class _UploadHomeworkState extends State<UploadHomework> {
                   child: LoaderElevatedButton(
                     textColor: Colors.black,
                     buttonText: "Submit",
-                    onPressed: ()async
-                    {await   HomeWorkService.addHomeWork(subjectId: subject, classId: _textController1.text, sectionId: _textController2.text, title: _textController4.text, fileUrl: "fileUrl",empID: genericProvider.empID,context: context);
+                    onPressed: ()async {
+                      // print("""subjectId: $subject, classId: $classs, sectionId: $sections, title: ${_textController4.text}, fileUrl: "fileUrl",empID: ${genericProvider.teacher.employeeId}""");
+                      Homework homework = Homework(subjectId: subject,classId: classs,sectionId: sections,title:_textController4.text, description: _textController4.text,filePath: "fileUrl" );
+                      // print("KKKKKKHOMEOWRK");
+                      // print(homework);
+                      AddService.addHomework(homework: homework, token: genericProvider.sessionToken,context: context,list: file);
+                      // await   HomeWorkService.addHomeWork(subjectId: subject, classId: classs, sectionId: sections, title: _textController4.text, fileUrl: "fileUrl",empID: genericProvider.teacher.employeeId,context: context);
                     },
                   )
 
@@ -111,37 +141,42 @@ Padding homeWorkTextFields(
       children: [
 
 
-        Material(
-          elevation: 6, // You can adjust the elevation as needed
-          color: Colors.white,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: TextField(
+        Container(
+          decoration:BoxDecoration(
+              color: Colors.white,
+
+          borderRadius: BorderRadius.circular(20)),
+          child: TextFormField(
+
             controller: controller,
             maxLines: maxLine ?? 1,
             decoration: InputDecoration(
-              hintStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(iconData ?? Icons.person),
+              ),
+              // hintStyle: TextStyle(color: Colors.grey),
               hintText: hintText,
-              fillColor: Colors.grey.withOpacity(.15),
-              focusColor: Colors.grey.withOpacity(.15),
+              fillColor: Colors.white,
+              focusColor: Colors.white,
               filled: true,
               enabled: enabled ?? true,
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(.15), width: 2),
+                      color: Colors.grey.withOpacity(.15), width: 1),
                   borderRadius: BorderRadius.circular(20)),
               focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(.15), width: 2),
+                      color: Colors.blue, width: 1),
                   borderRadius: BorderRadius.circular(20)),
               border: OutlineInputBorder(
                   borderSide: BorderSide(
                       color: Colors.grey.withOpacity(.15), width: 1),
                   borderRadius: BorderRadius.circular(20)),
-              icon: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(iconData ?? Icons.person),
-              ),
+              // icon: Padding(
+              //   padding: const EdgeInsets.only(left: 8.0),
+              //   child: Icon(iconData ?? Icons.person),
+              // ),
             ),
           ),
         ),

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/widgets/report_card_viewer.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
@@ -50,8 +52,8 @@ class _ReportCardPageState extends State<ReportCardPage> {
     var reportCards;
     String className;
     String report_card_link;
-    return StudentWrapper(widget:  FutureBuilder(
-        future: getReportCard(scholarID: genericProvider.scholarId),
+    return StudentWrapper(widget:  FutureBuilder<FetchReportCardResponse>(
+        future: GetService.getReportCard(token: genericProvider.sessionToken, context: context,),
         builder: (BuildContext context, snapshot) {
           if(snapshot.hasData){
 
@@ -67,7 +69,7 @@ class _ReportCardPageState extends State<ReportCardPage> {
                     height: MediaQuery.of(context).size.height*.7,
                     child:
                     ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: snapshot.data?.reportCards.length ?? 0,
                       itemBuilder: (context,index){
                         return  Column(
                           children: [
@@ -75,16 +77,16 @@ class _ReportCardPageState extends State<ReportCardPage> {
                               padding: const EdgeInsets.symmetric(vertical: 16.0),
                               child: InkWell(
                                 onTap: (){
-                                  final fileUrl = snapshot.data![index]["report_card_url"];
-                                  Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    return ReportCardViewer(fileUrl: fileUrl,);
-                                  }));
+                                  // final fileUrl = snapshot.data![index]["report_card_url"];
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  //   return ReportCardViewer(fileUrl: fileUrl,);
+                                  // }));
                                 },
                                 child:  Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                                   child: Row(
                                     children: [
-                                      Text(snapshot.data![index]["report_card_id"],style: TextStyle(
+                                      Text(snapshot.data?.reportCards[index].grade.toString() ?? "",style: TextStyle(
                                           fontWeight: FontWeight.bold, fontSize: 16,color: Colors.black87
                                       ),),
                                       Spacer(),

@@ -1,98 +1,105 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
+import 'package:practice/services/other/leave_page/leave_page_service.dart';
 import 'package:provider/provider.dart';
 
-import '../../../bloc/generic_bloc.dart';
+import '../../bloc/generic_bloc.dart';
 
-class TeacherLeaveRequest extends StatefulWidget {
-  const TeacherLeaveRequest({Key? key}) : super(key: key);
+class StudentLeaveRequest extends StatefulWidget {
+  final bool isStudent;
+  const StudentLeaveRequest({required this.isStudent,Key? key}) : super(key: key);
 
   @override
-  State<TeacherLeaveRequest> createState() => _TeacherLeaveRequestState();
+  State<StudentLeaveRequest> createState() => _StudentLeaveRequestState();
 }
 
-class _TeacherLeaveRequestState extends State<TeacherLeaveRequest> {
+class _StudentLeaveRequestState extends State<StudentLeaveRequest> {
   var genericProvider;
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
-
+    print(",,,,,,,,,,,,,,,,");
 
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU") // Update with your document ID
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-          .collection('leave_application')
-          .doc(
-          "teacher") // Assuming widget.studentId is the student's document ID
-          .snapshots(),
+    return FutureBuilder<FetchLeaveResponse>(
+        // (widget.isStudent)?LeavePageService.getStudentLeaves():
+      future: GetService.getLeaves(token: genericProvider.sessionToken, context: context),
       builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          (BuildContext context,  snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Error: ${snapshot.error}'),
           );
-        } else if (!snapshot.hasData || snapshot.data!.data() == null) {
-          return const Center(
-            child: Text('No leave requests found'),
-          );
-        } else {
-          // Retrieve leave applications data
-          Map<String, dynamic>? leaveData =
-          snapshot.data!.data() as Map<String, dynamic>?;
+        }
 
-          if (leaveData == null || !leaveData.containsKey('teacherLeave')) {
-            return const Center(
-              child: Text('No leave requests found for this teacher'),
-            );
-          }
+        // else if (!snapshot.hasData || snapshot.data!.data() == null) {
+        //   return Center(
+        //     child: Text('No leave requests found'),
+        //   );
+        // } else {
+        //   // Retrieve leave applications data
+        //   Map<String, dynamic>? leaveData =
+        //   snapshot.data!.data() as Map<String, dynamic>?;
+        //
+        //   if (leaveData == null || !leaveData.containsKey('studentLeave')) {
+        //     return Center(
+        //       child: Text('No leave requests found for this student'),
+        //     );
+        //   }
 
-          List<dynamic> leaveRequests = leaveData['teacherLeave'];
+       List<Leave> leaveRequests = snapshot.data?.leaves ?? [];
+
+
+          // List<dynamic> leaveRequests = leaveData['studentLeave'];
 
           // Filter leave applications based on student ID
-          List<dynamic> studentLeaveRequests = leaveRequests
-              .where((leave) => leave['tId'] == genericProvider.empID)
-              .toList();
+          // List<dynamic> studentLeaveRequests = leaveRequests;
+              // .where((leave) => leave['stuId'] == genericProvider.scholarId)
+              // .toList();
 
-          if (studentLeaveRequests.isEmpty) {
-            return const Center(
-              child: Text('No leave requests found for this teacher'),
-            );
-          }
+          // if (studentLeaveRequests.isEmpty) {
+          //   return Center(
+          //     child: Text('No leave requests found for this student'),
+          //   );
+          // }
 
           return ListView.builder(
-            itemCount: studentLeaveRequests.length,
+            itemCount: leaveRequests?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               // Extract leave request data
-              Map<String, dynamic> leaveRequest = studentLeaveRequests[index];
+             Leave leaveRequest = leaveRequests![index];
 
               // Convert timestamp to DateTime format
-              DateTime appliedDate =
-              (leaveRequest['appliedDate'] as Timestamp).toDate();
+              // DateTime appliedDate =
+              // (leaveRequest['appliedDate'] as Timestamp).toDate();
 
               return Card(
-                margin: const EdgeInsets.all(8.0),
+                margin: EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
-                      'Applied Date: ${DateFormat('dd MMM yyyy').format(appliedDate)}'),
+                      'Applied Date: ${leaveRequest.createdAt}'),
+
+                      // 'Applied Date: ${DateFormat('dd MMM yyyy').format(leaveRequest.createdAt)}'),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Reason: ${leaveRequest['reason']}'),
-                      Text('From Date: ${leaveRequest['fromDate']}'),
-                      Text('To Date: ${leaveRequest['toDate']}'),
-                      Text(
-                          'Principal Approval: ${leaveRequest['principalApproval']}'),
+                      Text('Reason: ${leaveRequest.reason}'),
+                      Text('From Date: ${leaveRequest.from}'),
+                      Text('To Date: ${leaveRequest.to}'),
+                      if(widget.isStudent)
+                        Text('Teacher Approval: ${leaveRequest.status}'),
+                      if(!widget.isStudent)
+                      Text('Principal Approval: ${leaveRequest.status}'),
                     ],
                   ),
                   trailing: Row(
@@ -101,49 +108,35 @@ class _TeacherLeaveRequestState extends State<TeacherLeaveRequest> {
                       IconButton(
                         onPressed: () {
                           // Show edit leave dialog
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return EditLeaveDialog(
-                                leaveRequest: leaveRequest,
-                              );
-                            },
-                          );
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (BuildContext context) {
+                          //
+                          //     return EditLeaveDialog(
+                          //       leaveRequest: leaveRequest,
+                          //     );
+                          //   },
+                          // );
                         },
-                        icon: const Icon(Icons.edit),
+                        icon: Icon(Icons.edit),
                       ),
                       IconButton(
                         onPressed: () async {
                           // Delete the leave request
-                          try {
-                            await FirebaseFirestore.instance
-                                .collection('NewSchool')
-                                .doc(
-                                "G0ITybqOBfCa9vownMXU") // Update with your document ID
-                                .collection('attendence')
-                                .doc(
-                                'y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-                                .collection('leave_application')
-                                .doc(
-                                "teacher") // Assuming widget.studentId is the student's document ID
-                                .update({
-                              'teacherLeave':
-                              FieldValue.arrayRemove([leaveRequest])
-                            });
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content:
-                              Text('Leave request deleted successfully'),
-                            ));
-                          } catch (error) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text(
-                                  'Failed to delete leave request. Please try again later.'),
-                            ));
-                          }
+                          // try {
+                          //   (widget.isStudent)?LeavePageService.deleteStudentLeaveRequest(leaveRequest):LeavePageService.deleteTeacherLeaveRequest(leaveRequest);
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //     content:
+                          //     Text('Leave request deleted successfully'),
+                          //   ));
+                          // } catch (error) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //     content: Text(
+                          //         'Failed to delete leave request. Please try again later.'),
+                          //   ));
+                          // }
                         },
-                        icon: const Icon(Icons.delete),
+                        icon: Icon(Icons.delete),
                       ),
                     ],
                   ),
@@ -152,7 +145,6 @@ class _TeacherLeaveRequestState extends State<TeacherLeaveRequest> {
             },
           );
         }
-      },
     );
   }
 }
@@ -186,12 +178,12 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Leave Request'),
+      title: Text('Edit Leave Request'),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('From Date'),
+            Text('From Date'),
             TextField(
               controller: _fromDateController,
               decoration: InputDecoration(
@@ -211,12 +203,12 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
                       });
                     }
                   },
-                  icon: const Icon(Icons.calendar_today),
+                  icon: Icon(Icons.calendar_today),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            const Text('To Date'),
+            SizedBox(height: 16),
+            Text('To Date'),
             TextField(
               controller: _toDateController,
               decoration: InputDecoration(
@@ -236,15 +228,15 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
                       });
                     }
                   },
-                  icon: const Icon(Icons.calendar_today),
+                  icon: Icon(Icons.calendar_today),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            const Text('Reason'),
+            SizedBox(height: 16),
+            Text('Reason'),
             TextField(
               controller: _reasonController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Enter reason',
               ),
             ),
@@ -256,7 +248,7 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
         TextButton(
           onPressed: () async {
@@ -269,7 +261,7 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
                 .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
                 .collection('leave_application')
                 .doc(
-                "teacher"); // Assuming widget.studentId is the student's document ID
+                "student"); // Assuming widget.studentId is the student's document ID
 
 // Fetch the current leave requests
             DocumentSnapshot leaveSnapshot = await leaveRef.get();
@@ -279,7 +271,7 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
             leaveSnapshot.data() as Map<String, dynamic>;
 
 // Extract the list of leave applications
-            List<dynamic> leaveRequests = leaveData['teacherLeave'];
+            List<dynamic> leaveRequests = leaveData['studentLeave'];
 
 // Find the index of the leave request to be updated
             int indexToUpdate = leaveRequests.indexWhere(
@@ -294,22 +286,23 @@ class _EditLeaveDialogState extends State<EditLeaveDialog> {
                 _reasonController.text.trim();
 
             try {
+              // Update the leave request in the array and save it back to Firestore
               await leaveRef.update({
-                'teacherLeave': leaveRequests,
+                'studentLeave': leaveRequests,
               });
 
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Leave request updated successfully'),
               ));
               Navigator.of(context).pop();
             } catch (error) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     'Failed to update leave request. Please try again later.'),
               ));
             }
           },
-          child: const Text('Update'),
+          child: Text('Update'),
         ),
       ],
     );

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:practice/screens/leave_page/student/view_leave.dart';
+import 'package:practice/screens/leave_page/view_leave.dart';
+import 'package:practice/services/other/leave_page/leave_page_service.dart';
 
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
-import 'apply_leave.dart';
+import '../apply_leave.dart';
 
 class LeavePage extends StatefulWidget {
   const LeavePage({super.key});
@@ -41,7 +42,7 @@ backgroundColor: Colors.white,
               child: Column(
                 children: [
                   Text("Leaves",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.black),),
-                  Text(genericProvider.loggedInStudent.studentName, style: TextStyle(fontSize: 12,color: Colors.black,overflow: TextOverflow.ellipsis),)
+                  Text(genericProvider.student.details.firstName, style: TextStyle(fontSize: 12,color: Colors.black,overflow: TextOverflow.ellipsis),)
                 ],
               ),
             ),
@@ -67,8 +68,8 @@ backgroundColor: Colors.white,
         ),
         body:  TabBarView(
             children: [
-              ApplyLeavePage(),
-              StudentLeaveRequest(),
+              ApplyLeavePage(isStudent: true,),
+              StudentLeaveRequest(isStudent: true,),
         ]),
 
         

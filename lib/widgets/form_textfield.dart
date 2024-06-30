@@ -20,14 +20,14 @@ class formTextFields extends StatefulWidget {
 
   final bool? enabled;
   final TextEditingController? textEditingController;
-  bool? isRequired = false;
+  bool? isRequired ;
 
   @override
   State<formTextFields> createState() => _formTextFieldsState();
 }
 
 class _formTextFieldsState extends State<formTextFields> {
-  String? _errorMessage;
+  String? _errorMessage = null;
   double verticalPadding = 16;
 
   @override
@@ -58,24 +58,28 @@ if(_errorMessage==null){
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: TextFormField(
-      //         validator:  (value) {
-      //
-      // String? errorMessage = widget.validator?.call(value);
-      //
-      // setState(() {
-      // _errorMessage = errorMessage;
-      // });
-      // return errorMessage;
-      // },
+              validator:  (value) {
+print("mkmkmkmkmkmkmkmkmkmkmkmkmkm");
+      String? errorMessage = widget.validator?.call(value);
+        print(errorMessage);
+      setState(() {
+      _errorMessage = errorMessage;
+      });
+      return errorMessage;
+      },
               controller: widget.textEditingController,
               maxLines: widget.maxLine ?? 1,
-              onSaved: (value){
-                String? errorMessage = widget.validator?.call(value);
-                setState(() {
-                  _errorMessage = errorMessage;
-
-                });
-              },
+              // onSaved: (value){
+              //   print("mkmkmkmkmkmkmkmkmkmkmkmkmkm");
+              //
+              //   String? errorMessage = widget.validator!.call(value);
+              //   print(errorMessage);
+              //
+              //   setState(() {
+              //     _errorMessage = errorMessage;
+              //
+              //   });
+              // },
               decoration: InputDecoration(
                 hintStyle: TextStyle(color: Colors.grey),
                 hintText: widget.isRequired!

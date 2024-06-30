@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../bloc/generic_bloc.dart';
+import '../modals/user_service/userService.pb.dart';
+import '../modals/user_service/userService.pbenum.dart';
+import '../services/add_service/add_service.dart';
 import '../widgets/class_section_dropdown.dart';
 import '../widgets/form_textfield.dart';
+import '../widgets/showSnackBar.dart';
 
 
 class AddTeacher extends StatefulWidget {
@@ -16,45 +22,9 @@ class AddTeacher extends StatefulWidget {
 class _AddTeacherState extends State<AddTeacher> {
   var classs;
   var section;
+  var classId;
 
-  Future<void> addTeacher(
-      {required String empId,
-        required String name,
-        required String classs,
-        required String section,
-        required String dob,
-        required String bloodGroup,
-        required String emergencyContact,
-        required String emailId,
-        required String fathersName,
-        required String mothersName}) async {
-    final firestore = FirebaseFirestore.instance;
-    final teachersRef = firestore
-        .collection(
-        '/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/teachers')
-        .doc(empId);
-    // final classRef = firestore.collection(
-    //     "NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/classes/$classs/Sections/"); // Path to create/get class document (replace with your logic)
-    // final classId = classRef.doc(section);
-    // Create a map with teacher data
-    final teacherData = {
-      'teacher_name': name,
-      'classs': classs,
-      // 'class': classId,
-      'email_id': emailId,
-      'Section': section, // Assuming class and section are combined in a single field
-      'dateOfBirth': dob,
-      'bloodGroup': bloodGroup,
-      'emergencyContact': emergencyContact,
-      'fathersName': fathersName,
-      'mothersName': mothersName,
-      'emp_id': empId
-    };
 
-    await teachersRef.set(teacherData);
-
-    print("Teacher added successfully!");
-  }
 
   TextEditingController _textController1 = TextEditingController();
   TextEditingController _textController2 = TextEditingController();
@@ -80,9 +50,17 @@ class _AddTeacherState extends State<AddTeacher> {
     // TODO: implement dispose
     super.dispose();
   }
-
+  var genericProvider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    genericProvider = Provider.of<GenericProvider>(context, listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60,
@@ -119,7 +97,7 @@ class _AddTeacherState extends State<AddTeacher> {
                 Container(
                     child: ClassSectionDropdown(
                       maxWidth: MediaQuery.of(context).size.width * .81,
-                      onSelect: (selectedClass, selectedSection) {
+                      onSelect: (selectedClass, selectedSection,classID,subject) {
                         classs = selectedClass;
                         section = selectedSection;
                       },
@@ -159,17 +137,62 @@ class _AddTeacherState extends State<AddTeacher> {
                     height: 44,
                     child: ElevatedButton(
                       onPressed: () async {
-                        addTeacher(
-                            empId: _textController2.text,
-                            name: _textController1.text,
-                            classs: classs,
-                            section: section,
-                            dob: _textController4.text,
-                            bloodGroup: _textController5.text,
-                            emergencyContact: _textController6.text,
-                            fathersName: _textController7.text,
-                            mothersName: _textController8.text,
-                            emailId: _textController9.text);
+                        if (classs != null && section != null) {
+                          // if (_formKey.currentState!.validate()) {
+                            User user = User(
+                              teacher: Teacher(
+                                details: Details(
+                                  id: _textController2.text,
+                                  firstName: _textController1.text,
+                                  lastName: _textController7.text,
+                                  phoneNumber: _textController6.text,
+                                  roles: 1,
+                                ),
+                                sectionId: section,
+                                classId: classs,
+                              ),
+                              type: Types.TEACHER,
+                            );
+                            await AddService.addUser(
+                                  token: genericProvider.sessionToken,
+                                context: context,
+                                user: user);
+                            // await addStudent(
+                            //     scholarId: _textController2.text,
+                            //     name: _textController1.text,
+                            //     classs: classs,
+                            //     section: section,
+                            //     rollNumber: _textController3.text,
+                            //     dob: _textController4.text,
+                            //     bloodGroup: _textController5.text,
+                            //     emergencyContact: _textController6.text,
+                            //     fathersName: _textController7.text,
+                            //     mothersName: _textController8.text,
+                            //     emailId: _textController9.text);
+                          // }
+                        // else {
+                        //     setState(() {
+                        //       _formKey.currentState!.reset();
+                        //     });
+                        //   }
+
+                          // else {
+                          //   setState(() {
+                          //     isClassSelected = selectedClass == null;
+                          //     isSectionSelected = selectedSection == null;
+                          //   });
+                          // }
+                        } else {
+                          showSnackBar(
+                              text: "Please select Class and Section",
+                              context: context);
+                        }
+
+                        setState(() {
+                          _formKey.currentState!.reset();
+                          classs = null;
+                          section = null;
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

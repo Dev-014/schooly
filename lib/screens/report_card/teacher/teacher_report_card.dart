@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/generic/upload/upload_report_card.dart';
+import 'package:practice/screens/generic/view/view_report_card.dart';
 import 'package:practice/widgets/pt_wrapper.dart';
 
 class TeacherReportCardPage extends StatefulWidget {
@@ -12,6 +13,6 @@ class TeacherReportCardPage extends StatefulWidget {
 class _TeacherReportCardPageState extends State<TeacherReportCardPage> {
   @override
   Widget build(BuildContext context) {
-    return PTWrapper(tabBarView1: UploadReportCard(), tabBarView2: SizedBox(), firstTabTitle: "REPORT CARD", title: "Report Card");
+    return PTWrapper(tabBarView1: UploadReportCard(), tabBarView2: ViewReportCard(), firstTabTitle: "REPORT CARD", title: "Report Card");
   }
 }

@@ -6,7 +6,7 @@ import 'package:practice/widgets/showSnackBar.dart';
 
 class LoaderElevatedButton extends StatefulWidget {
  final String buttonText;
- final Future<dynamic> Function() onPressed;
+ final Future<dynamic> Function()? onPressed;
  final Color? buttonColor;
  final Color? loaderColor;
  final Color? textColor;
@@ -37,22 +37,23 @@ class _LoaderElevatedButtonState extends State<LoaderElevatedButton> {
       height: widget.buttonHeight??44,
       child: ElevatedButton(
 
-        onPressed: () async {
+        onPressed: (widget.onPressed==null)?null:() async {
 
-         _toggleLoading();
           // Your upload/ submit method
-         try {
-           var result = await widget.onPressed();
-           showSnackBar(text: "Submitted", context: context);
+            print("bbnbnbnbnbnb");
+           try {
+             _toggleLoading();
 
-           // _completer.complete(result);
+             await widget.onPressed!();
+             _toggleLoading();
 
-         } catch (error) {
-           // _completer.completeError(error);
-           showSnackBar(text: error.toString(), context: context);
-         } finally {
-           _toggleLoading();
-         }
+             print("tttttttttttt");
+           }  catch (error) {
+             print("nbnbnbnbnbnb");
+             print(error);
+             showSnackBar(text: error.toString(), context: context,showError: true);
+             _toggleLoading();
+           }
         },
         style: ButtonStyle(
 

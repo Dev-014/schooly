@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/services/other/leave_page/leave_page_service.dart';
 
 class PrincipalStudentApproval extends StatefulWidget {
   const PrincipalStudentApproval({Key? key}) : super(key: key);
@@ -12,45 +13,38 @@ class PrincipalStudentApproval extends StatefulWidget {
 class _PrincipalStudentApprovalState extends State<PrincipalStudentApproval> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU") // Update with your document ID
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2') // Update with your document ID
-          .collection('leave_application')
-          .doc(
-          "student") // Assuming widget.studentId is the student's document ID
-          .snapshots(),
+    return FutureBuilder<List<dynamic>?>(
+      future: LeavePageService.getStudentLeaves(),
       builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot> studentSnapshot) {
+          studentSnapshot) {
         if (studentSnapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
           );
-        } else if (!studentSnapshot.hasData ||
-            studentSnapshot.data!.data() == null) {
-          return Center(
-            child: Text('No student leave data found.'),
-          );
         }
+        // else if (!studentSnapshot.hasData ||
+        //     studentSnapshot.data!.data() == null) {
+        //   return Center(
+        //     child: Text('No student leave data found.'),
+        //   );
+        // }
+        //
+        // Map<String, dynamic>? leaveData =
+        // studentSnapshot.data! as Map<String, dynamic>?;
+        //
+        // if (leaveData == null || !leaveData.containsKey('studentLeave')) {
+        //   return Center(
+        //     child: Text('No leave requests found for students.'),
+        //   );
+        // }
 
-        Map<String, dynamic>? leaveData =
-        studentSnapshot.data!.data() as Map<String, dynamic>?;
-
-        if (leaveData == null || !leaveData.containsKey('studentLeave')) {
-          return Center(
-            child: Text('No leave requests found for students.'),
-          );
-        }
-
-        List<dynamic> leaveRequests = leaveData['studentLeave'];
+        List<dynamic>? leaveRequests = studentSnapshot.data;
 
         return ListView.builder(
-          itemCount: leaveRequests.length,
+          itemCount: leaveRequests?.length ?? 0,
           itemBuilder: (BuildContext context, int index) {
             Map<String, dynamic> leaveRequest =
-            leaveRequests[index] as Map<String, dynamic>;
+            leaveRequests![index] as Map<String, dynamic>;
 
             // Convert timestamp to DateTime format
             DateTime appliedDate =
@@ -81,14 +75,14 @@ class _PrincipalStudentApprovalState extends State<PrincipalStudentApproval> {
                               icon: Icon(Icons.check),
                               onPressed: () {
                                 // Approve leave
-                                approveLeave(leaveRequest);
+                                LeavePageService.approveStudentLeave(leaveRequest);
                               },
                             ),
                             IconButton(
                               icon: Icon(Icons.close),
                               onPressed: () {
                                 // Reject leave
-                                rejectLeave(leaveRequest);
+                                LeavePageService.rejectStudentLeave(leaveRequest);
                               },
                             ),
                           ],
@@ -106,60 +100,5 @@ class _PrincipalStudentApprovalState extends State<PrincipalStudentApproval> {
     );
   }
 
-  void approveLeave(Map<String, dynamic> leaveRequest) {
-    // Update leave request in Firestore with approval status
-    FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('leave_application')
-        .doc('student')
-        .update({
-      'studentLeave': FieldValue.arrayRemove([leaveRequest]),
-    }).then((value) {
-      leaveRequest['teacherApproval'] = 'Approved';
-      leaveRequest['principalApproval'] =
-      'Approved';
-      FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU")
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2')
-          .collection('leave_application')
-          .doc('student')
-          .update({
-        'studentLeave': FieldValue.arrayUnion([leaveRequest]),
-      });
-    });
-  }
 
-  void rejectLeave(Map<String, dynamic> leaveRequest) {
-    // Update leave request in Firestore with rejection status
-    FirebaseFirestore.instance
-        .collection('NewSchool')
-        .doc("G0ITybqOBfCa9vownMXU")
-        .collection('attendence')
-        .doc('y2Yes9Dv5shcWQl9N9r2')
-        .collection('leave_application')
-        .doc('student')
-        .update({
-      'studentLeave': FieldValue.arrayRemove([leaveRequest]),
-    }).then((value) {
-      // Update the leave request with rejection status
-      leaveRequest['teacherApproval'] = 'Rejected';
-      leaveRequest['principalApproval'] =
-      'Rejected'; // Assuming principal approval is also rejected after teacher's rejection
-      FirebaseFirestore.instance
-          .collection('NewSchool')
-          .doc("G0ITybqOBfCa9vownMXU")
-          .collection('attendence')
-          .doc('y2Yes9Dv5shcWQl9N9r2')
-          .collection('leave_application')
-          .doc('student')
-          .update({
-        'studentLeave': FieldValue.arrayUnion([leaveRequest]),
-      });
-    });
-  }
 }

@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
 import 'package:practice/modals/student.dart';
+import 'package:practice/services/add_service/add_service.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/widgets/report_card_viewer.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
 import 'package:provider/provider.dart';
+
+import '../../../modals/user_service/userService.pb.dart';
 
 class SyllabusPage extends StatefulWidget{
 
@@ -45,7 +50,7 @@ class _SyllabusPageState extends State<SyllabusPage>{
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
-    loggedInStudent = genericProvider.loggedInStudent;
+    loggedInStudent = genericProvider.student;
     // TODO: implement initState
     super.initState();
   }
@@ -55,8 +60,8 @@ class _SyllabusPageState extends State<SyllabusPage>{
     var reportCards;
     String className;
     String report_card_link;
-    return StudentWrapper(widget: FutureBuilder(
-        future: getListOfSubjects(classId: loggedInStudent!.classs),
+    return StudentWrapper(widget: FutureBuilder<FetchSyllabusResponse>(
+        future: GetService.getSyllabus(token: genericProvider.sessionToken, context: context),
         builder: (BuildContext context, snapshot) {
           if(snapshot.hasData){
 
@@ -70,7 +75,7 @@ class _SyllabusPageState extends State<SyllabusPage>{
                     height: MediaQuery.of(context).size.height*.7,
                     child:
                     ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: snapshot.data!.syllabus.length,
                       itemBuilder: (context,index){
                         return  Column(
                           children: [
@@ -78,16 +83,16 @@ class _SyllabusPageState extends State<SyllabusPage>{
                               padding: const EdgeInsets.symmetric(vertical: 16.0),
                               child: InkWell(
                                 onTap: (){
-                                  final fileUrl = snapshot.data![index]["syllabus_url"];
-                                  Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    return ReportCardViewer(fileUrl: fileUrl,);
-                                  }));
+                                  // final fileUrl = snapshot.data![index]["syllabus_url"];
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  //   return ReportCardViewer(fileUrl: fileUrl,);
+                                  // }));
                                 },
                                 child:  Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                                   child: Row(
                                     children: [
-                                      Text(snapshot.data![index]["subject_name"],style: TextStyle(
+                                      Text(snapshot.data?.syllabus[index].name ?? "",style: TextStyle(
                                           fontWeight: FontWeight.bold, fontSize: 16,color: Colors.black87
                                       ),),
                                       Spacer(),

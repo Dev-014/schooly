@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/generic/upload/upload_fee_details.dart';
 import 'package:practice/widgets/pt_wrapper.dart';
+import 'package:practice/widgets/student_wrapper.dart';
 
 class TeacherFeeDetail extends StatefulWidget {
   const TeacherFeeDetail({super.key});
@@ -12,10 +13,7 @@ class TeacherFeeDetail extends StatefulWidget {
 class _TeacherFeeDetailState extends State<TeacherFeeDetail> {
   @override
   Widget build(BuildContext context) {
-    return PTWrapper(
-        tabBarView1: UploadFeeDetail(),
-        tabBarView2: Container(),
-        firstTabTitle: "FeeDetails",
-        title: "Fee Details");
+    return StudentWrapper(
+        title: "Fee Details", widget: UploadFeeDetails(),);
   }
 }

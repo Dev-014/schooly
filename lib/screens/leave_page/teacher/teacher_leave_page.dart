@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:practice/screens/leave_page/teacher/apply_leave.dart';
+import 'package:practice/screens/leave_page/apply_leave.dart';
 import 'package:practice/screens/leave_page/teacher/approve_leave.dart';
-import 'package:practice/screens/leave_page/teacher/view_leave.dart';
+import 'package:practice/screens/leave_page/view_leave.dart';
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
@@ -63,10 +63,10 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
                         color: Colors.black,
                       ),
                     ),
-                    Text(
-                      genericProvider.loggedInTeacher.teacherName,
-                      style: TextStyle(fontSize: 12, color: Colors.black,overflow: TextOverflow.clip),
-                    )
+                    // Text(
+                    //   genericProvider.loggedInTeacher.teacherName,
+                    //   style: TextStyle(fontSize: 12, color: Colors.black,overflow: TextOverflow.clip),
+                    // )
                   ],
                 ),
               ),
@@ -102,9 +102,9 @@ class _TeacherLeavePageState extends State<TeacherLeavePage> {
         ),
         body: const TabBarView(
           children: [
-            TeacherApplyLeave(),
+            ApplyLeavePage(isStudent: false),
             TeacherStudentApproval(),
-            TeacherLeaveRequest(),
+            StudentLeaveRequest(isStudent: false),
           ],
         ),
       ),

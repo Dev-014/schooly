@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/services/other/study_material/study_material_services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../bloc/generic_bloc.dart';
+import '../../../modals/fetch_service/fetchService.pb.dart';
 import '../../../widgets/class_section_dropdown.dart';
 import '../../../widgets/multimedia_card.dart';
 import '../../../widgets/subject_dropdown.dart';
@@ -17,12 +20,14 @@ class ViewStudyMaterial extends StatefulWidget {
 class _ViewStudyMaterialState extends State<ViewStudyMaterial> {
   String? clazz;
   String? subject;
+  String? classId;
   String? section;
   bool get allDropdownsSelected => clazz != null && section != null && subject != null;
   var genericProvider;
   @override
   void initState() {
     // TODO: implement initState
+    print("vvvvvv");
     genericProvider = Provider.of<GenericProvider>(context,listen: false);
 
     super.initState();
@@ -37,37 +42,40 @@ class _ViewStudyMaterialState extends State<ViewStudyMaterial> {
 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClassSectionDropdown(
-              horizontalDirection: true,
-              maxWidth: MediaQuery.of(context).size.width*.44,
-              onSelect: (selectedClass, selectedSection) {
-                setState(() {
-                  clazz = selectedClass;
-                  section = selectedSection;
-                });
-
-              },
-            ),
-
-
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: SubjectDropdown(
-                maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
-                setState(() {
-                  subject = selectedSubject;
-
-                });
-                // Use the selectedClass and selectedSection values here
-                print('Selected subject: $subject');
-              },),
-            ),
+            // ClassSectionDropdown(
+            //   horizontalDirection: true,
+            //   maxWidth: MediaQuery.of(context).size.width*.44,
+            //   onSelect: (selectedClass, selectedSection,classID,subjectName) {
+            //     setState(() {
+            //       clazz = selectedClass;
+            //       section = selectedSection;
+            //       classId = classID;
+            //       subject = subjectName;
+            //     });
+            //
+            //   },
+            // ),
 
 
-            if (allDropdownsSelected)
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 12.0),
+            //   child: SubjectDropdown(
+            //     classId: classId!,
+            //     maxWidth: MediaQuery.of(context).size.width*.84, onSelect: (selectedSubject) {
+            //     setState(() {
+            //       subject = selectedSubject;
+            //
+            //     });
+            //     // Use the selectedClass and selectedSection values here
+            //     print('Selected subject: $subject');
+            //   },),
+            // ),
 
-              FutureBuilder<List<Map<String, dynamic>?>?>(
-                future: StudyMaterialServices.getStudyMaterialListForClassAndSection(empID: genericProvider.empID,clazz: clazz!,subject: subject!,section: section!),
+            //
+            // if (allDropdownsSelected)
+
+              FutureBuilder<FetchStudyMaterialResponse>(
+                future: GetService.getStudyMaterial(token: genericProvider.sessionToken, context: context),
                 builder: (BuildContext context, snapshot) {
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -80,7 +88,7 @@ class _ViewStudyMaterialState extends State<ViewStudyMaterial> {
                       padding: const EdgeInsets.all(16.0),
                       child: Center(child: Text('Error: ${snapshot.error}')),
                     );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (!snapshot.hasData || snapshot.data!.studyMaterials.isEmpty) {
                     return const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Center(child: Text('No data available')),
@@ -103,14 +111,13 @@ class _ViewStudyMaterialState extends State<ViewStudyMaterial> {
                             child: ListView.builder(
                                 shrinkWrap: true,
 
-                                itemCount: snapshot.data?.length,
+                                itemCount: snapshot.data?.studyMaterials.length,
                                 itemBuilder: (context, index) {
-                                  final listOfMap = snapshot.data;
-                                  print(listOfMap);
-                                  Map<String, dynamic>? map = listOfMap![index];
-                                  final studyMaterialHeading = map!["title"];
-                                  print("??????????");
-                                  print(listOfMap);
+
+                                  StudyMaterial? studyMaterial = snapshot.data?.studyMaterials[index];
+                                  final studyMaterialHeading = studyMaterial!.title;
+
+
                                   // final status = map["status"];
                                   return  Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -118,10 +125,10 @@ class _ViewStudyMaterialState extends State<ViewStudyMaterial> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        MultiMediaCard(title: studyMaterialHeading, date: "English / Today",),
+                                        MultiMediaCard(title: studyMaterialHeading, date: "${studyMaterial.subjectId} / Today",),
                                         IconButton(onPressed: (){
 
-                                          StudyMaterialServices.deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map["id"]);
+                                          // StudyMaterialServices.deleteStudyMaterial(subjectId: subject!, classId: clazz!, sectionId: section!,id: map["id"]);
                                           setState(() {
 
                                           });

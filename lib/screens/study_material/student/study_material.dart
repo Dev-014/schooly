@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/bloc/generic_bloc.dart';
+import 'package:practice/modals/fetch_service/fetchService.pb.dart';
 import 'package:practice/screens/multimedia_page.dart';
+import 'package:practice/services/get_service%20/get_service.dart';
 import 'package:practice/utils/constants_colors.dart';
 import 'package:practice/widgets/student_wrapper.dart';
 import 'package:provider/provider.dart';
+
+import '../../../modals/academic_service/academicService.pb.dart';
 
 class StudyMaterial extends StatefulWidget {
   final String clazz;
@@ -16,7 +20,7 @@ class StudyMaterial extends StatefulWidget {
 }
 
 class _StudyMaterialState extends State<StudyMaterial> {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   ///NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material/science/class_10/study_material_index_1/section_A/study_material_teacher_id
 
@@ -56,25 +60,25 @@ class _StudyMaterialState extends State<StudyMaterial> {
   //
   //   }
   // }
-
-  Future<List<Map<String, dynamic>?>> getStudyMaterialsByIds(
-      List<dynamic> docIds) async {
-    final firestore = FirebaseFirestore.instance;
-    final materials = await Future.wait(docIds.map((materialId) async {
-      final materialRef = firestore
-          .collection(
-              '/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material')
-          .doc(materialId);
-      final materialDoc = await materialRef.get();
-      if (materialDoc.exists) {
-        return materialDoc.data() as Map<String, dynamic>;
-      } else {
-        return null;
-      }
-    }).toList());
-
-    return materials.where((material) => material != null).toList();
-  }
+  //
+  // Future<List<Map<String, dynamic>?>> getStudyMaterialsByIds(
+  //     List<dynamic> docIds) async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final materials = await Future.wait(docIds.map((materialId) async {
+  //     final materialRef = firestore
+  //         .collection(
+  //             '/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material')
+  //         .doc(materialId);
+  //     final materialDoc = await materialRef.get();
+  //     if (materialDoc.exists) {
+  //       return materialDoc.data() as Map<String, dynamic>;
+  //     } else {
+  //       return null;
+  //     }
+  //   }).toList());
+  //
+  //   return materials.where((material) => material != null).toList();
+  // }
 
 //   Future<List<Map<String, dynamic>>> getStudyMaterialsForSectionA(
 //       String schoolId,
@@ -96,69 +100,62 @@ class _StudyMaterialState extends State<StudyMaterial> {
 //     return materials;
 //   }
 //
-  Future<List<String>> getSyllabusDocIds() async {
-    final firestore = FirebaseFirestore.instance;
+  Future<List<String>> getSyllabusSubjectIds() async {
 
     // Create a reference to the document at the specified path
-    final docRef = await firestore
-        .collection(
-            "/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/syllabus/10/Syllab")
-        .get();
+    List<Subject>? subjectIds = await GetService.getSubjects(token: genericProvider.sessionToken,classId: genericProvider.student.classId);
+    for(var subject in subjectIds ?? []){
+      subjects.add(subject.name);
+      filteredSubjects = subjects;
 
-    // Get the subcollection named 'syllabus'
-    // final syllabusQuery = await docRef.collection('syllabus').get();
-    print(docRef.docs.first);
-    // Extract doc IDs from the subcollection documents
-    final docIds = docRef.docs.map((doc) => doc.id).toList();
-    subjects.addAll(docIds);
-    filteredSubjects = subjects;
+    }
     print(">>>>>>>>>>>>>>>>>>>");
-    print(subjects);
-    return docIds;
-  }
-
-  Future<List> getSubjectNames() async {
-    final firestore = FirebaseFirestore.instance;
-
-    // Get the documents from the subcollection at the specified path
-    final syllabusQuery = await firestore
-        .collection(
-            "/NewSchool/G0ITybqOBfCa9vownMXU/attendance/y2Yes9Dv5shcWQl9N9r2/syllabus/10/syllabus/")
-        .get();
-
-    // Check if there are any documents
-    if (syllabusQuery.docs.isEmpty) {
-      return []; // Return empty list if no documents
-    }
-
-    // Extract subject names using a loop (alternative to map)
-    final subjectNames = [];
-    for (var doc in syllabusQuery.docs) {
-      final subjectData = doc.data();
-      if (subjectData != null && subjectData['subject_name'] != null) {
-        subjectNames.add(subjectData['subject_name'] as String);
-      }
-    }
-
-    print(subjectNames);
-    return subjectNames;
-  }
-
-  Future<List<String>> getSubjects() async {
-    List<String> listOfSubjects = [];
-//genericProvider.loggedInStudent.classs
-    QuerySnapshot syllabusSnapshot = await FirebaseFirestore.instance
-        .collection(
-            '/NewSchool/G0ITybqOBfCa9vownMXU/attendance/y2Yes9Dv5shcWQl9N9r2/syllabus')
-        .doc("10") // Assuming className is the ID of the class document
-        .collection('syllabus')
-        .get();
-    print(syllabusSnapshot.docs);
-    subjects = syllabusSnapshot.docs.map((doc) => doc.id).toList();
-    print("<<<<<<<<<<<>>>>>>>>>>>>>>");
     print(subjects);
     return subjects;
   }
+
+  // Future<List> getSubjectNames() async {
+  //   final firestore = FirebaseFirestore.instance;
+  //
+  //   // Get the documents from the subcollection at the specified path
+  //   final syllabusQuery = await firestore
+  //       .collection(
+  //           "/NewSchool/G0ITybqOBfCa9vownMXU/attendance/y2Yes9Dv5shcWQl9N9r2/syllabus/10/syllabus/")
+  //       .get();
+  //
+  //   // Check if there are any documents
+  //   if (syllabusQuery.docs.isEmpty) {
+  //     return []; // Return empty list if no documents
+  //   }
+  //
+  //   // Extract subject names using a loop (alternative to map)
+  //   final subjectNames = [];
+  //   for (var doc in syllabusQuery.docs) {
+  //     final subjectData = doc.data();
+  //     if (subjectData != null && subjectData['subject_name'] != null) {
+  //       subjectNames.add(subjectData['subject_name'] as String);
+  //     }
+  //   }
+  //
+  //   print(subjectNames);
+  //   return subjectNames;
+  // }
+  //
+//   Future<List<String>> getSubjects() async {
+//     List<String> listOfSubjects = [];
+// //genericProvider.loggedInStudent.classs
+//     QuerySnapshot syllabusSnapshot = await FirebaseFirestore.instance
+//         .collection(
+//             '/NewSchool/G0ITybqOBfCa9vownMXU/attendance/y2Yes9Dv5shcWQl9N9r2/syllabus')
+//         .doc("10") // Assuming className is the ID of the class document
+//         .collection('syllabus')
+//         .get();
+//     print(syllabusSnapshot.docs);
+//     subjects = syllabusSnapshot.docs.map((doc) => doc.id).toList();
+//     print("<<<<<<<<<<<>>>>>>>>>>>>>>");
+//     print(subjects);
+//     return subjects;
+//   }
 
   List<String> subjects = [
     // "Math", "Science", "English", "History", "english","hindi"
@@ -172,35 +169,35 @@ class _StudyMaterialState extends State<StudyMaterial> {
   @override
   void initState() {
     genericProvider = Provider.of<GenericProvider>(context, listen: false);
-    _docIdsFuture = getSyllabusDocIds();
-
+    _docIdsFuture = getSyllabusSubjectIds();
+    //
     super.initState();
 
     // Set filteredSubjects to all subjects initially
   }
 
-  Future<List<Map<String, dynamic>>> fetchStudyMaterial(
-      {required String subjectName,
-      required String clazz,
-      required String section}) async {
-    final firestore = FirebaseFirestore.instance;
-
-    // Create a query based on the path and criteria
-    final query = firestore
-        .collection(
-            "/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material")
-        .where('subjectId', isEqualTo: subjectName)
-        .where('class', isEqualTo: clazz)
-        .where('section', isEqualTo: section);
-
-    // Get the query snapshot
-    final querySnapshot = await query.get();
-    // Extract study materials as a list of maps
-    final studyMaterials = querySnapshot.docs.map((doc) => doc.data()).toList();
-    print(">>>>>>>>>>><<<<<<<<<<<<<<<<<");
-    print(studyMaterials);
-    return studyMaterials;
-  }
+  // Future<List<Map<String, dynamic>>> fetchStudyMaterial(
+  //     {required String subjectName,
+  //     required String clazz,
+  //     required String section}) async {
+  //   final firestore = FirebaseFirestore.instance;
+  //
+  //   // Create a query based on the path and criteria
+  //   final query = firestore
+  //       .collection(
+  //           "/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/study_material")
+  //       .where('subjectId', isEqualTo: subjectName)
+  //       .where('class', isEqualTo: clazz)
+  //       .where('section', isEqualTo: section);
+  //
+  //   // Get the query snapshot
+  //   final querySnapshot = await query.get();
+  //   // Extract study materials as a list of maps
+  //   final studyMaterials = querySnapshot.docs.map((doc) => doc.data()).toList();
+  //   print(">>>>>>>>>>><<<<<<<<<<<<<<<<<");
+  //   print(studyMaterials);
+  //   return studyMaterials;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -273,16 +270,13 @@ class _StudyMaterialState extends State<StudyMaterial> {
                       children: filteredSubjects.map((subject) {
                         return InkWell(
                           onTap: () async {
-                            var list = await fetchStudyMaterial(
-                                subjectName: subject,
-                                clazz: genericProvider.loggedInStudent.classs,
-                                section:
-                                    genericProvider.loggedInStudent.section);
+                            FetchStudyMaterialResponse list =  await GetService.getStudyMaterial(token: genericProvider.sessionToken, context: context,subject_id: subject,forStudent: true);
+
                             print(list);
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return MultiMediaPage(
-                                listOfStudyMaterial: list,
+                                listOfStudyMaterial: list.studyMaterials,
                               );
                             }));
                           },

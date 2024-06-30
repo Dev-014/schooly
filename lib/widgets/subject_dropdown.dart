@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:practice/modals/academic_service/academicService.pb.dart';
+import 'package:provider/provider.dart';
 
+import '../bloc/generic_bloc.dart';
+import '../services/get_service /get_service.dart';
 import 'new_drop_down.dart';
 
 class SubjectDropdown extends StatefulWidget {
   final double maxWidth;
   final void Function(String? selectedSubject) onSelect;
+  final String classId;
 
 
   SubjectDropdown({
     required this.maxWidth,
     required this.onSelect,
+    required this.classId
   });
   @override
   _SubjectDropdownState createState() => _SubjectDropdownState();
@@ -18,25 +24,30 @@ class SubjectDropdown extends StatefulWidget {
 
 class _SubjectDropdownState extends State<SubjectDropdown> {
   String? selectedSubject;
+  var genericProvider;
+  @override
+  void initState() {
 
+    genericProvider = Provider.of<GenericProvider>(context,listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('/NewSchool/G0ITybqOBfCa9vownMXU/attendence/y2Yes9Dv5shcWQl9N9r2/subjects').snapshots(),
+    return FutureBuilder<List<Subject>?>(
+      future: GetService.getSubjects(token: genericProvider.sessionToken, classId: widget.classId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
         List<CustDropdownMenuItem> subjectDropdownItems = [];
-        for (var subjectDoc in snapshot.data!.docs) {
+        for (var subjectDoc in snapshot.data!) {
           print("<<<<<<<<<object>>>>>>>>>");
-          print(subjectDoc.id);
-          String subjectName = subjectDoc.id;
+          print(subjectDoc.name);
+          String subjectName = subjectDoc.name;
           subjectDropdownItems.add(
             CustDropdownMenuItem(
               value: subjectName,
               child: Container(height:50 ,alignment: Alignment.centerLeft,decoration: BoxDecoration(borderRadius: BorderRadius.circular(14),color: Colors.grey.withOpacity(.0)),child: Text(subjectName)),
-
             ),
           );
         }

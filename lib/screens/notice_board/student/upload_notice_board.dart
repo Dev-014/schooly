@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:practice/services/notice_board/notice_board_service.dart';
 import '../../../services/firebase_storage.dart';
 
 class StudentNoticeCreate extends StatefulWidget {
@@ -21,50 +22,6 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
 
   var store = FirebaseStorageService();
 
-  void addNotice() async {
-    if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
-      Timestamp appliedDate = Timestamp.now();
-
-      // Construct the notice data
-      final Map<String, dynamic> noticeData = {
-        'title': titleController.text,
-        'content': contentController.text,
-        'date': appliedDate,
-        'class': selectedClass,
-        'imageSrc': file,
-      };
-
-      try {
-        // Get a reference to the Firestore document
-        final DocumentReference documentReference = FirebaseFirestore.instance
-            .collection('NewSchool')
-            .doc('G0ITybqOBfCa9vownMXU')
-            .collection('attendence')
-            .doc('y2Yes9Dv5shcWQl9N9r2')
-            .collection('noticeBoard')
-            .doc('allNotice');
-
-        // Update the Firestore document with the notice data
-        await documentReference.update({
-          'notice': FieldValue.arrayUnion([noticeData])
-        });
-
-        // Print a success message
-        print('Notice added successfully');
-      } catch (error) {
-        // Handle Firestore errors
-        print('Failed to add notice: $error');
-      }
-
-      // Clear input fields and reset variables
-      setState(() {
-        titleController.clear();
-        contentController.clear();
-        file = "";
-        selectedClass = 'All';
-      });
-    }
-  }
 
   bool isAddingNotice = false;
   String selectedClass = 'All';
@@ -172,12 +129,24 @@ class _StudentNoticeCreateState extends State<StudentNoticeCreate> {
                   Container(
                       height: 100, width: 100, child: Image.network(file)),
                 const SizedBox(height: 10),
+
                 ElevatedButton(
-                  onPressed: () {
-                    addNotice();
-                    setState(() {
-                      isAddingNotice = false;
-                    });
+                  onPressed: () async {
+                    if(titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
+                       NoticeBoardService.addNotice(title: titleController.text,
+                          content: contentController.text,
+                          classs: selectedClass,
+                          imgSrc: file);
+
+
+                      setState(() {
+                          titleController.clear();
+                          contentController.clear();
+                          file = "";
+                          selectedClass = 'All';
+                        isAddingNotice = false;
+                      });
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor:

@@ -17,7 +17,7 @@ class LoaderIconTextButton extends StatefulWidget {
 }
 
 class _LoaderIconTextButtonState extends State<LoaderIconTextButton> {
-  late Completer<dynamic> _completer;
+   Completer<dynamic> _completer = Completer();
 
   var _isLoading = false;
   void _toggleLoading() {
@@ -38,8 +38,10 @@ class _LoaderIconTextButtonState extends State<LoaderIconTextButton> {
           _completer.complete(result);
 
         } catch (error) {
-          _completer.completeError(error);
+          print(error);
           showSnackBar(text: error.toString(), context: context);
+          _completer!.completeError(error);
+
         } finally {
           _toggleLoading();
         }
